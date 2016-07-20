@@ -1,0 +1,92 @@
+<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="px-vis-behavior-common.html" />
+<link rel="import" href="px-vis-behavior-d3.html" />
+
+
+<!--
+"The clipping path restricts the region to which paint can be applied. Conceptually, any parts of the drawing that lie outside of the region bounded by the currently active clipping path are not drawn." (MDN)
+
+Ostensibly, the clipping path gets applied to drawing components to prevent them from drawing on certain parts of the chart, such stopping a line series drawing where the axis is drawn.
+
+To use, specfify the sizing, svg, and interpreters as specified in the example. It will return an ID for the clipping path which can be passed to other drawing objects.
+
+##### Usage
+
+    <px-vis-clip-path
+        clip-path="{{clipPath}}"
+        svg="[[svg]]"
+        x="[[x]]"
+        y="[[y]]"
+        width="[[width]]"
+        height="[[height]]"
+        margin="[[margin]]">
+    </px-vis-clip-path>
+
+## MDN Spec
+https://developer.mozilla.org/en-US/docs/Web/SVG/Element/clipPath
+
+@element px-vis-clip-path
+@blurb The clipping path restricts the region to which paint can be applied.
+@homepage index.html
+@demo demo.html
+-->
+<dom-module id="px-vis-clip-path">
+    <template>
+    </template>
+</dom-module>
+
+<script>
+  Polymer({
+
+    is: 'px-vis-clip-path',
+
+    behaviors: [
+      PxVisBehaviorD3.svg,
+      PxVisBehavior.sizing,
+      PxVisBehaviorD3.axes,
+      PxVisBehavior.commonMethods,
+      PxVisBehaviorD3.clipPath
+    ],
+
+    /**
+     * Properties block, expose attribute values to the DOM via 'reflect'
+     *
+     * @property properties
+     * @type Object
+     */
+    properties: {
+
+    },
+
+    observers: [
+      '_drawElement(x,y,svg,width,height, margin.*)'
+    ],
+
+    /**
+     * Creates and sets a clipping path
+     *
+     * @method _drawElement
+     */
+    _drawElement: function() {
+
+      this.set('clipPath', this.generateRandomID('cp_'));
+      this.set('seriesClipPath', this.generateRandomID('cps_'));
+      this.fire('px-vis-clip-path-updated', { 'dataVar': 'clipPath', 'data': this.clipPath, 'method':'set' });
+      this.fire('px-vis-series-clip-path-updated', { 'dataVar': 'seriesClipPath', 'data': this.seriesClipPath, 'method':'set' });
+
+      this.svg.append("clipPath")
+        .attr("id",this.clipPath)
+        .append("rect")
+        .attr('y',-this.margin.top)
+        .attr("width", this.width - this.margin.left)
+        .attr("height", this.height - this.margin.bottom);
+
+      this.svg.append("clipPath")
+        .attr("id",this.seriesClipPath)
+        .append("rect")
+        .attr("width", this.width - this.margin.left - this.margin.right)
+        .attr("height", this.height - this.margin.bottom  - this.margin.top);
+
+    }
+  });
+</script>

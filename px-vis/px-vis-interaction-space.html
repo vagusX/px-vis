@@ -1,0 +1,563 @@
+<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="px-vis-behavior-common.html" />
+<link rel="import" href="px-vis-behavior-d3.html" />
+<link rel="import" href="../px-colors-design/colors.html" />
+
+
+<!--
+Element providing on-chart hover functionality to get data values near the mouse cursor and listen to mouse events on the chart.
+- Sets tooltipData property which can then be used to share adjacent datapoint values with other components, such as the register.
+
+
+##### Usage
+
+    <px-vis-interaction-space
+        svg="[[svg]]"
+        width="[[width]]"
+        height="[[height]]"
+        margin="[[margin]]"
+        chart-data="[[chartData]]"
+        x="[[x]]"
+        y="[[y]]"
+        current-domain-x="[[currentDomainX]]"
+        current-domain-y="[[currentDomainY]]"
+        tooltip-data="{{tooltipData}}"
+        extents-data="{{extentsData}}">
+    </px-vis-interaction-space>
+
+@element px-vis-interaction-space
+@blurb Element providing on-chart hover functionality to get data values near the mouse cursor.
+@homepage index.html
+@demo demo.html
+
+TODO implement a dev setting to choose between only showing data at that x, snapping to nearest data, or interpolating value at x
+
+-->
+<dom-module id="px-vis-interaction-space">
+    <link rel="import" type="css" href="css/px-vis.css"/>
+    <template>
+
+    </template>
+</dom-module>
+
+<script>
+  Polymer({
+
+    is: 'px-vis-interaction-space',
+
+    behaviors: [
+      PxVisBehavior.sizing,
+      PxVisBehaviorD3.svg,
+      PxVisBehaviorD3.axes,
+      PxVisBehavior.dataset,
+      PxVisBehavior.tooltipData,
+      PxVisBehavior.extentsData,
+      PxVisBehavior.commonMethods,
+      PxVisBehaviorD3.interaction,
+      PxVisBehavior.axisTypes,
+      PxVisBehavior.completeSeriesConfig,
+      PxVisBehavior.zoomSelection,
+      commonColors
+    ],
+    /***EVENTS****
+    /*
+    * fires an update to the interaction svg
+    * @event px-vis-interaction-svg-updated
+    */
+    /*
+    * fires an update to the tooltip
+    * @event px-vis-tooltip-updated
+    */
+
+    /**
+     * Properties block, expose attribute values to the DOM via 'reflect'
+     *
+     * @property properties
+     * @type Object
+     */
+    properties: {
+      /**
+       * Holder for the interaction rectangle object
+       *
+       * @property _rect
+       * @type Object
+       */
+      _rect:{
+        type:Object,
+        value: function() {return{};}
+      },
+      /**
+       * an object that contains meta data for the area drawn by the user
+       *
+       * @property _actionArea
+       * @type Object
+       */
+      _actionArea: {
+        type: Object,
+        value: function() {return {};}
+      }
+    },
+
+    observers: [
+      'drawElement(currentDomainX,currentDomainY,chartData.*,svg,width,height, completeSeriesConfig)',
+      '_resetTooltipData(completeSeriesConfig.*)'
+     ],
+
+    /**
+    * when attached, re-fire set properties for precipitation pattern
+    *
+    * @method attached
+    */
+    attached: function(){
+      if(this._doesObjHaveValues(this.interactionSvg)){
+        this.fire('px-vis-interaction-svg-updated', { 'dataVar': 'interactionSvg', 'data': this.interactionSvg, 'method':'set' });
+      }
+
+      if(this._doesObjHaveValues(this.tooltipData)){
+        this.fire('px-vis-tooltip-updated', { 'dataVar': 'tooltipData', 'data': this.tooltipData, 'method':'set' });
+      }
+
+    },
+
+    /**
+     * Draws the tooltip elements and sets up listeners and callbacks on chart hover
+     * Sets the tooltipData property which gets passed to the register.
+     *
+     * @method drawElement
+     */
+    drawElement: function() {
+
+      // make sure the tooltip draws on top of everything; returns a set property interactionSvg
+      this.cloneSVGElem(this.svg.node(),'interactionSvg');
+      this.fire('px-vis-interaction-svg-updated', { 'dataVar': 'interactionSvg', 'data': this.interactionSvg, 'method':'set' });
+
+
+      // append the rectangle to capture mouse interactions
+      this._rect = this.interactionSvg.append("rect")
+        .attr('id',"mouseCapture")
+        .attr("width", this.width - this.margin.left - this.margin.right)
+        .attr("height", this.height - this.margin.bottom - this.margin.top)
+        .attr("fill", "none")
+        .attr("pointer-events", "all")
+        .on("mouseout.tooltip", this._resetTooltipData.bind(this))
+        .on("mousemove.tooltip",this._calcTooltipData.bind(this))
+        .on("mousedown.action", this._drawActionBox.bind(this))
+        .on("mousemove.action", this._updateActionBox.bind(this))
+        .on("mouseup.action", this._finishActionBox.bind(this))
+        .style("cursor","crosshair");
+
+
+      // TODO touchevents
+      // TODO if there is no register tooltip or cursor, set .tooltip listeners to null
+      // TODO if there is no zoom or action panel, set action listeners to null
+
+      // send the register etc an empty list of series
+      // this._resetTooltipData();
+    },  //drawElement
+    /**
+     * Helper function called on mouseover
+     * Shows the tooltip elements
+     *
+     * @method _clearTooltip
+     */
+    _mouseOOver:function() {
+      // trigger mouseover
+    },
+
+    /**
+     * Helper function called on mouseout
+     * Hides the tooltip elements and resets tooltipData
+     *
+     * @method _resetTooltipData
+     */
+    _resetTooltipData: function() {
+      var ttD = {
+            'time': null,
+            'series': [],
+            'mouse': null,
+            'xArr': null,
+            'yArr': null
+          },
+          keys = Object.keys(this.completeSeriesConfig),
+          len = keys.length,
+          i;
+
+
+      for(i = 0; i < len; i++){
+        ttD.series.push({'name':keys[i],'value': null });
+      }
+
+      this.set('tooltipData',ttD);
+      this.fire('px-vis-tooltip-updated', { 'dataVar': 'tooltipData', 'data': ttD, 'method':'set' });
+    },
+
+    /**
+     * Helper function called on mousemove
+     * Calculates the mouse position and associated x & y values. Then sets the d3 elements and sets tooltipData for consumption elsewhere
+     *
+     * @method _calcTooltipData
+     */
+    _calcTooltipData:function() {
+
+      if(!this.mouseDown) {
+        //  d3.mouse: returns the x position on the screen of the mouse
+        var mousePos = Px.d3.mouse(this._rect.node()),
+            x0,
+            dataObj,
+            bisectDate,
+            xArr,
+            yArr,
+            len,
+            index,
+            d0,
+            d1,
+            d,
+            xCoord,
+            yCoord;
+
+
+        this.debounce('move',function(){
+          // TODO Maybe this should be a option: return all val at x or closets vals at cursor
+          // invert: takes position on the screen and converts it into an equivalent date
+          var minDist = Number.MAX_VALUE,
+              result = {},
+              xArr = [],
+              yArr = [],
+              keys = Object.keys(this.completeSeriesConfig),
+              len  = keys.length,
+              d,
+              x1 = this.xAxisType !== 'ordinal' ? this.x.invert(mousePos[0]) : null,
+              y1 = this.yAxisType !== 'ordinal' ? this.y.invert(mousePos[1]) : null,
+              x2,
+              y2,
+              chartData;
+
+              // setup a holder for our data to pass out
+              var dataObj = {
+                'time':(this.xAxisType === 'time') ? x1 : null,
+                'series': [],
+                'mouse': mousePos,
+                'xArr': null,
+                'yArr': null
+              };
+
+              for(var i = 0; i < len; i++) {
+
+                var yKey = this.completeSeriesConfig[keys[i]]['y'],
+                    xKey = this.completeSeriesConfig[keys[i]]['x'];
+
+                minDist = Number.MAX_VALUE;
+                result = {};
+
+                //ordinal are specials...
+                if(this.xAxisType === 'ordinal') {
+                  //find ordinal value for X
+                  result[xKey] = this._getOrdinalValue(true, mousePos[0]);
+
+                  //now get Y
+                  if(this.yAxisType === 'ordinal') {
+                    result[yKey] = this._getOrdinalValue(false, mousePos[1]);
+                  } else {
+                    result[yKey] = this._getClosestValue(false, y1, this.chartData, xKey, yKey, result[xKey]);
+                  }
+                } else if(this.yAxisType === 'ordinal') {
+
+                  result[yKey] = this._getOrdinalValue(false, mousePos[1]);
+                  //now get X
+                  if(this.yAxisType === 'ordinal') {
+                    result[xKey] = this._getOrdinalValue(true, mousePos[0]);
+                  } else {
+                    result[xKey] = this._getClosestValue(true, x1, this.chartData, xKey, yKey, result[yKey]);
+                  }
+                }
+                //find closest point....
+                else if(this.xAxisType === 'time') {
+                  //time based X axis
+                  /*
+                    d3.bisector returns index in our array that corresponds to the horizontal position of the mouse pointer.
+                    Specifically this returns the date that falls to the left of the mouse cursor.
+                  */
+                  chartData  = this.chartData;
+
+                  var bisectDate = Px.d3.bisector(function(d) {
+                    return d[this.completeSeriesConfig[keys[i]]['x']];
+                  }.bind(this)).left,
+                  index = bisectDate(chartData, x1, 1),
+                  r;
+                  // get the data values around the index
+                  d0 = chartData[index - 1];
+                  d1 = (chartData[index]) ? chartData[index] : chartData[index - 1];
+                  // sets result as the closest date to the mouse
+                  r = (x1 - d0[xKey] > d1[xKey] - x1) ? d1 : d0;
+                  result[xKey] = r[xKey];
+                  result[yKey] = r[yKey];
+
+                } else {
+                  //non time based: iterate over points and find the closest
+
+                  for(var j = 0; j < this.chartData.length; j++) {
+
+                    //get point coords
+                    x2 = this.chartData[j][xKey];
+                    y2 = this.chartData[j][yKey];
+
+                    //distance between the two points
+                    d = Math.sqrt( (x2-=x1)*x2 + (y2-=y1)*y2 );
+
+                    //keep the closest point
+                    if(d < minDist) {
+                      minDist = d;
+                      //store this point
+                      //Warning: You can't reuse x2 and y2! their values are changed
+                      //during the calculation, hence needing to refetch from array
+                      result[xKey] = this.chartData[j][xKey];
+                      result[yKey] = this.chartData[j][yKey];
+                    }
+                  }
+                }
+
+                // get the pixel coords for that data
+                xCoord = this.x(result[xKey]);
+                yCoord = this.y(result[yKey]);
+
+                xArr.push(xCoord);
+                yArr.push(yCoord);
+
+                dataObj.series.push({'name':keys[i],'value': result, 'coord': [xCoord,yCoord] });
+              } //for
+
+            dataObj['xArr'] = xArr;
+            dataObj['yArr'] = yArr;
+            // now we can set our data that we want to pass out
+            this.set('tooltipData',dataObj);
+            this.fire('px-vis-tooltip-updated', { 'dataVar': 'tooltipData', 'data': dataObj, 'method':'set' });
+        },1);
+      }
+      //this also resets registers, making it look bad
+      /*else {
+        //make sure tooltip is hidden
+        var dataObj = {
+          'time': null,
+          'series': [],
+          'mouse': null,
+          'xArr': null,
+          'yArr': null
+        };
+        this.set('tooltipData',dataObj);
+        this.fire('px-vis-tooltip-updated', { 'dataVar': 'tooltipData', 'data': dataObj, 'method':'set' });
+      }*/
+    },
+    /**
+     * Tries to find the ordinal value for the mouse position on the X (xAxis=true)
+     * or Y (xAxis=false) axis. If searching on X axis mousePos must be the X value,
+     * Y value if searching on the Y axis
+     *
+     */
+    _getOrdinalValue: function(xAxis, mousePos) {
+      //TODO: try getting the closest one rather than the one directly on the left
+      var domain = xAxis ? this.x.domain() : this.y.domain(),
+          range = xAxis ? this.x.range() : this.y.range();
+
+      rangeInterval = (range[1] - range[0])/domain.length;
+
+      var axisPos = 0,
+          distance = Number.MAX_VALUE,
+          minDistance = Number.MAX_VALUE,
+          result = -1;
+      for(var index=0; index<domain.length; index++) {
+
+        axisPos = (index+0.5)*rangeInterval;
+        distance = Math.abs(axisPos - mousePos);
+
+        if(distance < minDistance) {
+          minDistance = distance;
+          result = index;
+        }
+      }
+
+      return domain[result];
+    },
+    /**
+     * Gets the range of all ordinal values between from and to (both being values of the axis)
+     *
+     */
+    _getOrdinalRange: function(xAxis, from, to) {
+
+      //get the diferent values
+      var allValues = xAxis === true ? this.x.domain() : this.y.domain(),
+          fromVal = this._getOrdinalValue(xAxis, from),
+          toVal = this._getOrdinalValue(xAxis, to),
+          fromIndex = allValues.indexOf(fromVal),
+          toIndex = allValues.indexOf(toVal),
+          result  = [];
+
+      //now add everything between the two values, including those 2 values
+      for(var i=fromIndex; i<toIndex+1; i++) {
+        result.push(allValues[i]);
+      }
+      return result;
+    },
+    /**
+     * Gets the closest value on the X (xAxis=true) or Y axis (xAxis=false)
+     * for a specific ordinal value defined on the other axis
+     *
+     */
+    _getClosestValue: function(xAxis, value, data, xKey, yKey, ordValue) {
+      var dataIndex = xAxis ? xKey : yKey,
+          ordIndex = xAxis ? yKey : xKey,
+          minDiff = Number.MAX_VALUE,
+          curr,
+          currDiff,
+          result;
+
+      data.forEach(function(point, index) {
+        //only look at points that have the proper ordinal value
+        if(point[ordIndex] === ordValue) {
+          curr = point[dataIndex];
+
+          currDiff = Math.abs(value - curr);
+          if(currDiff < minDiff) {
+            minDiff = currDiff;
+            result = curr;
+          }
+        }
+      });
+
+      return result;
+    },
+    /**
+     * Helper function called on document.mouseup
+     * assumes the user wanted to "close" the action box, and calls _finishActionBox
+     *
+     * @method _mouseUpOutsideSvg
+     */
+    _mouseUpOutsideSvg: function() {
+      this._finishActionBox();
+    },
+    /**
+     * Helper function called on mousedown.action
+     * Draws a rectangle on the chart
+     *
+     * @method _drawActionBox
+     */
+    _drawActionBox: function() {
+
+      //only allow left clicks
+      if(Px.d3.event.button === 0) {
+        this.mouseDown = true;
+        //in case the user clicks inside the chart, and mouses out, we are waiting for a mouseup, and closing our action box with the coordinates available on the mouseup.
+        Px.d3.select(document).on('mouseup.action', this._mouseUpOutsideSvg.bind(this));
+
+        var mousePos = Px.d3.mouse(this._rect.node());
+        // use original svg so it draws under the _rect and does not interfer with our mouse events
+
+        var startX = mousePos[0],
+            startY = mousePos[1];
+
+        if(this.selectionType === 'xAxis') {
+          startY = 0;
+        } else if(this.selectionType === 'yAxis') {
+          startX = 0;
+        }
+
+        this._actionArea = this.svg.append( "rect")
+          .attr('class', "action-area")
+          .attr('x', startX)
+          .attr('y', startY)
+          .attr('ox', startX) // save this original position for calcs
+          .attr('oy', startY) // save this original position for calcs
+          .attr('rx', 2)
+          .attr('ry', 2)
+          .attr('width', 0)
+          .attr('height', 0)
+          .attr('fill', this.colors.grey2)
+          .attr('fill-opacity', 0.5)
+          .attr('stroke', this.colors.grey6);
+      }
+    },
+    /**
+     * Helper function called on mousedown.action
+     * Updates the size of the action area rectangle
+     *
+     * @method _updateActionBox
+     */
+    _updateActionBox: function() {
+
+      if(this._doesObjHaveValues(this._actionArea)) {
+
+        var mousePos = Px.d3.mouse(this._rect.node()),
+          // save somewhere else--> not as an attr, inefficient
+            ox = parseInt(this._actionArea.attr("ox")),
+            oy = parseInt(this._actionArea.attr("oy")),
+            newX = mousePos[0],
+            newY = mousePos[1];
+
+        if(this.selectionType === 'xAxis') {
+          newY = this._rect.attr('height');
+        } else if(this.selectionType === 'yAxis') {
+          newX = this._rect.attr('width');
+        }
+
+        // if current position is greater than the original position
+        if(newX >= ox){
+          // set x to the original position to prevent some drift on crossover. width is equal to the difference between the x and current mouse position
+          this._actionArea.attr("x", ox);
+          this._actionArea.attr("width", newX - ox);
+        } else {
+          // else, the x is the current pos (because we cant have negative width) and width is the difference
+          this._actionArea.attr("x", newX);
+          this._actionArea.attr("width", ox - newX);
+        }
+
+        if(newY >= oy){
+          this._actionArea.attr("y", oy);
+          this._actionArea.attr("height", newY - oy);
+        } else {
+          this._actionArea.attr("y", newY);
+          this._actionArea.attr("height", oy - newY);
+        }
+      }
+    },
+
+    /**
+     * Helper function called on mouseup.action
+     * Gets the size of the action area rectangle, sets the extents, and removes it
+     *
+     * @method _finishActionBox
+     */
+    _finishActionBox: function() {
+      //since we are done drawing our action box, remove the listener from document using d3.
+      Px.d3.select(document).on('mouseup.action', null);
+      this.mouseDown = false;
+      var extents = {};
+
+      //make sure we have somthing selected
+      if(this._actionArea.attr("width") > 0 && this._actionArea.attr("height") > 0) {
+        extents.x1 = parseInt(this._actionArea.attr("x"));
+        extents.y1 = parseInt(this._actionArea.attr("y"));
+        extents.w = parseInt(this._actionArea.attr("width"));
+        extents.h = parseInt(this._actionArea.attr("height"));
+        extents.x2 = extents.x1 + extents.w;
+        extents.y2 = extents.y1 + extents.h;
+
+        if(this.xAxisType === 'ordinal') {
+          extents.eX = this._getOrdinalRange(true, extents.x1, extents.x2);
+        } else {
+          extents.eX = [this.x.invert(extents.x1), this.x.invert(extents.x2)];
+        }
+
+        if(this.yAxisType === 'ordinal') {
+          //Y axis is top to bottom
+          extents.eY = this._getOrdinalRange(false, extents.y2, extents.y1);
+        } else {
+          //Y axis is top to bottom
+          extents.eY = [this.y.invert(extents.y2), this.y.invert(extents.y1)];
+        }
+
+        this.set('extentsData', extents);
+        this.fire('px-vis-extents-data-updated', {'data': extents, 'dataVar': 'extentsData', 'method': 'set'});
+      }
+      this._actionArea.remove();
+    }
+  });
+</script>

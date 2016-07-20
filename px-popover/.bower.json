@@ -1,0 +1,38 @@
+{
+  "name": "px-popover",
+  "version": "1.4.1",
+  "main": [
+    "px-popover.html"
+  ],
+  "ignore": [
+    ".*",
+    "npm-debug.log",
+    "Gruntfile.js",
+    "sass",
+    "bower_components",
+    "node_modules",
+    "test",
+    "OSS_Notice.pdf"
+  ],
+  "dependencies": {
+    "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#^1.0.2",
+    "polymer": "^1.5.0",
+    "px-theme": "https://github.com/PredixDev/px-theme.git#~0.8.0",
+    "px-overlay": "https://github.com/PredixDev/px-overlay.git#~0.2.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#~v1.1.0",
+    "px-starter-kit-design": "https://github.com/PredixDev/px-starter-kit-design.git#~0.4.0",
+    "web-component-tester": "~3.3.14"
+  },
+  "homepage": "https://github.com/PredixDev/px-popover",
+  "_release": "1.4.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.4.1",
+    "commit": "033e59b39755e1ec5cba4ff1a9aca20fdfd1cb3e"
+  },
+  "_source": "https://github.com/PredixDev/px-popover.git",
+  "_target": "~1.4.0",
+  "_originalSource": "px-popover"
+}

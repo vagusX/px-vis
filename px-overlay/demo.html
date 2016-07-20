@@ -1,0 +1,60 @@
+<!doctype html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>px-overlay Demo</title>
+        <!-- Requires Webcomponents.js polyfill is provided by the page for browsers that don't support html imports -->
+        <script src="../webcomponentsjs/webcomponents-lite.min.js"></script>
+        <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
+        <link rel="import" href="px-overlay.html"/>
+        <link rel="import" href="../px-theme/px-theme.html"/>
+    </head>
+
+    <body style="height:1500px;">
+      <style>
+        .hidden{
+          visibility: hidden;
+          display:none;
+        }
+      </style>
+
+        <h3>Demo</h3>
+
+        <p>
+            Although related, examples are /not/ the same as the test fixtures.
+            Tests are tests, examples are examples.
+        </p>
+
+        <p>
+            Also see the <a href="index.html">documentation</a> and the <a href="test/fixture.html">UI test fixture</a>.
+        </p>
+
+        <p>
+            Light and dark overlays. Click to turn on and off:
+        </p>
+
+        <button id="lightClick">Light</button>
+        <button id="darkClick">Dark</button>
+        <!-- instance 1, "predix" theme -->
+        <px-overlay id="dark" class="hidden" type="dark"></px-overlay>
+        <px-overlay id="light" class="hidden" type="light"></px-overlay>
+
+        <script>
+          document.getElementById('lightClick').addEventListener('click',function(){
+            document.getElementById('light').toggleClass('hidden');
+          });
+          document.getElementById('darkClick').addEventListener('click',function(){
+            document.getElementById('dark').toggleClass('hidden');
+          });
+          document.getElementById('dark').addEventListener('click',function(){
+            this.toggleClass('hidden');
+          });
+          document.getElementById('light').addEventListener('click',function(){
+            this.toggleClass('hidden');
+          });
+
+        </script>
+    </body>
+</html>

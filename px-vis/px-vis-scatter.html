@@ -1,0 +1,273 @@
+<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="px-vis-behavior-common.html" />
+<link rel="import" href="px-vis-behavior-d3.html" />
+<link rel="import" href="../px-colors-design/colors.html" />
+
+<!--
+Element which draws scatter series onto the chart
+
+##### Usage
+
+    <px-vis-scatter
+        svg="[[svg]]"
+        clip-path="[[clipPath]]"
+        series-id="[[item.name]]"
+        series-number="[[index]]"
+        chart-data="[[item]]"
+        x="[[x]]"
+        y="[[y]]"
+        current-domain-x="[[currentDomainX]]"
+        current-domain-y="[[currentDomainY]]"
+        muted-series="[[mutedSeries]]">
+    </px-vis-scatter>
+
+@element px-vis-scatter
+@blurb Element which draws lines series onto the chart
+@homepage index.html
+@demo demo.html
+-->
+<dom-module id="px-vis-scatter">
+    <link rel="import" type="css" href="css/px-vis.css"/>
+    <template>
+
+    </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: 'px-vis-scatter',
+
+    behaviors: [
+      PxVisBehaviorD3.svg,
+      PxVisBehaviorD3.axes,
+      PxVisBehavior.dataset,
+      PxVisBehavior.mutedSeries,
+      PxVisBehavior.commonMethods,
+      PxVisBehaviorD3.clipPath,
+      PxVisBehavior.completeSeriesConfig,
+      commonColors
+    ],
+
+    /**
+     * Properties block, expose attribute values to the DOM via 'reflect'
+     *
+     * @property properties
+     * @type Object
+     */
+    properties: {
+      /**
+       * A unique ID for each line series
+       *
+       * @property seriesId
+       * @type String
+       */
+      seriesId:{
+        type:String
+      },
+      /**
+       * Scales the size of the scatter marker
+       *
+       */
+      markerScale: {
+        type: Number,
+        value: 1
+      },
+      /**
+       * The symbol used for the marker. Supported symbols:
+       * - 'circle'
+       * - 'cross'
+       * - 'diamond'
+       * - 'square'
+       * - 'triangle-up'
+       * - 'star'
+       * - 'wye'
+       * more info at https://github.com/d3/d3-shape/blob/master/README.md#symbols
+       */
+      markerSymbol: {
+        type: String,
+        value: 'circle'
+      },
+      _markerMapping: {
+        type: Object,
+        readOnly: true,
+        value: {
+          'circle': Px.d3.symbolCircle,
+          'cross': Px.d3.symbolCross,
+          'diamond': Px.d3.symbolDiamond,
+          'square': Px.d3.symbolSquare,
+          'triangle-up': Px.d3.symbolTriangle,
+          'star': Px.d3.symbolStar,
+          'wye': Px.d3.symbolWye
+        }
+      },
+      /**
+       * An index of the series used for calculating its color
+       *
+       * @property scatterNumber
+       * @type String
+       */
+      seriesNumber:{
+        type:Number,
+        value:0
+      },
+      /**
+       * A holder object for the series group
+       *
+       * @property scatterGroup
+       * @type Object
+       */
+      scatterGroup:{
+        type:Object,
+        value: function() {return{};}
+      },
+      /**
+       * A holder object for the series objects
+       *
+       */
+      scatterDots:{
+        type:Object
+      },
+      /**
+       * A holder object for the series builder
+       *
+       */
+      scatterBuilder:{
+        type:Object
+      }
+    },
+
+    observers: [
+      'drawElement(svg,x,y,currentDomainX,currentDomainY,chartData.*,completeSeriesConfig.*)',
+      'isIdInMuted(mutedSeries.*)',
+      '_addClipPath(clipPath)'
+     ],
+
+    ready:function(){
+      // if there is no dev set unique ID, generate one
+      if(!this.seriesId){
+        this.set('seriesId', this.generateRandomID('scatter_'));
+      }
+    },
+
+    /**
+     * Draws or updates the scatter element.
+     * Called from an observer watching for data and the necessary d3 objects
+     *
+     * @method drawElement
+     */
+    drawElement: function() {
+      var data = this.chartData;
+
+      // checks to see if the group already exists. If not, create; if so, update
+      if(this._isObjEmpty(this.scatterGroup)) {
+
+        //override marker symbol if defined in serie config
+        this.markerSymbol = this.completeSeriesConfig[this.seriesId].markerSymbol ?
+                              this.completeSeriesConfig[this.seriesId].markerSymbol : this.markerSymbol;
+        this.markerScale = this.completeSeriesConfig[this.seriesId].markerScale ?
+                              this.completeSeriesConfig[this.seriesId].markerScale : this.markerScale;
+
+        // draw the path
+        this.scatterGroup = this.svg.append("g")
+          .attr("series-id", 'scatter_' + this.seriesId)
+          .attr("class", "series-scatter");
+      }
+      var _this = this;
+
+      this.scatterBuilder = this.scatterGroup.selectAll('path.' + this.markerSymbol)
+        .data(data);
+
+
+      this.scatterBuilder.exit().remove();
+
+      this.scatterBuilder.enter()
+        .append("path")
+        .attr("class", function(d,i){
+          // if this series is missing a datapoint, remove that point
+          if(isNaN(d[_this.completeSeriesConfig[_this.seriesId]['y']])){
+            return this.remove();
+          }
+          return _this.markerSymbol;
+        })
+        .attr("d", Px.d3.symbol().type(this._markerMapping[this.markerSymbol]))
+      .merge(this.scatterBuilder)
+        .attr('fill',this.completeSeriesConfig[this.seriesId]['color'])
+        .attr('fill-opacity',0.6)
+        .attr('stroke',this.completeSeriesConfig[this.seriesId]['color'])
+        .attr('stroke-opacity',1)
+        .attr("transform", this._applyTransform.bind(this));
+
+      this.scatterDots = this.scatterGroup.selectAll('path.' + this.markerSymbol);
+
+      this._addClipPath();
+    },
+    /**
+     * Helper to call addClipPath with the elem
+     *
+     * @method _addClipPath
+     */
+    _addClipPath: function(){
+      this.addClipPath(this.scatterGroup);
+    },
+    /**
+     * Checks mutedSeries to see if this ID is in there
+     * Called from an observer watching mutedSeries
+     *
+     * @method isIdInMuted
+     */
+    isIdInMuted: function() {
+      if(this.mutedSeries.hasOwnProperty(this.seriesId)){
+        // if true, mute
+        if(this.mutedSeries[this.seriesId]){
+          this._muteScatter();
+        } else {
+          this._colorScatter();
+        }
+      }
+    },
+    /**
+     * Applies the necessary translate and scale to the scatterDots
+     *
+     */
+    _applyTransform: function(d) {
+      var xTrans,
+          yTrans;
+
+      if(d[this.completeSeriesConfig[this.seriesId]['x']]){
+        xTrans = this.x(d[this.completeSeriesConfig[this.seriesId]['x']]);
+      }
+      if(d[this.completeSeriesConfig[this.seriesId]['y']]){
+        yTrans = this.y(d[this.completeSeriesConfig[this.seriesId]['y']]);
+      }
+
+      //make sure we have a value
+      xTrans = xTrans ? xTrans : 0;
+      yTrans = yTrans ? yTrans : 0;
+
+      return "translate(" + xTrans + "," + yTrans + ")" + ' scale(' + this.markerScale + ')';
+    },
+    /**
+     * Adds full color to the scatters.
+     *
+     * @method _colorScatter
+     */
+    _colorScatter:function(){
+      var index = this.seriesNumber;
+      this.scatterDots
+        .attr('fill',this.completeSeriesConfig[this.seriesId]['color'])
+        .attr('fill-opacity',0.6)
+        .attr('stroke',this.completeSeriesConfig[this.seriesId]['color'])
+        .attr('stroke-opacity',1);
+    },
+    /**
+     * Adds muted color to the scatters.
+     *
+     * @method _muteScatter
+     TODO add dev set color and opacity
+     */
+     _muteScatter:function(){
+       this.scatterDots.attr('fill-opacity',0.3);
+       this.scatterDots.attr('stroke-opacity',0);
+     }
+  });
+</script>

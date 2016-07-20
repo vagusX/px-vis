@@ -1,0 +1,129 @@
+<!-- build:remove -->
+<!DOCTYPE html>
+<html lang=en>
+  <head>
+    <meta charset=utf8>
+    <title>Toggles</title>
+    <link rel=stylesheet href=css/style.css>
+  </head>
+  <body>
+    <section class=viewport role=region>
+      <!-- /build -->
+      <h1>Toggles</h1>
+      <div class="flex flex--justify flex--wrap flex--baseline">
+        <p>
+          To use this module, follow the instructions in the
+          <a href=https://github.com/PredixDev/px-toggle-design>README</a>.
+          <!-- build:remove -->
+          (For background on PXd, read the
+          <a href=https://github.com/PredixDev/px-getting-started>Getting Started</a>
+          documentation.)
+          <!-- /build -->
+        </p>
+        <a class="btn btn--primary" href=https://github.com/PredixDev/px-toggle-design>
+          <i class="fa fa-github u-mr--"></i>
+          px-toggle-design
+        </a>
+      </div>
+      <h2>How to Use</h2>
+      <p>Install via command line:</p>
+      <figure class="code u-mb+">
+        <code>
+          bower install --save https://github.com/PredixDev/px-toggle-design.git
+        </code>
+      </figure>
+      <p>Add to component Sass file:</p>
+      <figure class="code u-mb++">
+        <code>
+          @import "px-toggle-design/_objects.toggle.scss";
+        </code>
+      </figure>
+      <h2>Small</h2>
+      <h3>Sass Flag</h3>
+      <figure class="code">
+        <code>
+          $inuit-enable-toggle--small : true;
+        </code>
+      </figure>
+      <small>
+        Flag must be set before
+        <code class="code code--inline">@import</code>
+        in component Sass file.
+      </small>
+      <h3>HTML</h3>
+      <figure class="code u-mb+">
+        <code>
+          &lt;input id=&hellip; class="toggle__input toggle__input--small" type=checkbox&gt;
+          <br>
+          &lt;label for=&hellip; class="toggle__label toggle__label--small"&gt;&hellip;&lt;/label&gt;
+        </code>
+      </figure>
+      <div class=u-mb++>
+        <input id=toggle-small class="toggle__input toggle__input--small" type=checkbox>
+        <label for=toggle-small class="toggle__label toggle__label--small">On</label>
+      </div>
+      <h2>Regular</h2>
+      <figure class="code u-mb+">
+        <code>
+          &lt;input id=&hellip; class=toggle__input type=checkbox&gt;
+          <br>
+          &lt;label for=&hellip; class=toggle__label&gt;&hellip;&lt;/label&gt;
+        </code>
+      </figure>
+      <div class=u-mb++>
+        <input id=toggle class=toggle__input type=checkbox>
+        <label for=toggle class=toggle__label>On</label>
+      </div>
+      <h2>Large</h2>
+      <h3>Sass Flag</h3>
+      <figure class="code">
+        <code>
+          $inuit-enable-toggle--large : true;
+        </code>
+      </figure>
+      <small>
+        Flag must be set before
+        <code class="code code--inline">@import</code>
+        in component Sass file.
+      </small>
+      <h3>HTML</h3>
+      <figure class="code u-mb+">
+        <code>
+          &lt;input id=&hellip; class="toggle__input toggle__input--large" type=checkbox&gt;
+          <br>
+          &lt;label for=&hellip; class="toggle__label toggle__label--large"&gt;&hellip;&lt;/label&gt;
+        </code>
+      </figure>
+      <div class=u-mb++>
+        <input id=toggle-large class="toggle__input toggle__input--large" type=checkbox>
+        <label for=toggle-large class="toggle__label toggle__label--large">On</label>
+      </div>
+      <h2>Huge</h2>
+      <h3>Sass Flag</h3>
+      <figure class="code">
+        <code>
+          $inuit-enable-toggle--huge : true;
+        </code>
+      </figure>
+      <small>
+        Flag must be set before
+        <code class="code code--inline">@import</code>
+        in component Sass file.
+      </small>
+      <h3>HTML</h3>
+      <figure class="code u-mb+">
+        <code>
+          &lt;input id=&hellip; class="toggle__input toggle__input--huge" type=checkbox&gt;
+          <br>
+          &lt;label for=&hellip; class="toggle__label toggle__label--huge"&gt;&hellip;&lt;/label&gt;
+        </code>
+      </figure>
+      <div class=u-mb++>
+        <input id=toggle-huge class="toggle__input toggle__input--huge" type=checkbox>
+        <label for=toggle-huge class="toggle__label toggle__label--huge">On</label>
+      </div>
+    <!-- build:remove -->
+    </section>
+  </body>
+</html>
+<!-- /build -->

@@ -1,0 +1,45 @@
+{
+  "name": "px-toggle-design",
+  "version": "0.2.12",
+  "authors": [
+    "General Electric"
+  ],
+  "description": "Toggle control styles for Predix Experience",
+  "main": "_objects.toggle.scss",
+  "keywords": [
+    "px",
+    "sass",
+    "toggle"
+  ],
+  "license": "Apache 2",
+  "homepage": "https://github.com/PredixDev/px-toggle-design.git",
+  "private": false,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "OSS_Notice.pdf"
+  ],
+  "dependencies": {
+    "px-colors-design": "https://github.com/PredixDev/px-colors-design.git#~0.2.0",
+    "px-defaults-design": "https://github.com/PredixDev/px-defaults-design.git#~0.2.0",
+    "px-helpers-design": "https://github.com/PredixDev/px-helpers-design.git#~0.3.0"
+  },
+  "devDependencies": {
+    "px-buttons-design": "https://github.com/PredixDev/px-buttons-design.git#~0.4.0",
+    "px-code-design": "https://github.com/PredixDev/px-code-design.git#~0.2.0",
+    "px-iconography-design": "https://github.com/PredixDev/px-iconography-design.git#~0.2.0",
+    "px-starter-kit-design": "https://github.com/PredixDev/px-starter-kit-design.git#~0.4.0"
+  },
+  "_release": "0.2.12",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.2.12",
+    "commit": "84602fd33193dc539cb0c6b81174ee16df806173"
+  },
+  "_source": "https://github.com/predixDev/px-toggle-design.git",
+  "_target": "^0.2.12",
+  "_originalSource": "px-toggle-design"
+}

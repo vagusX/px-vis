@@ -1,0 +1,38 @@
+{
+  "name": "px-calendar-picker",
+  "version": "0.3.0",
+  "main": [
+    "px-calendar-picker.html"
+  ],
+  "ignore": [
+    ".*",
+    "npm-debug.log",
+    "Gruntfile.js",
+    "sass",
+    "bower_components",
+    "node_modules",
+    "test"
+  ],
+  "dependencies": {
+    "polymer": "^1.5.0",
+    "px-theme": "~0.8.0",
+    "px-datetime-common": "~0.5.0",
+    "polymer-font-awesome": "polymer-font-awesome#~v0.1.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#~v1.1.0",
+    "px-buttons-design": "https://github.com/PredixDev/px-buttons-design.git#~0.4.20",
+    "px-tables-design": "https://github.com/PredixDev/px-tables-design.git#~0.3.0",
+    "px-starter-kit-design": "https://github.com/PredixDev/px-starter-kit-design.git#~0.4.9"
+  },
+  "homepage": "https://github.com/PredixDev/px-calendar-picker",
+  "_release": "0.3.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.3.0",
+    "commit": "cfa1eb25c397a543fa044f3416a18abcc4831e88"
+  },
+  "_source": "https://github.com/PredixDev/px-calendar-picker.git",
+  "_target": "~0.3.0",
+  "_originalSource": "px-calendar-picker"
+}

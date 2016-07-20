@@ -1,0 +1,168 @@
+<!doctype html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>px-popover Demo</title>
+        <!-- Requires Webcomponents.js polyfill is provided by the page for browsers that don't support html imports -->
+        <script src="../webcomponentsjs/webcomponents.min.js"></script>
+        <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
+        <link rel="import" href="../px-theme/px-theme.html"/>
+        <link rel="import" href="px-popover.html"/>
+        <style media="screen">
+            .spacer {
+                margin-top: 300px;
+            }
+            .sample-container {
+                width: 250px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .hover-popover {
+                padding: 15px;
+                width: 200px;
+                background-color: black;
+                color: white;
+                text-align: center;
+                vertical-align: middle;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h3>PX-Popover Demo</h3>
+        <p>
+            Although related, examples are /not/ the same as the test fixtures.
+            Tests are tests, examples are examples.
+        </p>
+
+        <p>
+            Also see the <a href="index.html">documentation</a> and the <a href="test/fixture.html">UI test fixture</a>.
+        </p>
+
+        <p>
+            Click button to invoke popover:
+        </p>
+
+        <div class="sample-container">
+            <button id="btnUp" type="button" name="button">Up</button>
+            <px-popover
+                for="btnUp"
+                orientation="top"
+                popover-title="Top Popover"
+                popover-body="Lorem ipsum dolor sit amet, consectetur elit, sed do eiusmod.">
+            </px-popover>
+
+            <button id="btnDown" type="button" name="button">Down</button>
+            <px-popover
+                for="btnDown"
+                orientation="bottom"
+                popover-title=""
+                popover-body="Lod.">
+            </px-popover>
+
+            <button id="btnLeft" type="button" name="button">Left</button>
+            <px-popover
+                for="btnLeft"
+                orientation="left"
+                popover-title="Left Popover"
+                popover-body="Lorem ipsum dolor sit amet, consectetur elit, sed do eiusmod.">
+            </px-popover>
+
+            <button id="btnRight" type="button" name="button">Right</button>
+            <px-popover
+                for="btnRight"
+                orientation="right"
+                popover-title="Right Popover"
+                popover-body="Lorem ipsum dolor sit amet, consectetur elit, sed do eiusmod.">
+            </px-popover>
+        </div>
+        <p></p>
+        <hr style="margin-top:50px;">
+        <div class="sample-container">
+          <p>Transformations on the target work:</p>
+          <button id="btnTransform" type="button" name="button" style="transform:translate(150px,20px)">Transformed button</button>
+          <px-popover
+              for="btnTransform"
+              orientation="bottom"
+              popover-title="Translated Popover"
+              popover-body="Transformations work.">
+          </px-popover>
+        </div>
+        <hr style="margin-top:50px;">
+        <div class="sample-container" style="transform:translate(250px,50px)">
+          <p>Transformations on an ancestor elem also work:</p>
+          <button id="btnTransPar" type="button" name="button" >Transformed parent</button>
+          <px-popover
+              for="btnTransPar"
+              orientation="bottom"
+              popover-title="Transformed parent Popover"
+              popover-body="Transformations work."
+              position="relative" >
+          </px-popover>
+        </div>
+        <hr style="margin-top:50px;margin-bottom:50px;">
+        <div class="sample-container"  style="position:relative;">
+          <p style="position:relative;z-index:-1">When Adding a Position Relative ancestor elem, wrap the target and popover in their own position relative element and set the position relative flag in the popover:</p>
+          <span style="position:relative;">
+            <button id="btnUpRel" type="button" name="button">Up</button>
+            <px-popover
+                for="btnUpRel"
+                orientation="top"
+                popover-title="Top Popover"
+                popover-body="Need to wrap the target and popover in a div with relative position."
+                position="relative" >
+            </px-popover>
+          </span>
+          <span style="position:relative;">
+            <button id="btnDownRel" type="button" name="button">Down</button>
+            <px-popover
+                for="btnDownRel"
+                orientation="bottom"
+                popover-title="Bottom Popover"
+                popover-body="Need to wrap the target and popover in a div with relative position"
+                position="relative" >
+            </px-popover>
+          </span>
+
+          <span style="position:relative;">
+            <button id="btnLeftRel" type="button" name="button">Left</button>
+            <px-popover
+                for="btnLeftRel"
+                orientation="left"
+                popover-title="Left Popover"
+                popover-body="Need to wrap the target and popover in a div with relative position"
+                position="relative" >
+            </px-popover>
+          </span>
+
+          <span style="position:relative;">
+            <button id="btnRightRel" type="button" name="button">Right</button>
+            <px-popover
+                for="btnRightRel"
+                orientation="right"
+                popover-title="Right Popover"
+                popover-body="Need to wrap the target and popover in a div with relative position"
+                position="relative" >
+            </px-popover>
+          </span>
+        </div>
+
+        <hr style="margin-top:50px;margin-bottom:50px;">
+
+        <div class="sample-container" style="margin-top:50px;position:relative;">
+          <p>Transformations on the target with position relative parent do not work. Instead, transform the parent div:</p>
+          <div style="position:relative;">
+            <button id="btnTransform" type="button" name="button" style="transform:translate(250px,50px)">Transformed button</button>
+            <px-popover
+                for="btnTransform"
+                orientation="bottom"
+                popover-title="Translated Popover"
+                popover-body="Transformations on a relative element currently break positioning."
+                position="relative" >
+            </px-popover>
+          </div>
+        </div>
+    </body>
+</html>

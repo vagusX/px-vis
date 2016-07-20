@@ -1,0 +1,460 @@
+<link rel="import" href="px-vis-d3.html" />
+<script>
+
+Px.d3 = d3;
+
+if(typeof Px.oldD3 !== 'undefined') {
+  d3 = Px.oldD3;
+}
+
+var PxVisBehaviorD3 = PxVisBehaviorD3 || {};
+
+/*
+    Name:
+    PxVisBehaviorD3.svg
+
+    Description:
+    Polymer behavior that provides the svg property and core methods for d3 components.
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorD3.svg
+*/
+PxVisBehaviorD3.svg = {
+  properties: {
+    /**
+     * svg is a holder for the d3 instantiated svg container to draw to.
+     * Must be set in ready and passed to all components so they know whom to draw to.
+     *
+     * FUTURE: when Polymer supports SVG, this only need be set on the SVG element.
+     *
+     * @property svg
+     * @type Object
+     */
+    svg:{
+      type: Object,
+      notify:true
+    },
+    /*
+    *
+    * The SVG element inside the chart - not a D3 selected element.
+    */
+    pxSvgElem : {
+      type: Object,
+      notify:true
+    }
+  },
+
+  /**
+   * Generates a random id string.
+   *
+   * Takes a string prefix, then adds 10 random chars
+   *
+   * @param {string}
+   * @return {id string}
+   */
+  generateRandomID: function(baseStr){
+    // FIXME In theory, we could get two of the same IDs.
+    var id = baseStr,
+        abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+        len = abc.length;
+
+    for(var i = 0; i < 10; i++){
+      id += abc.charAt(Math.floor(Math.random() * len));
+    }
+
+    return id;
+  },
+  /*
+   * Clones a SVG elem and sets a component property with the d3 instance of that clone.
+   *
+   * The intent of this is to clone the high level 'g' elem we draw to and attach it.
+   * The draw order matters  in SVG and we want the some stuff to appear on top of everything else
+   * Since we cannot easily ensure it draw order with components, we can stick top level items in a different 'g' that we know is drawn after the main 'g'
+   *
+   * @param {element}
+   * @param {string}
+  */
+  cloneSVGElem: function(svg,prop){
+    var tempSVG = svg,
+        clone = tempSVG.cloneNode();
+
+    tempSVG.parentNode.appendChild(clone);
+
+    this.set(prop,Px.d3.select(clone));
+  }
+};
+
+/*
+    Name:
+    PxVisBehaviorD3.axes
+
+    Description:
+    Polymer behavior that provides the x,y axes and domains for d3 components.
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorD3.axes
+*/
+PxVisBehaviorD3.axes = {
+  properties: {
+    /**
+     * x is a holder for the d3 instantiated scale object
+     * Must be set in the svg component and passed to all components so they know the drawing scale.
+     * This can be set declaratively
+     *
+     * See: https://github.com/mbostock/d3/wiki/Scales
+     *
+     * @property x
+     * @type Object
+     */
+    x:{
+      type: Object,
+      notify:true
+    },
+    /**
+     * y is a holder for the d3 instantiated scale object
+     * Must be set in the svg component and passed to all components so they know the drawing scale.
+     * This can be set declaratively
+     *
+     * See: https://github.com/mbostock/d3/wiki/Scales
+     *
+     * @property y
+     * @type Object
+     */
+    y:{
+      type: Object,
+      notify:true
+    },
+    /**
+     * The chart extents which have been set by the scale component
+     *
+     * Serves as a trigger for many elements to redraw
+     *
+     * @property currentDomainX
+     * @type Array
+     */
+    currentDomainX:{
+      type:Array,
+      notify:true
+    },
+    /**
+     * The chart extents which have been set by the scale component
+     *
+     * Serves as a trigger for many elements to redraw
+     *
+     * @property currentDomainY
+     * @type Array
+     */
+    currentDomainY:{
+      type:Array,
+      notify:true
+    }
+  }
+};
+
+/*
+    Name:
+    PxVisBehaviorD3.axis
+
+    Description:
+    Polymer behavior that provides the axis and domain properties for d3 components.
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorD3.axis
+*/
+PxVisBehaviorD3.axis = {
+  properties: {
+    /**
+     * axis is a general holder for the d3 instantiated scale object
+     * Can pass any type of instantiated scale object, IE pass in either your x or your y depending which this axis is for.
+     * This can be set declaratively
+     *
+     * See: https://github.com/mbostock/d3/wiki/Scales
+     *
+     * @property axis
+     * @type Object
+     */
+    axis:{
+      type: Object,
+      value: {},
+      notify: true
+    },
+    /**
+     * The chart extents which have been set by the scale component
+     *
+     * Serves as a trigger for many elements to redraw
+     *
+     * @property currentDomain
+     * @type Object
+     */
+    currentDomain:{
+      type:Array,
+      notify:true
+    },
+    /**
+     * Defines which side the axis should be on.
+     *  - 'left'
+     *  - 'right'
+     *  - 'bottom'
+     *  - 'top'
+     *
+     * @property orientation
+     * @type String
+     * @default bottom
+     */
+    orientation:{
+      type: String,
+      value: 'bottom',
+    }
+  }
+};
+
+/*
+    Name:
+    PxVisBehaviorD3.selectedDomain
+
+    Description:
+    Polymer behavior that provides the an object to hold user selected domains for d3 components.
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorD3.selectedDomain
+*/
+PxVisBehaviorD3.selectedDomain = {
+  properties: {
+    /**
+     * New chart extents selected by the user
+     *
+     * Serves as a trigger for the scale component to redefine the chart extents
+     *
+     * @property selectedDomain
+     * @type Object
+     */
+    selectedDomain:{
+      type:Object,
+      value: function() {
+        return {x:[], y:[]};
+      },
+      notify:true
+    }
+  }
+};
+
+/*
+    Name:
+    PxVisBehaviorD3.interaction
+
+    Description:
+    Polymer behavior that provides the interactionSvg object for d3 components.
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorD3.interaction
+*/
+PxVisBehaviorD3.interaction = {
+  properties: {
+    /**
+     * Holder for a clone of the passed in svg container.
+     *
+     * We cant use the normal svg container due to drawing order. The purpose of this clone is to ensure the tooltip capture elements are drawn on top of the chart rather than following normal draw order.
+     *
+     * @property interactionSvg
+     * @type Object
+     */
+    interactionSvg:{
+      type: Object
+    }
+  }
+};
+
+PxVisBehaviorD3.clipPath = {
+  properties: {
+    /**
+     * Holder for a clipping path ID
+     *
+     */
+    clipPath: {
+      type:String,
+      notify:true
+    },
+    /**
+     * A more restricting clip path used to limit where the series are being drawn
+     *
+     */
+    seriesClipPath: {
+      type:String,
+      notify: true
+    }
+  },
+  /**
+   * Add the clip-path attr to the element
+   *
+   * @method addClipPath
+   */
+  addClipPath: function(elem){
+    if(typeof(this.clipPath) !== 'undefined' && !this._isObjEmpty(elem)){
+      elem.attr("clip-path", 'url(#' + this.clipPath + ')');
+    }
+  }
+};
+
+PxVisBehaviorD3.dynamicRedraw = {
+  properties: {
+    /**
+     * Boolean to specify if we should redraw the chart series when we move an axis. More of a chart type by chart type configuration rather than a developer configuration. IE, for charts such as multi-y timeseries, it is unnessary. For charts such as parallel coordinates, it is necessary.
+     */
+    redrawSeries: {
+      type: Boolean,
+      value: false
+    },
+    /**
+     * The accompanying array of series elements required to redraw.
+     */
+    redrawElems: {
+      type: Array,
+      value: function() { return [] }
+    },
+    /**
+     * Boolean specifing if the axis should redraw as you move them or just at the end.
+     */
+    dynamicAxisRedraw: {
+      type: Boolean,
+      value: false
+    }
+  }
+};
+
+PxVisBehaviorD3.axisConfig = {
+  properties: {
+    /**
+     * The displayed title for the axis
+     *
+     * @property title
+     * @type String
+     * @default ''
+     */
+    title: {
+      type:String,
+      value: ''
+    },
+    /**
+     * Defines on which side the tick mark the label should sit.
+     *  - 'center'
+     *  - 'before'
+     *  - 'after'
+     *
+     * @property labelPosition
+     * @type String
+     * @default center
+     */
+    labelPosition: {
+      type: String,
+      value: 'center',
+    },
+    /**
+     * Defines how the label should be rotated. Number is the degree of rotation
+     *
+     * @property labelRotation
+     * @type Number
+     * @default 0
+     */
+    labelRotation: {
+      type: Number,
+      value: 0,
+    },
+    /**
+     * Defines how the label should be moved in x,y. Array is an x,y pair and coresponds to the number of pixels to move the label
+     *
+     * @property labelTranslation
+     * @type Array
+     * @default [0,0]
+     */
+    labelTranslation: {
+      type: Array,
+      value: function() {return [0,0];},
+    },
+    /**
+     * Defines the base label type size
+     *
+     * @property labelTypeSize
+     * @type Number
+     * @default 12
+     */
+    labelTypeSize: {
+      type: Number,
+      value: 12,
+    },
+    /**
+     * Array of the series which belong to this axis
+     *
+     * @property series
+     * @type Array
+     */
+    series: {
+      type: Array,
+      value: function() {return[];}
+    },
+    /**
+     * An x,y amount to move the axis to allow for labels and titles
+     *
+     * @property translateAmt
+     * @type Array
+     */
+    translateAmt: {
+      type: Array,
+      value:function(){ return [0,0]; }
+    },
+    /**
+     * Optional object to specify placement of the title. If none is supplied, then it uses `orientation` to determine title location.
+     *
+     *```
+     *    {
+     *      x: Number, // a x number of pixels
+     *      y: Number, // a y number of pixels
+     *      r: Number, // a number of degrees to rotate
+     *      anchor: String, // middle, start, end
+     *    }
+     *```
+     */
+    titleLocation: {
+      type: Object,
+      value: function(){ return {} }
+    },
+
+    /**
+     * Defines the Title type size
+     *
+     */
+    titleTypeSize: {
+      type: Number,
+      value: 15,
+    },
+
+    /**
+     * Defines the axis stroke width
+     *
+     */
+    strokeWidth: {
+      type: Number,
+      value: 1
+    },
+
+    outerTickSize: {
+      type: Number,
+      value: 0
+    },
+
+    tickValues: {
+      type: Array
+    }
+  }
+};
+
+</script>

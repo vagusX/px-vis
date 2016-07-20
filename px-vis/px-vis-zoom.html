@@ -1,0 +1,72 @@
+<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="px-vis-behavior-common.html" />
+<link rel="import" href="px-vis-behavior-d3.html" />
+
+
+<!--
+Element providing an on-chart zoom.
+
+##### Usage
+
+    <px-vis-zoom
+        margin="[[margin]]"
+        extents-data="[[extentsData]]"
+        selected-domain="{{selectedDomain}}"
+        px-svg-elem={{pxSvgElem}}>
+    </px-vis-zoom>
+
+@element px-vis-zoom
+@blurb Element providing an on-chart zoom.
+@homepage index.html
+@demo demo.html
+-->
+<dom-module id="px-vis-zoom">
+    <link rel="import" type="css" href="css/px-vis-zoom.css"/>
+    <template>
+      <button id="resetBtn" class="btn hidden" on-click="resetZoom">Reset Zoom</button>
+    </template>
+</dom-module>
+
+<script>
+  Polymer({
+
+    is: 'px-vis-zoom',
+
+    behaviors: [
+      PxVisBehaviorD3.svg,
+      PxVisBehavior.extentsData,
+      PxVisBehaviorD3.selectedDomain
+    ],
+
+    /**
+     * Properties block, expose attribute values to the DOM via 'reflect'
+     *
+     * @property properties
+     * @type Object
+     */
+    properties: {
+
+    },
+    observers: [
+      'zooooom(extentsData)'
+    ],
+    zooooom: function(extentsData) {
+      //make sure the button is visible so we can measure it
+      this.toggleClass('hidden', false, this.$.resetBtn);
+
+      var rect = this.pxSvgElem.getBoundingClientRect(),
+          topLeftRect = this.getBoundingClientRect();
+      this.$.resetBtn.style.left = rect.width - 170 - Number(this.margin.right) + 'px';
+      this.$.resetBtn.style.top = (rect.top - topLeftRect.top) + Number(this.margin.top) + 'px';
+
+      this.set('selectedDomain', {x:extentsData.eX, y:extentsData.eY});
+      this.fire('px-vis-selected-domain-updated', { 'data':{x:extentsData.eX, y:extentsData.eY}, 'method': 'set', 'dataVar': 'selectedDomain' });
+
+    },
+    resetZoom: function(){
+      this.set('selectedDomain', 'reset');
+      this.fire('px-vis-selected-domain-updated', { 'data':'reset', 'method': 'set', 'dataVar': 'selectedDomain' });
+      this.toggleClass('hidden', true, this.$.resetBtn);
+    }
+  });
+</script>

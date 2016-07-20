@@ -1,0 +1,413 @@
+<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="px-vis-behavior-common.html" />
+<link rel="import" href="px-vis-behavior-d3.html" />
+<link rel="import" href="../px-colors-design/colors.html" />
+<link rel="import" href="../px-tooltip/px-tooltip.html" />
+<link rel="import" href="../px-popover/px-popover.html" />
+
+<!--
+Element which draws scatter series onto the chart
+
+##### Usage
+
+    <px-vis-pie
+        svg="[[svg]]"
+        clip-path="[[clipPath]]"
+        series-id="[[item.name]]"
+        series-number="[[index]]"
+        chart-data="[[item]]"
+        x="[[x]]"
+        y="[[y]]"
+        current-domain-x="[[currentDomainX]]"
+        current-domain-y="[[currentDomainY]]"
+        muted-series="[[mutedSeries]]">
+    </px-vis-pie>
+
+@element px-vis-pie
+@blurb Element which draws lines series onto the chart
+@homepage index.html
+@demo demo.html
+-->
+<dom-module id="px-vis-pie">
+    <link rel="import" type="css" href="css/px-vis-pie.css"/>
+    <template>
+      <!-- anchors for tooltip and popovers -->
+      <span id="tooltipAnchor" class="visuallyhidden anchor"></span>
+      <span id="popoverAnchor" class="visuallyhidden anchor"></span>
+      <!-- Title in the middle -->
+      <div id="title" class$="[[_getTitleClass(showTitle)]]">
+        <span id="totalTitle">Total</span>
+        <span id="totalValue">{{total}} {{_getUnit(completeSeriesConfig, seriesId)}}</span>
+      </div>
+      <!-- tooltip elem -->
+      <px-tooltip id="tooltip" orientation="top" delay="10" for="tooltipAnchor">
+        <div style="display:flex; flex-direction:column; align-items:center">
+          <span>{{_ttTitle}}</span>
+          <span>{{_ttMessage}}</span>
+        </div>
+      </px-tooltip>
+      <!-- popover elem -->
+      <px-popover id="popover" popover-title="" orientation="top" hide-overlay class="popover" for="popoverAnchor">
+      </px-popover>
+    </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: 'px-vis-pie',
+
+    behaviors: [
+      PxVisBehaviorD3.svg,
+      PxVisBehavior.dataset,
+      PxVisBehavior.mutedSeries,
+      PxVisBehavior.commonMethods,
+      PxVisBehavior.sizing,
+      PxVisBehavior.dataset,
+      PxVisBehavior.completeSeriesConfig,
+      commonColors
+    ],
+
+    /**
+     * Properties block, expose attribute values to the DOM via 'reflect'
+     *
+     * @property properties
+     * @type Object
+     */
+    properties: {
+      /**
+       * A unique ID for each line series
+       *
+       * @property seriesId
+       * @type String
+       */
+      seriesId:{
+        type:String
+      },
+      /**
+       * An index of the series used for calculating its color
+       *
+       * @property scatterNumber
+       * @type String
+       */
+      seriesNumber:{
+        type:Number,
+        value:0
+      },
+      /**
+       * Number between 0 and 1 defining how much of the inner pie should be cut.
+       * Typically at 0 this is a pie chart, at 0.5 a donut chart and at 1 all
+       * the chart is cut (=> not visible)
+       *
+       */
+      innerRadius: {
+        type: Number,
+        value: 0
+      },
+      /**
+       * Whether the chart should be disaplyed as a donut rather than a pie.
+       * If displayed as a donut it will by default use 30px as the ring size.
+       * It can be overriden by using the "innerRadius" property (between 0 and 1)
+       */
+      donut: {
+        type: Boolean,
+        value: false
+      },
+      /**
+       * A holder object for the series group
+       *
+       * @property scatterGroup
+       * @type Object
+       */
+      pieGroup:{
+        type:Object
+      },
+      /**
+       * Whether to show a title in the middle of the pie/donut with the total value.
+       * Meant to be used with a donut chart
+       */
+      showTitle: {
+        type: Boolean,
+        value: false
+      },
+      /**
+       * A holder object for the series object
+       *
+       * @property linePath
+       * @type String
+       */
+      pieGroup:{
+        type:Object,
+        value: function() {return{};}
+      },
+      /**
+       * Total value of all slices
+       */
+      total: {
+        Type: Number,
+        value: 0
+      },
+      /**
+       * Radius of the pie chart
+       *
+       */
+      _radius: {
+        type: Number,
+        computed: '_computeRadius(width, height, margin)'
+      },
+      /**
+       * String representing the translation needed to center the pie on the
+       * svg
+       *
+       */
+      _translationString: {
+        type: String,
+        computed: '_computeTranslationString(_radius)'
+      },
+      /**
+       * Message used for tooltip and popover, containing info on current slice
+       *
+       */
+      _ttMessage: {
+        type: String,
+        value: ''
+      },
+      /**
+       * Title used for tooltip and popover, containing info on current slice
+       *
+       */
+      _ttTitle: {
+        type: String,
+        value: ''
+      },
+      /**
+       * d3 arc function used to draw arcs
+       */
+      _arc: {
+        type: Object
+      },
+      /**
+       * How much the pie is currently rotated in rad
+       */
+      _currentRotationAngle: {
+        type:Number,
+        value:0
+      },
+      /**
+       * whether the values should be displayed in %
+       */
+      usePercentage: {
+        type: Boolean,
+        value: false
+      },
+      /**
+       * Unit currently in use: unit or %
+       */
+      _internalUnits: {
+        type: String,
+        computed: '_computeInternalUnits(completeSeriesConfig, seriesId, usePercentage)'
+      }
+    },
+
+    observers: [
+      'drawElement(width,height,margin,svg,chartData.*,completeSeriesConfig, seriesId, usePercentage)'
+     ],
+
+     attached: function() {
+
+      //position popover anchor, it won't move afterward
+      var curRect = this.pxSvgElem.getBoundingClientRect(),
+          titleRect = this.$.title.getBoundingClientRect(),
+          leftMarg = Number(this.margin.left),
+          bottomMarg = Number(this.margin.bottom);
+
+      this.$.popoverAnchor.style.left = (curRect.left + leftMarg +  this._radius) + 'px';
+      this.$.popoverAnchor.style.top = (curRect.top +  Number(this.margin.top)) + 'px';
+
+      //position title div
+      this.$.title.style.left = (leftMarg + this._radius - titleRect.width/2) + 'px';
+      this.$.title.style.top = -this.height + Number(this.margin.top) + this._radius - titleRect.height/2 + 'px';
+     },
+    /**
+     * Draws or updates the pie element.
+     * Called from an observer watching for data and the necessary d3 objects
+     *
+     * @method drawElement
+     */
+    drawElement: function() {
+      //calculate data and radius
+      var data = this.chartData,
+          pie = Px.d3.pie().value(function(d){return d['x'];})(data);
+
+      // checks to see if the group already exists. If not, create; if so, update
+      if(this._isObjEmpty(this.pieGroup)){
+        // draw the path and move it so the ie is centered
+        this.pieGroup = this.svg.append('g')
+          .attr('series-id', 'pie_' + this.seriesId)
+          .attr('class', 'pie-slice')
+          .attr('transform', this._translationString);
+      }
+
+      // declare an arc generator function
+      this._arc = Px.d3.arc().outerRadius(this._radius);
+      if(this.donut) {
+        var innerRadiusPx = this.innerRadius === 0 ? (this._radius - 30) : this.innerRadius * this._radius;
+        this._arc.innerRadius(innerRadiusPx);
+      } else {
+        this._arc.innerRadius(0);
+      }
+
+      // select paths, use arc generator to draw
+      var arcs = this.pieGroup.selectAll('pie-slice')
+                              .data(pie)
+                              .enter()
+                              .append('svg:g')
+                              .attr('class', 'slice')
+                              .on('tap', this._centerOnSlice.bind(this))
+                              .on('mouseover', this._showTooltip.bind(this))
+                              .on('mouseleave', this._hideTooltip.bind(this));
+
+      arcs.append('svg:path')
+          .attr('fill', function(d, i){
+              return this._getPieColorForIndex(i);
+          }.bind(this))
+          .attr('d', function (d) {
+              return this._arc(d);
+          }.bind(this));
+
+      this.pieGroup
+          .transition()
+          .duration(1250)
+          .attr('transform', this._translationString + ' rotate(-180)');
+
+      this.set('_currentRotationAngle', -Math.PI);
+    },
+    /**
+     * Return the value or the slice datum depending on use of percentages
+     */
+    _getSliceValue: function(datum) {
+      if(this.usePercentage) {
+        return datum.data.percentage + this._internalUnits;
+      } else {
+        return datum.data[this.completeSeriesConfig[this.seriesId].x] + ' ' + this._internalUnits;
+      }
+    },
+    /**
+     * Function used to display a tooltip for a specific slice
+     *
+     */
+    _showTooltip: function(datum, index, group) {
+
+      //get label and value
+      this.set('_ttTitle', datum.data[this.completeSeriesConfig[this.seriesId].y]);
+      this.set('_ttMessage', this._getSliceValue(datum));
+
+
+      //center tooltip
+      var rotatedDatum = {
+        startAngle: datum.startAngle + this._currentRotationAngle,
+        endAngle: datum.endAngle + this._currentRotationAngle
+      }
+
+      var rect = this.pxSvgElem.getBoundingClientRect(),
+        scroll = document.documentElement.scrollTop || document.body.scrollTop,
+        center = this._arc.centroid(rotatedDatum);
+
+      this.$.tooltipAnchor.style.left = (rect.left  + center[0] + this._radius + Number(this.margin.left)) + 'px';
+      this.$.tooltipAnchor.style.top = (rect.top + 5 + center[1] + Number(this.margin.top) + this._radius) + 'px';
+      this.$.tooltip._show();
+    },
+    _hideTooltip: function(datum, index, group) {
+
+      //close if we aren't moving over the tooltip
+      if(this.$.tooltip !== Px.d3.event.relatedTarget) {
+
+        this.$.tooltip._hide();
+      } else {
+
+        //if we moved over our tooltip don't close it
+        //but make sure that if we leave the tooltip for something else it will close...
+        var close = function(evt) {
+          //TODO: if we're moving back to the slice this is going to make the tooltip flicker
+          this.$.tooltip.removeEventListener('mouseleave', close);
+          this.$.tooltip._hide();
+        }.bind(this);
+        this.$.tooltip.addEventListener('mouseleave', close);
+      }
+    },
+    /**
+     * Transforms the svg to show the slice at the top (12 o clock)
+     *
+     */
+    _centerOnSlice: function(datum, index, group) {
+      this.set('_currentRotationAngle', this._getRotationAngle(datum));
+      this.pieGroup
+          .transition()
+          .duration(750)
+          .attr('transform', this._translationString + ' rotate(' + this._radToDeg(this._currentRotationAngle) + ')');
+
+      //display a popover after the rotation
+      setTimeout(function() {
+
+        //position popover anchor
+        var curRect = this.pxSvgElem.getBoundingClientRect(),
+            leftMarg = Number(this.margin.left);
+
+        this.$.popoverAnchor.style.left = (curRect.left + leftMarg +  this._radius) + 'px';
+        this.$.popoverAnchor.style.top = (curRect.top +  Number(this.margin.top)) + 'px';
+
+        this.$.popover.popoverTitle = datum.data[this.completeSeriesConfig[this.seriesId].y];
+        this.$.popover.popoverBody = this._getSliceValue(datum);
+
+        this.$.popover.show();
+      }.bind(this), 750);
+    },
+    /**
+     * Computes the translation string needed to center the pie
+     */
+    _computeTranslationString: function() {
+      return 'translate(' + this._radius + ',' + this._radius + ')';
+    },
+    /**
+     * Computes the radius of the pie chart from size attributes
+     */
+    _computeRadius: function(width, height, margin) {
+      return Math.min(height - margin.bottom - margin.top,
+                      width - margin.left - margin.right)/2;
+    },
+    /**
+     * Converts rad to deg
+     *
+     */
+    _radToDeg: function(angle) {
+      return angle * 180 / Math.PI;
+    },
+    /**
+     * Calculates the approriate rotation angle for the slice to be displayed at 12 o clock
+     *
+     */
+    _getRotationAngle: function(slice) {
+      //get angle to middle of slice, then adjust rotation direction
+      var start = slice.startAngle,
+          end = slice.endAngle,
+          mid = start + (end - start)/2,
+          adjusted = mid < Math.PI ? -mid : Math.PI * 2 - mid;
+
+      return adjusted;
+    },
+    _getTitleClass: function(showTitle) {
+      var classList = 'title inline--flex flex--col flex--middle ';
+
+      if(!showTitle) {
+        classList += 'visuallyhidden ';
+      }
+
+      return classList;
+    },
+    _getUnit: function(completeSeriesConfig, seriesId) {
+      return completeSeriesConfig[seriesId].xAxisUnit;
+    },
+    _computeInternalUnits: function(completeSeriesConfig, seriesId, usePercentage) {
+      return usePercentage ? '%' : this._getUnit(completeSeriesConfig, seriesId);
+    }
+  });
+</script>

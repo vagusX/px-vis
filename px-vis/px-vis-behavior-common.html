@@ -1,0 +1,740 @@
+<script>
+var PxVisBehavior = PxVisBehavior || {};
+
+/*
+    Name:
+    PxVisBehavior.sizing
+
+    Description:
+    Polymer behavior that provides the basic sizing properties for px-vis components.
+
+    Dependencies:
+    - none
+
+    @polymerBehavior PxVisBehavior.sizing
+*/
+PxVisBehavior.sizing = {
+  properties: {
+    /**
+    * The width of the elem; generally the width of the charting area for most components
+    *
+    */
+    width: {
+      type: Number
+    },
+
+    /**
+    * The height of the component; generally the height of the charting area for most components.
+    *
+    */
+    height: {
+      type: Number,
+    },
+
+    /**
+    * Defines the base margin for the chart. Calcs are run to add to the margin to accomodate axes and other elements which exist within the SVG frame, but outside the chart frame.
+    *
+    */
+    margin:{
+      type:Object,
+      value: function() {
+        return {
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0
+        };
+      }
+    }
+  }
+};
+
+/*
+    Name:
+    PxVisBehavior.formatting
+
+    Description:
+    Polymer behavior that provides the string and number formating options and methods. Includes name truncation and numbro-element number formating options.
+
+    Dependencies:
+    - numbro-element components
+
+    @polymerBehavior PxVisBehavior.formatting
+*/
+PxVisBehavior.formatting = {
+  properties: {
+    /**
+     * Defines how a display number should be formatted:
+     * Provide localization for currency formatting
+     *
+     * For valid formats and features, see: http://numbrojs.com/languages.html
+     * For docs on the component, see: https://metanov.github.io/numbro-element/components/numbro-element/
+     *
+     * @property numberFormatCulture
+     * @type String
+     * @default 'en-US'
+     */
+    numberFormatCulture: {
+      type:String,
+      notify: true,
+      value: 'en-US'
+    },
+    /**
+     * Defines how a display number should be formatted:
+     * Specify whether the value should be formatted as a currency
+     *
+     * For valid formats and features, see: http://numbrojs.com/format.html
+     * For docs on the component, see: https://metanov.github.io/numbro-element/components/numbro-element/
+     *
+     * @property numberFormatIsCurrency
+     * @type Boolean
+     * @default false
+     */
+    numberFormatIsCurrency: {
+      type :Boolean,
+      notify: true,
+      value: false
+    },
+    /**
+     * Defines how a display number should be formatted:
+     * Provide a new default format for currency
+     *
+     * For valid formats and features, see: http://numbrojs.com/format.html
+     * For docs on the component, see: https://metanov.github.io/numbro-element/components/numbro-element/
+     *
+     * @property numberFormatCurrency
+     * @type String
+     * @default '$0,0.00'
+     */
+    numberFormatCurrency: {
+      type: String,
+      notify: true,
+      value:'$0,0.00'
+    },
+    /**
+     * Defines how a display number should be formatted:
+     * Provides a new default format
+     *
+     * For valid formats and features, see: http://numbrojs.com/format.html
+     * For docs on the component, see: https://metanov.github.io/numbro-element/components/numbro-element/
+     *
+     * @property numberFormatDefault
+     * @type String
+     * @default '0,0.0000'
+     */
+    numberFormatDefault: {
+      type: String,
+      notify: true,
+      value: '0,0.0000'
+    },
+    /**
+     * Defines how a display number should be formatted:
+     * The format used to generate the output
+     *
+     * For valid formats and features, see: http://numbrojs.com/format.html
+     * For docs on the component, see: https://metanov.github.io/numbro-element/components/numbro-element/
+     *
+     * @property numberFormat
+     * @type String
+     * @default '0,0.00'
+     */
+    numberFormat: {
+      type: String,
+      notify: true,
+      value: '0,0.00'
+    },
+    /**
+     * Defines how a display number should be converted back to a Number:
+     * A formatted String to extract a value from
+     *
+     * For valid formats and features, see: http://numbrojs.com/format.html#unformat
+     * For docs on the component, see: https://metanov.github.io/numbro-element/components/numbro-element/
+     *
+     * @property numberFormatUnformat
+     * @type String
+     * @default '0,0.0000'
+     */
+    numberFormatUnformat: {
+      type: String,
+      notify: true,
+      value: '0,0.0000'
+    },
+    /**
+     * Defines how a display number should be formatted:
+     * Provide a new default format for 0 value
+     *
+     * For valid formats and features, see: http://numbrojs.com/format.html
+     * For docs on the component, see: https://metanov.github.io/numbro-element/components/numbro-element/
+     *
+     * @property numberFormatZero
+     * @type String
+     * @default ''
+     */
+    numberFormatZero: {
+      type: String,
+      notify: true,
+      value:''
+    }
+
+  },
+  /**
+   * _truncateName takes a string and string length [optional].
+   * Returns a truncated string with the middle replaced by an ellipsis. The ellipsis does not count towards the total character count.
+   * Follows these truncation principles: http://www.gesdh.com/predix/product/principles/truncation/
+   * Example: LNG_BAH_HOT_EFFECTIVENESS_CORE8 --> LNG_B...CORE8
+   *
+   * Length cannot be less than 2 characters.
+   * Default length is 10 characters.
+   *
+   * If the string is less than or equal to the length or the length is invalid, returns the original string.
+   *
+   * @param {String} name, {Integer} len
+   * @return {String} truncatedString
+  */
+  _truncateName:function(name,len){
+    var len = len || 10;
+
+    // make sure length is legit
+    if(len < 2) {
+      return name;
+    }
+
+    //check that name is greater than length; if not, return it
+    if(name.length <= len){
+      return name;
+    }
+
+    // truncate
+    var frontLen = Math.ceil(len / 2),
+        backLen = Math.floor(len / 2),
+        front = name.slice(0,frontLen),
+        back = name.slice(-backLen);
+
+    return front + '...' + back;
+  }
+};
+
+/*
+    Name:
+    PxVisBehavior.dataset
+
+    Description:
+    Polymer behavior that provides the data object for d3 components.
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehavior.dataset
+*/
+PxVisBehavior.dataset = {
+    properties: {
+      /**
+       * container for the data object that drives the chart / component
+       * Generally loaded with an iron-ajax tag (but doesnt have to be)
+       * This can be set declaratively
+       *
+       * @property chartData
+       * @type Object
+       */
+      chartData:{
+        type: Array,
+        notify: true
+      }
+    }
+};
+
+/*
+    Name:
+    PxVisBehavior.completeSeriesConfig
+
+    Description:
+    Polymer behavior that provides a computed series configuration object to components.
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehavior.completeSeriesConfig
+*/
+
+PxVisBehavior.completeSeriesConfig = {
+    properties: {
+      /**
+       * A configuration file generated by the chart behavior based on seriesConfig and defaultSeriesConfig.
+       *
+       */
+       completeSeriesConfig: {
+         type: Object,
+         notify: true
+       },
+    }
+};
+
+/*
+    Name:
+    PxVisBehavior.mutedSeries
+
+    Description:
+    Polymer behavior that provides the mutedSeries property px-vis components.
+
+    Dependencies:
+    -
+
+    @polymerBehavior PxVisBehavior.mutedSeries
+*/
+PxVisBehavior.mutedSeries = {
+  properties: {
+    /**
+     * A list of user selected muted series. Tied declaratively to series components
+     *
+     * The series name is the key and the value is a boolean for whether it is muted or not:
+     *
+     *```
+     * {
+     *     'seriesId1':true,
+     *     'seriesId2':false,
+     *  }
+     *```
+     *
+     * In this example, seriesId1 is muted. seriesId2 was muted, but has been turned back on.
+     *
+     * @property mutedSeries
+     * @type Object
+     * @default []
+     */
+    mutedSeries:{
+      type:Object,
+      notify: true,
+      value:function(){ return {}; },
+    },
+  }
+};
+
+/*
+    Name:
+    PxVisBehavior.tooltipData
+
+    Description:
+    Polymer behavior that provides the tooltipData property px-vis components.
+
+    Dependencies:
+    -
+
+    @polymerBehavior PxVisBehavior.tooltipData
+*/
+PxVisBehavior.tooltipData = {
+  properties: {
+    /**
+     * Data reported back by the interaction space component. Displays the series name, values, and timestamp in the register. tooltipData is in the form:
+     *
+     *```
+     *   {
+     *     'time': d3TimeStamp,
+     *     'series': [
+     *       {'name':'seriesName0','value': seriesVal0 },
+     *       {'name':'seriesName1','value': seriesVal1 }
+     *     ]
+     *   }
+     *```
+     *
+     * When not hovering on a chart, the tooltipData should still have the series names in order for them to still appear in the register. IE:
+     *
+     *```
+     *   {
+     *     'time': null,
+     *     'series': [
+     *       {'name':'seriesName0','value': null },
+     *       {'name':'seriesName1','value': null }
+     *     ]
+     *   }
+     *```
+     *
+     * @property tooltipData
+     * @type Object
+     */
+    tooltipData:{
+      type:Object,
+      notify:true
+    }
+  }
+};
+
+/*
+    Name:
+    PxVisBehavior.extentsData
+
+    Description:
+    Polymer behavior that provides the extentsData property px-vis components.
+
+    Dependencies:
+    -
+
+    @polymerBehavior PxVisBehavior.extentsData
+*/
+PxVisBehavior.extentsData = {
+  properties: {
+    /**
+     * Data reported back by the interaction space. Displays the interpreted x & y coords, width and height, and domain extents. extentsData is in the form:
+     *
+     *```
+     *   {
+     *     x1 = {pixel-space}
+     *     y1 = {pixel-space}
+     *     x2 = {pixel-space}
+     *     y2 = {pixel-space}
+     *     w = {pixels}
+     *     h = {pixels}
+     *     eX = [{domain}, {domain}];
+     *     eY = [{domain}, {domain}];
+     *   }
+     *```
+     *
+     * @property extentsData
+     * @type Object
+     */
+    extentsData:{
+      type:Object,
+      notify:true
+    }
+  }
+};
+
+PxVisBehavior.commonMethods = {
+  properties: {
+  },
+
+  /**
+   * Checks to see if an object is empty
+   *
+   * @param {object}
+   * @return {bool}
+   */
+  _isObjEmpty:function(obj){
+    if(typeof(obj) === 'undefined'){
+      return false;
+    }
+    return Object.keys(obj).length === 0;
+  },
+  /**
+   * Checks to see if an object has values
+   *
+   * @param {object}
+   * @return {bool}
+   */
+  _doesObjHaveValues:function(obj){
+    if(typeof(obj) === 'undefined'){
+      return false;
+    }
+    return Object.keys(obj).length > 0;
+  },
+  /**
+   * Checks to see if an object is defined
+   *
+   * @param {object}
+   * @return {bool}
+   */
+  _isVarDefined:function(obj){
+    if(typeof(obj) === 'undefined'){
+      return false;
+    }
+    return true
+  },
+  /**
+   * Checks to see if an object is defined
+   *
+   * @param {object}
+   * @return {bool}
+   */
+  _isVarUndefined:function(obj){
+    if(typeof(obj) === 'undefined'){
+      return true;
+    }
+    return false
+  },
+  /**
+   *  Returns the color used for a pie slice given a specific index
+   *
+   */
+  _getPieColorForIndex: function(index) {
+    return commonColors.properties.dataVisColors.value[commonColors.properties.seriesColorOrder.value[index]];
+  }
+};
+
+/*
+    Name:
+    PxVisBehavior.axisTypes
+
+    Description:
+    Polymer behavior that provides 2 properties defining the type of axis of a
+    px-vis components.
+
+    Dependencies:
+    -
+
+    @polymerBehavior PxVisBehavior.axisTypes
+*/
+PxVisBehavior.axisTypes = {
+  properties: {
+    /**
+     * Sets the type of data for the x values
+     *
+     * Valid entries are:
+     * - `ordinal`: for discrete input domains, such as names or categories.
+     * - `time`: for time domains.
+     * - `linear`: for continuous input domains, such as numbers.
+     * - 'pie': for pie/donut charts
+     */
+    xAxisType: {
+      type: String,
+      value: 'linear',
+      notify: true
+    },
+    /**
+     * Sets the type of data for the y values
+     *
+     * Valid entries are:
+     * - `ordinal`: for discrete input domains, such as names or categories.
+     * - `linear`: for continuous input domains, such as numbers.
+     * - 'pie': for pie/donut charts
+     */
+    yAxisType: {
+      type: String,
+      value: 'linear',
+      notify: true
+    }
+  }
+};
+/*
+    Name:
+    PxVisBehavior.zoomSelection
+
+    Description:
+    Polymer behavior that provides 1 property defining how the selection should
+    behave when user draw a box for zooming
+
+    Dependencies:
+    -
+
+    @polymerBehavior PxVisBehavior.zoomSelection
+*/
+
+PxVisBehavior.zoomSelection = {
+  properties: {
+    /**
+     *
+     * The shape of selection (zoom) the user can do. Can be:
+     * - 'xy': user can draw a rectangle freely
+     * - 'xAxis': user can select a range withing the X axis, the Y axis always
+     *   being entirely selected
+     * - 'YAxis': user can select a range withing the Y axis, the X axis always
+     *   being entirely selected
+     */
+    selectionType: {
+      type: String,
+      value: 'xy'
+    }
+  }
+};
+
+/*
+     Name:
+    PxVisBehavior.chartExtents
+
+    Description:
+    Polymer behavior that provides a chartExtents object to components.
+
+
+    @polymerBehavior PxVisBehavior.chartExtents
+*/
+
+
+PxVisBehavior.chartExtents = {
+  properties: {
+    /**
+    *
+    *```
+    *  {
+    *      "x": [0,100],
+    *      "y": [5,50],
+    *  }
+    *```
+    *
+    * For an ordinal dataset, chart extents can be set like this:
+    *```
+    *  {
+    *      "x": ['low','medium','high'],
+    *      "y": [5,50],
+    *  }
+    *```
+    */
+    chartExtents: {
+      type: Object,
+      notify: true
+    }
+  }
+};
+
+/*
+     Name:
+    PxVisBehavior.events
+
+    Description:
+    Polymer behavior that provides config and data to manage "events" (px-vis-event) on the chart
+
+
+    @polymerBehavior PxVisBehavior.events
+*/
+
+
+PxVisBehavior.events = {
+  properties: {
+    /**
+     * Configuration object to define what event should map to what icon and color.
+     * The object has a key being the event name, the value being a the configuration object for that event. The configuration object has four properties:
+     * - `color`: A valid color name found in the px-colors-design
+     * - `icon`: the reference to the icon; for Font Awesome, it can be a class or a unicode value; for an image, it is a path
+     * - `type`: 'fa', 'unicode', or 'image'. 'fa' and 'unicode' are font-awesome icons, 'fa' referring to the class ('fa-camera') and 'unicode' referring to the unicode value for the icon formatted as '\uf004'
+     * - `offset`: an 2 element array with the number of pixels to offset the icon. offset[0] is along the x-axis; offset[1] is along the y-axis; necessary for some icons to adjust their values to acheive a better alignment over the event line.
+     *
+     * ```
+     * Format: {
+     *   "Event-Name-A":{
+     *     "color": "a_valid_color_from_px-colors-design",
+     *     "icon": "font-awesome-class",
+     *     "type": "fa",
+     *     "offset":[0,0]
+     *   },
+     *   "Event-Name-B":{
+     *     "color": "a_valid_color_from_px-colors-design",
+     *     "icon": "unicode-of-the-font-character",
+     *     "type": "unicode",
+     *     "offset":[0,0]
+     *   },
+     *   "Event-Name-C":{
+     *     "color": "a_valid_color_from_px-colors-design",
+     *     "icon": "path-to-an-img",
+     *     "type": "image",
+     *     "offset":[0,0]
+     *   },
+     * }
+     * ```
+     *
+     * ```
+     * Example: {
+     *   "Recalibrate":{
+     *     "color": "blue",
+     *     "icon": "fa-camera",
+     *     "type": "fa",
+     *     "offset":[-3,0]
+     *   },
+     *   "Fan start":{
+     *     "color": "green",
+     *     "icon": "\uf015",
+     *     "type": "unicode",
+     *     "offset":[5,0]
+     *   },
+     *   "Fan stop":{
+     *     "icon": "Dancing_banana.gif",
+     *     "type": "image",
+     *     "offset":[-2,-20],
+     *     "size":"25"
+     *    }
+     * }
+     *```
+     *
+     * @property eventConfig
+     * @type Object
+     */
+    eventConfig: {
+      type: Object
+    },
+    /**
+     * Configuration object to define what the default icon should be. This gets used if a) no eventConfig is defined or b) the particular event is not defined in the eventConfig object.
+     *
+     *```
+     * Default: {
+     *   'color': 'grey7',
+     *   'icon': 'fa-circle',
+     *   'type': 'fa',
+     *   'offset': 0,
+     *   'size': '16'
+     * }
+     *```
+     *
+     * @property defaultEventConfig
+     * @type Object
+     */
+    defaultEventConfig: {
+      type: Object,
+      value: function() {
+        return {
+          'color': 'grey7',
+          'icon': 'fa-info-circle',
+          'type': 'fa',
+          'offset': [0,0],
+          'size':'16'
+        };
+      }
+    },
+    /**
+     * Data representing the events. Example:
+     * [
+     *    {
+     *      "id": "123",
+     *      "x": 2,
+     *      "label": "Recalibrate"
+     *    },
+     *    {
+     *      "id": "456",
+     *      "x": 3,
+     *      "label": "Fan start"
+     *    },
+     *    {
+     *      "id": "789",
+     *      "x": 4,
+     *      "label": "Fan stop"
+     *    },
+     *    {
+     *      "id": "333",
+     *      "x": 8,
+     *      "label": "Default"
+     *    }
+     *  ]
+     */
+    eventData: {
+      type: Array
+    }
+  }
+};
+
+PxVisBehavior.dimensions = {
+  properties: {
+    /**
+    *
+    *```
+    *  {
+    *      "x": [0,100],
+    *      "y": [5,50],
+    *  }
+    *```
+    *
+    * For an ordinal dataset, chart extents can be set like this:
+    *```
+    *  {
+    *      "x": ['low','medium','high'],
+    *      "y": [5,50],
+    *  }
+    *```
+    */
+    dimensions: {
+      type: Array,
+      notify: true
+    },
+
+    seriesKey: {
+      type: String,
+      notify: true
+    },
+  }
+};
+
+</script>

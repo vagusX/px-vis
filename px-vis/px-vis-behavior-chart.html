@@ -1,0 +1,348 @@
+
+<link rel="import" href="../px-colors-design/colors.html" />
+<link rel="import" href="px-vis-behavior-common.html" />
+<script>
+var PxVisBehaviorChart = PxVisBehaviorChart || {};
+
+/*
+    Name:
+    PxVisBehaviorChart.chartCommon
+
+    Description:
+    Polymer behavior that provides the basic listeners and methods for charts built with px-vis.
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorChart.chartCommon
+*/
+PxVisBehaviorChart.chartCommon = [{
+    properties: {
+      /**
+      * A configuration file to associate series order, name, type, and colors.
+      *
+      * Association of name, type, and seriesNumber should be developer set. Color and axis are optional.
+      *
+      *```
+      *  {
+      *     "seriesKey": {  //seriesKey is a unique identifier for the configuration
+      *         "type": "line",  //line or scatter
+      *         "markerSymbol": "diamond" //if using scatter different markerSymbol can be used. See "markerSymbol" in px-vis-scatter
+      *         "markerScale": "2" //if using scatter allows to scale the size of markers
+      *         "name": "My Series",  //human readable name
+      *         "x": "x",  //index or key name for independent variable
+      *         "y": "y",  //index or key name for independent variable
+      *         "xAxisUnit": "Volt" //Unit to be used for the X axis. Can be ignored if x axis is time based
+      *         "yAxisUnit": "Oranges" //unit to be used for the Y axis.
+      *         "xMin": 0,  // minimum x value
+      *         "xMax": 100,  //maximum x value
+      *         "yMin": 5,  //minimum y value
+      *         "yMax": 50,  //maximum y value
+      *         "color": "rgb(0,0,0)", //color you want the chart
+      *         "axis": "axis1"  //axis the chart should be on
+      *     }
+      *  }
+      *```
+      */
+      seriesConfig: {
+        type: Object,
+        notify: true,
+        value: function(){
+          return {}
+        }
+      },
+      /**
+      * A default configuration file. It fills in the missing parts of seriesConfig.
+      *
+      */
+      defaultSeriesConfig: {
+        type: Object,
+        notify: true,
+        value: function(){
+          // defaultSeriesConfig[xMin] cant be Infinity by default because then we cant assign it Infinity in json.
+          return {
+            "type": "line",
+            "x": 'x',
+            "xMin": "dynamic",
+            "xMax": "dynamic",
+            "yMin": 0,
+            "yMax": "dynamic"
+          }
+        }
+      },
+      /**
+      * A boolean flag on whether to include all the series in the data.
+      * - `false`: only series defined in the seriesConfig file will be drawn
+      * - `true`: All series in the dataset will be drawn. Defaults will be used for the seriesConfig
+      */
+      includeAllSeries: {
+        type: Boolean,
+        notify: true,
+        value: false
+      }
+    },
+
+    listeners:{
+      'px-vis-svg-updated'              : '_updateLocalProperty',
+      'px-vis-data-updated'             : '_updateLocalProperty',
+      'px-vis-x-updated'                : '_updateLocalProperty',
+      'px-vis-y-updated'                : '_updateLocalProperty',
+      'px-vis-current-domain-x-updated' : '_updateLocalProperty',
+      'px-vis-current-domain-y-updated' : '_updateLocalProperty',
+      'px-vis-tooltip-updated'          : '_updateLocalProperty',
+      'px-vis-interaction-svg-updated'  : '_updateLocalProperty',
+      'px-vis-extents-data-updated'     : '_updateLocalProperty',
+      'px-vis-clip-path-updated'        : '_updateLocalProperty',
+      'px-vis-series-clip-path-updated' : '_updateLocalProperty',
+      'px-vis-svg-element-updated'      : '_updateLocalProperty',
+
+      'px-vis-muted-series-updated'     : '_updateGlobalProperty',
+      'px-vis-selected-domain-updated'  : '_updateGlobalProperty'
+
+    },
+
+    observers: [
+      '_setCompleteSeriesConfig(defaultSeriesConfig.*,chartData.*,seriesConfig.*)'
+    ],
+
+    _calcChartExts: function(mins,maxes,axis){
+      if(this[axis + 'AxisType'] === 'ordinal'){
+        // how should someone set the ordinal list? Differet key in seriesConfig?
+        return [];
+      }
+
+      var dMin = this.defaultSeriesConfig[axis+'Min'] === 'dynamic' ? Infinity: this.defaultSeriesConfig[axis+'Min'],
+          dMax = this.defaultSeriesConfig[axis+'Max'] === 'dynamic' ? -Infinity: this.defaultSeriesConfig[axis+'Max'];
+
+      mins.push(dMin);
+      maxes.push(dMax);
+
+      return [ Math.min.apply(null, mins) , Math.max.apply(null, maxes) ];
+    },
+
+    /**
+    * Creates the real series confit object based on the default settings, the dev defined series config, and the includeAllSeries flag.
+    *
+    */
+    _setCompleteSeriesConfig: function(){
+      if(this._doesObjHaveValues(this.defaultSeriesConfig) && this._doesObjHaveValues(this.chartData)){
+        // FUTURE TODO refactor: use MAPs and SETs instead of Objects when IE has support / is no longer supported by us
+        // We could use d3 sets and maps... worth it?
+        var fullConfig = (this.seriesConfig) ? JSON.parse(JSON.stringify(this.seriesConfig)) : {},
+            k = Object.keys(fullConfig),
+            kLen = k.length,
+            // FIXME 0 elem might not have all keys. How do we actually find all keys?
+            allYs = (this.includeAllSeries) ? Object.keys(this.chartData[0]) : [],
+            // create a new object with the y keys as config keys
+            objYs = allYs.reduce(function(obj, item) {
+              obj[item] = {};
+              return obj;
+            }, {}),
+            xMins = [],
+            xMaxes = [],
+            yMins = [],
+            yMaxes = [],
+            missingYs,
+            x;
+        if(k.length === 0 && !this.includeAllSeries){
+          console.warn("No series were added to the chart. Either add them in the seriesConfig or turn on includeAllSeries");
+          return;
+        }
+
+        // First, fill in the existing series.
+        for(var i = 0; i < kLen; i++) {
+          if(!fullConfig[k[i]].hasOwnProperty('y')){
+            console.warn("Configuration " + k[i] + " does not have a y-value associated with it.");
+            continue;
+          }
+
+          if(!fullConfig[k[i]]['type']) {
+            fullConfig[k[i]]['type'] = this.defaultSeriesConfig['type'];
+          }
+          if(!fullConfig[k[i]]['name']) {
+            fullConfig[k[i]]['name'] = k[i];
+          }
+          if(!fullConfig[k[i]]['x']) {
+            fullConfig[k[i]]['x'] = this.defaultSeriesConfig['x'];
+          }
+          if(!fullConfig[k[i]]['color']) {
+            fullConfig[k[i]]['color'] = this._getColor(i);
+          }
+
+          //fill in units if they're not defined and defined in default config
+          if(!fullConfig[k[i]]['xAxisUnit'] && this.defaultSeriesConfig['xAxisUnit']) {
+            fullConfig[k[i]]['xAxisUnit'] = this.defaultSeriesConfig['xAxisUnit'];
+          }
+          if(!fullConfig[k[i]]['yAxisUnit'] && this.defaultSeriesConfig['yAxisUnit']) {
+            fullConfig[k[i]]['yAxisUnit'] = this.defaultSeriesConfig['yAxisUnit'];
+          }
+
+          if(fullConfig[k[i]]['xMin']) {
+            xMins.push(fullConfig[k[i]]['xMin']);
+          }
+          if(fullConfig[k[i]]['xMax']) {
+            xMaxes.push(fullConfig[k[i]]['xMax']);
+          }
+          if(fullConfig[k[i]]['yMin']) {
+            yMins.push(fullConfig[k[i]]['yMin']);
+          }
+          if(fullConfig[k[i]]['yMax']) {
+            yMaxes.push(fullConfig[k[i]]['yMax']);
+          }
+
+          // delete this y / key from objYs if includeAllSeries is on so we have a unique set
+          delete objYs[ fullConfig[k[i]]['y'] ];
+        }
+
+        //figure out what x is, either a config value (assuming all x are the same) or the default
+        x = (k.length > 0) ? fullConfig[k[0]]['x'] : this.defaultSeriesConfig['x'];
+        // delete the 'x' key from our all y keys obj
+        delete objYs [x];
+
+        // create a new set of whatever Ys are left so we can iterate over it
+        missingYs = Object.keys(objYs);
+        // add the missing keys to our configuration, use y as the config key by default
+        for(var i = 0; i < missingYs.length; i++){
+          objYs[ missingYs[i] ]['type'] = this.defaultSeriesConfig['type'];
+          objYs[ missingYs[i] ]['name'] = missingYs[i];
+          objYs[ missingYs[i] ]['x'] = x;
+          objYs[ missingYs[i] ]['y'] = missingYs[i];
+          objYs[ missingYs[i] ]['color'] = this._getColor(kLen + i);
+
+          // copy the obj to our config
+          fullConfig[ missingYs[i] ] = objYs[ missingYs[i] ];
+        }
+
+        if(!this.chartExtents){
+          this.chartExtents = {};
+          this.chartExtents['x'] = this._calcChartExts(xMins,xMaxes,'x');
+          this.chartExtents['y'] = this._calcChartExts(yMins,yMaxes,'y');
+        } else {
+          if(!this.chartExtents.x){
+            this.chartExtents['x'] = this._calcChartExts(xMins,xMaxes,'x');
+          }
+          if(!this.chartExtents.y){
+            this.chartExtents['y'] = this._calcChartExts(yMins,yMaxes,'y');
+          }
+        }
+
+        this.fire('px-vis-chart-extents', { 'dataVar': 'chartExtents', 'data': this.chartExtents, 'method':'set' });
+        this.notifyPath('chartExtents',this.chartExtents);
+
+        this.fire('px-vis-complete-series-config', { 'dataVar': 'completeSeriesConfig', 'data': fullConfig, 'method':'set' });
+        this.set('completeSeriesConfig',fullConfig);
+      }
+    },
+    /**
+     * Helper function to return the correct color for a particular index.
+     **/
+    _getColor: function(i){
+      var l = this.seriesColorOrder.length,
+          index = this._calcIndex(i,l);
+      return this.dataVisColors[this.seriesColorOrder[ index ]];
+    },
+    /**
+     * Helper function to calculate the index. When we run out of indcies, it loops back over valid indicies.
+     **/
+    _calcIndex: function(i,l){
+      return i < l ? i : this._calcIndex(i - l,l);
+    },
+
+    /**
+     * Helper function that only calls _updateProperty if event originates from a child component of the chart.
+     *
+     * Events data packet must come in the form:
+     * ```
+     *  {
+     *    'dataVar': variableName,  //'chartData' or 'mutedSeries.myLineSeries'
+     *    'data': data,
+     *    'method':'set'  //any Polymer method: 'set','push', etc
+     *  }
+     *```
+     * @method _updateLocalProperty
+     * @param {event}
+     */
+    _updateLocalProperty: function(evt){
+      var detail = evt.detail;
+      var ne = Polymer.dom(evt);
+      if(ne.rootTarget.dataHost === this){
+        this._updateProperty(detail);
+      }
+    },
+    /**
+     * Helper function that always calls _updateProperty regardless of origin.
+     *
+     * Events data packet must come in the form:
+     * ```
+     *  {
+     *    'dataVar': variableName,  //'chartData' or 'mutedSeries.myLineSeries'
+     *    'data': data,
+     *    'method':'set'  //any Polymer method: 'set','push', etc
+     *  }
+     *```
+     * @method _updateGlobalProperty
+     * @param {event}
+     */
+    _updateGlobalProperty: function(evt){
+      var detail = evt.detail;
+      this._updateProperty(detail);
+    },
+    /**
+     * Generic variable updater. Triggered by events to support precipitation pattern.
+     *
+     * Events data packet must come in the form:
+     * ```
+     *  {
+     *    'dataVar': variableName,  //'chartData' or 'mutedSeries.myLineSeries'
+     *    'data': data,
+     *    'method':'set'  //any Polymer method: 'set','push', etc
+     *  }
+     *```
+     * @method _updateProperty
+     * @param {object}
+     */
+    _updateProperty: function(detail){
+      this[detail.method](detail.dataVar, detail.data);
+      if(detail.method !== 'set'){
+        this.notifyPath(detail.dataVar,detail.data);
+      }
+    },
+    /**
+     * Helper function for the register. Returns true if the side register should exist
+     *
+     * @method _sideRegister
+     */
+    _sideRegister:function(location){
+      return location === 'side' || location === 'both';
+    },
+    /**
+     * Helper function for the register. Returns true if the top register should exist
+     *
+     * @method _topRegister
+     */
+    _topRegister:function(location){
+      return location === 'top' || location === 'both';
+    },
+    /**
+     * Helper function for the line series. Returns true if the series is a line
+     *
+     * @method _chartTypeLine
+     */
+    _chartTypeLine: function(key,obj){
+        return obj[key]['type'] === 'line';
+    },
+    /**
+     * Helper function for the line series. Returns true if the series is a line
+     *
+     * @method _chartTypeLine
+     */
+    _chartTypeScatter: function(key,obj){
+      return obj[key]['type'] === 'scatter';
+    },
+
+    _returnKeys: function(obj){
+      return Object.keys(obj);
+    }
+
+}, commonColors, PxVisBehavior.commonMethods,PxVisBehavior.axisTypes];
+</script>

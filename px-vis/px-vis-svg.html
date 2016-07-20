@@ -1,0 +1,149 @@
+<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="px-vis-behavior-common.html" />
+<link rel="import" href="px-vis-behavior-d3.html" />
+
+
+<!--
+Element which creates an SVG element and sets up d3
+
+##### Usage
+
+    <px-vis-svg
+        svg="{{svg}}"
+        width="[[width]]"
+        height="[[height]]"
+        margin="[[margin]]">
+    </px-vis-svg>
+
+@element px-vis-svg
+@blurb Element which creates an SVG element and sets up d3
+@homepage index.html
+@demo demo.html
+-->
+<dom-module id="px-vis-svg">
+    <link rel="import" type="css" href="css/px-vis.css"/>
+    <template>
+      <svg class="px-vis-svg" id="chartSVG">
+        <content></content>
+      </svg>
+    </template>
+</dom-module>
+
+<script>
+    Polymer({
+
+        is: 'px-vis-svg',
+
+        /****** EVENTS ******/
+        /**
+         * Fired once d3 svg drawing element has been configured.
+         *
+         * Uses the px-vis-behavior-chart behavior, for listening and setting property, locally or globally.
+         * Detail includes:
+         *
+         * ```
+         * { 'data': d3.select('g') }
+         * ```
+         *
+         * @event px-vis-svg-updated
+         */
+         /*
+         * Fired once the svg is configured, passes the svg element inside px-vis-svg.
+         *
+         * Uses the px-vis-behavior-chart behavior, for listening and setting property, locally or globally.
+         * ```
+         * {'data': this.$.chartSVG}
+         * ```
+         * @event px-vis-svg-element-updated
+         */
+
+        behaviors: [
+          PxVisBehavior.sizing,
+          PxVisBehavior.commonMethods,
+          PxVisBehaviorD3.svg
+        ],
+
+        /**
+         * Properties block, expose attribute values to the DOM via 'reflect'
+         *
+         * @property properties
+         * @type Object
+         */
+        properties: {
+          /**
+           * A list of sub elements should we need to know our children
+           *
+           *
+           */
+          // _childElems:{
+          //   type:Array,
+          //   value:[]
+          // }
+        },
+
+        observers: [
+          '_setSVG(width,height,margin)'
+        ],
+
+
+
+        /**
+         *  When ready, let's find out who our children are
+         */
+        // ready: function() {
+        //   // Polymer.dom(this).observeNodes(this._onEffectiveDomUpdated.bind(this));
+        // },
+        // created: function(){
+        // },
+        // attached: function() {
+        // },
+
+        // _onEffectiveDomUpdated: function (info) {
+        //   this.async(function () {
+        //     info.addedNodes.forEach(this._onNodeAdded.bind(this));
+        //   });
+        // },
+        // _onNodeAdded: function (node) {
+        //   if (!(node instanceof Text)) {
+        //     node.__map = this.map;
+        //     this._childElems.push(node);
+        //   }
+        // },
+
+        /**
+        * when attached, re-fire set properties for precipitation pattern, as well as the svg element that's inside px-svg.
+        *
+        * @method attached
+        */
+        attached: function(){
+          if(this._doesObjHaveValues(this.svg)){
+            this.fire('px-vis-svg-updated',{ 'data': this.svg, 'dataVar': 'svg', 'method': 'set' });
+            this.fire('px-vis-svg-element-updated', {'data': this.$.chartSVG, 'dataVar': 'pxSvgElem', 'method': 'set'});
+          }
+
+        },
+
+        /**
+         * Configures the SVG and d3 drawing element
+         *
+         * @method _setSVG
+         */
+        _setSVG: function(){
+          if(this.width && this.height && this._doesObjHaveValues(this.margin)){
+            var svg = Px.d3.select(this.$$("svg"))
+              .attr('width',this.width)
+              .attr('height',this.height);
+
+            this.svg = (this._isVarUndefined(this.svg)) ? svg.append('g') : this.svg;
+            this.svg.attr('width',this.width)
+              .attr('height',this.height)
+              .attr("transform", "translate(" + this.margin.left + ',' + this.margin.top + ")");
+
+            this.notifyPath('svg',this.svg);
+            this.fire('px-vis-svg-updated',{ 'data': this.svg, 'dataVar': 'svg', 'method': 'set' });
+            this.set('pxSvgElem', this.$.chartSVG);
+            this.fire('px-vis-svg-element-updated', {'data': this.$.chartSVG, 'dataVar': 'pxSvgElem', 'method': 'set'});
+          }
+        },
+    });
+</script>

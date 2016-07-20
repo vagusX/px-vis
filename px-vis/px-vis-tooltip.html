@@ -1,0 +1,92 @@
+<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="../px-colors-design/colors.html" />
+<link rel="import" href="px-vis-behavior-common.html" />
+<link rel="import" href="px-vis-behavior-d3.html" />
+<link rel="import" href="px-vis-register.html" />
+
+
+<!--
+Element providing on-chart tooltip display
+- Consumes tooltipData property
+
+
+##### Usage
+
+    <px-vis-tooltip
+        px-svg-elem=[[pxSvgElem]]
+        width="250"
+        margin="[[margin]]"
+        chart-data="[[chartData]]"
+        tooltip-data="[[tooltipData]]">
+    </px-vis-tooltip>
+
+@element px-vis-tooltip
+@blurb Element providing on-chart hover functionality to get data values near the mouse cursor.
+@homepage index.html
+@demo demo.html
+
+-->
+<dom-module id="px-vis-tooltip">
+    <link rel="import" type="css" href="css/px-vis-tooltip.css"/>
+    <template>
+      <px-vis-register
+        id="tooltip"
+        class="hidden u-pl u-pr u-pt u-pb"
+        tooltip-data=[[tooltipData]]
+        chart-data="[[chartData]]"
+        x-axis-type="[[xAxisType]]"
+        y-axis-type="[[yAxisType]]"
+        complete-series-config="[[completeSeriesConfig]]">
+      </px-vis-register>
+    </template>
+</dom-module>
+
+<script>
+  Polymer({
+
+    is: 'px-vis-tooltip',
+
+    behaviors: [
+      PxVisBehavior.sizing,
+      PxVisBehaviorD3.svg,
+      PxVisBehavior.dataset,
+      PxVisBehavior.tooltipData,
+      PxVisBehavior.axisTypes,
+      PxVisBehavior.completeSeriesConfig,
+      commonColors
+    ],
+
+    /**
+     * Properties block, expose attribute values to the DOM via 'reflect'
+     *
+     * @property properties
+     * @type Object
+     */
+    properties: {
+      _rect: {
+        type: Object,
+        value: function() {return{};}
+      }
+    }, //properties
+
+    observers: [
+      '_updateTooltip(tooltipData.*)'
+     ],
+     attached: function() {
+       this.set('_rect', this.pxSvgElem.getBoundingClientRect());
+     },
+    _updateTooltip: function(){
+      if(this.tooltipData.mouse !== null){
+        this.toggleClass('hidden',false, this.$.tooltip);
+        this._moveTooltip();
+      } else {
+        this.toggleClass('hidden',true, this.$.tooltip);
+      }
+    },
+    _moveTooltip: function() {
+      // TODO allow spacing adjustment
+      this.$.tooltip.style.left = this._rect.left + Number(this.margin.left) + 15 + this.tooltipData.mouse[0] + 'px';
+      this.$.tooltip.style.top = this._rect.top + Number(this.margin.top) + 5 + this.tooltipData.mouse[1]  + 'px';
+    }
+  });
+</script>

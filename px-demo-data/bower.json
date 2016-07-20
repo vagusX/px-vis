@@ -1,0 +1,17 @@
+{
+  "name": "px-demo-data",
+  "version": "0.0.10",
+  "authors": [
+    "GE"
+  ],
+  "description": "sample test data",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "./bower_components",
+    "test",
+    "tests"
+  ]
+}

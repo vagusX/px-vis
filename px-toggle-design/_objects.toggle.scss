@@ -1,0 +1,220 @@
+////
+/// PX-TOGGLE-DESIGN
+/// Defines simple toggle objects
+/// @group px-toggle-design
+////
+
+@import "px-defaults-design/_settings.defaults.scss";
+@import "px-colors-design/_settings.colors.scss";
+@import "px-helpers-design/_generic.helpers.scss";
+
+/// @type String [default] - Prepend value for all generated classes
+$inuit-toggle-namespace         : $inuit-namespace !default;
+
+/// @type Color [default] - Foreground color
+$inuit-toggle-color             : $gray9 !default;
+
+/// @type Color [default] - Background color
+$inuit-toggle-background        : $gray4 !default;
+
+/// @type Color [default] - Border color
+$inuit-toggle-border            : $gray5 !default;
+
+/// @type Color [default] - Switch color
+$inuit-toggle-switch            : $white !default;
+
+/// @type Color [default] - Switch color border
+$inuit-toggle-switch-border     : $gray2 !default;
+
+/// @type Color | String [default] - Switch color shadow
+$inuit-toggle-switch-shadow     : 0px 1px 0px rgba($black, .15) !default;
+
+/// @type Color [default] - Background color on
+$inuit-toggle-background--on    : $select-blue-default !default;
+
+/// @type Color [default] - Border color on
+$inuit-toggle-border--on        : $select-blue-hover !default;
+
+/// @type Boolean [default] - Produce CSS for small toggles?
+$inuit-enable-toggle--small     : false !default;
+
+/// @type Boolean [default] - Produce CSS for large toggles?
+$inuit-enable-toggle--large     : false !default;
+
+/// @type Boolean [default] - Produce CSS for huge toggles?
+$inuit-enable-toggle--huge      : false !default;
+  
+.#{$inuit-toggle-namespace}toggle__input,
+%#{$inuit-toggle-namespace}toggle__input {
+  @include accessibility;
+  &:checked + {
+    .#{$inuit-toggle-namespace}toggle__label,
+    %#{$inuit-toggle-namespace}toggle__label {
+      background-color: $inuit-toggle-border--on;
+      &:before {
+        background-color: $inuit-toggle-background--on;
+      }
+      &:after {
+        margin-left: $inuit-base-spacing-unit--huge;
+      }
+    }
+  }
+}
+
+.#{$inuit-toggle-namespace}toggle__label,
+%#{$inuit-toggle-namespace}toggle__label {
+  position: relative;
+  display: block;
+  width: $inuit-base-spacing-unit--huge * 2;
+  height: $inuit-base-spacing-unit--huge;
+  border-radius: $inuit-base-spacing-unit--huge;
+  padding: 1px;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  transition: background .4s;
+  background-color: $inuit-toggle-border;
+  text-indent: -9999rem;
+  &:before, &:after {
+    position: absolute;
+    display: block;
+    content: "";
+  }
+  &:before {
+    top: 1px;
+    right: 1px;
+    bottom: 1px;
+    left: 1px;
+    border-radius: $inuit-base-spacing-unit--huge;
+    transition: background .4s;
+    background-color: $inuit-toggle-background;
+  }
+  &:after {
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    width: calc(#{$inuit-base-spacing-unit--huge} - 6px);
+    border: 1px solid $inuit-toggle-switch-border;
+    border-radius: calc(#{$inuit-base-spacing-unit--huge} - 6px);
+    box-shadow: $inuit-toggle-switch-shadow;
+    background-color: $inuit-toggle-switch;
+    transition: margin .4s, background .4s;
+  }
+}
+
+
+
+@if ($inuit-enable-toggle--small == true) {
+
+  /**
+   * Small buttons.
+   */
+
+  .#{$inuit-toggle-namespace}toggle__input--small,
+  %#{$inuit-toggle-namespace}toggle__input--small {
+    &:checked + {
+      .#{$inuit-toggle-namespace}toggle__label--small,
+      %#{$inuit-toggle-namespace}toggle__label--small {
+        &:after {
+          margin-left: $inuit-base-spacing-unit--large;
+        }
+      }
+    }
+  }
+  
+  .#{$inuit-toggle-namespace}toggle__label--small,
+  %#{$inuit-toggle-namespace}toggle__label--small {
+    width: $inuit-base-spacing-unit--large * 2;
+    height: $inuit-base-spacing-unit--large;
+    border-radius: $inuit-base-spacing-unit--large;
+    &:before {
+      border-radius: $inuit-base-spacing-unit--large;
+    }
+    &:after {
+      top: 2px;
+      bottom: 2px;
+      left: 2px;
+      width: calc(#{$inuit-base-spacing-unit--large} - 4px);
+      border-radius: calc(#{$inuit-base-spacing-unit--large} - 4px);
+    }
+  }
+
+}
+
+
+
+@if ($inuit-enable-toggle--large == true) {
+
+  /**
+   * Small buttons.
+   */
+
+  .#{$inuit-toggle-namespace}toggle__input--large,
+  %#{$inuit-toggle-namespace}toggle__input--large {
+    &:checked + {
+      .#{$inuit-toggle-namespace}toggle__label--large,
+      %#{$inuit-toggle-namespace}toggle__label--large {
+        &:after {
+          margin-left: $inuit-base-spacing-unit--large * 2;
+        }
+      }
+    }
+  }
+  
+  .#{$inuit-toggle-namespace}toggle__label--large,
+  %#{$inuit-toggle-namespace}toggle__label--large {
+    width: $inuit-base-spacing-unit--large * 4;
+    height: $inuit-base-spacing-unit--large * 2;
+    border-radius: $inuit-base-spacing-unit--large * 2;
+    &:before {
+      border-radius: $inuit-base-spacing-unit--large * 2;
+    }
+    &:after {
+      top: calculateRem(4px);
+      bottom: calculateRem(4px);
+      left: calculateRem(4px);
+      width: calc(#{$inuit-base-spacing-unit--large * 2} - #{calculateRem(8px)});
+      border-radius: calc(#{$inuit-base-spacing-unit--large * 2} - #{calculateRem(8px)});
+    }
+  }
+
+}
+
+
+
+@if ($inuit-enable-toggle--huge == true) {
+
+  /**
+   * Small buttons.
+   */
+
+  .#{$inuit-toggle-namespace}toggle__input--huge,
+  %#{$inuit-toggle-namespace}toggle__input--huge {
+    &:checked + {
+      .#{$inuit-toggle-namespace}toggle__label--huge,
+      %#{$inuit-toggle-namespace}toggle__label--huge {
+        &:after {
+          margin-left: $inuit-base-spacing-unit--huge * 2;
+        }
+      }
+    }
+  }
+  
+  .#{$inuit-toggle-namespace}toggle__label--huge,
+  %#{$inuit-toggle-namespace}toggle__label--huge {
+    width: $inuit-base-spacing-unit--huge * 4;
+    height: $inuit-base-spacing-unit--huge * 2;
+    border-radius: $inuit-base-spacing-unit--huge * 2;
+    &:before {
+      border-radius: $inuit-base-spacing-unit--huge * 2;
+    }
+    &:after {
+      top: $inuit-base-spacing-unit--tiny;
+      bottom: $inuit-base-spacing-unit--tiny;
+      left: $inuit-base-spacing-unit--tiny;
+      width: calc(#{$inuit-base-spacing-unit--huge * 2} - #{$inuit-base-spacing-unit--small});
+      border-radius: calc(#{$inuit-base-spacing-unit--huge * 2} - #{$inuit-base-spacing-unit--small});
+    }
+  }
+
+}

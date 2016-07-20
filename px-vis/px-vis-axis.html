@@ -1,0 +1,384 @@
+<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="px-vis-behavior-common.html" />
+<link rel="import" href="px-vis-behavior-d3.html" />
+<link rel="import" href="../px-colors-design/colors.html" />
+
+
+<!--
+d3 element creating an axis for the chart
+
+##### Usage
+
+    <px-vis-axis
+        svg="[[svg]]"
+        axis="[[x]]"
+        margin="[[margin]]"
+        title="Date"
+        orientation="bottom"
+        label-position="center"
+        current-domain="[[currentDomainX]]">
+    </px-vis-axis>
+
+##### d3 reference
+https://github.com/mbostock/d3/wiki/SVG-Axes
+
+@element px-vis-axis
+@blurb d3 element creating an axis for the chart
+@homepage index.html
+@demo demo.html
+-->
+<dom-module id="px-vis-axis">
+    <link rel="import" type="css" href="css/px-vis.css"/>
+    <template>
+
+    </template>
+</dom-module>
+
+<script>
+    Polymer({
+
+        is: 'px-vis-axis',
+
+        behaviors: [
+          PxVisBehaviorD3.svg,
+          PxVisBehaviorD3.axis,
+          PxVisBehavior.completeSeriesConfig,
+          PxVisBehavior.commonMethods,
+          PxVisBehaviorD3.axisConfig,
+          commonColors
+        ],
+
+        /**
+         * Properties block, expose attribute values to the DOM via 'reflect'
+         *
+         * @property properties
+         * @type Object
+         */
+        properties: {
+          /**
+           * Holder for the instantiated d3 axis
+           *
+           * @property _axis
+           * @type Object
+           */
+          _axis: {
+            type: Object,
+            value: function() {return{};},
+            notify: true
+          },
+          /**
+           * Holder for the axis drawing
+           *
+           * @property _axisGroup
+           * @type Object
+           */
+          _axisGroup: {
+            type: Object,
+            value: function() {return{};}
+          },
+          /**
+           * A unique ID for the axis
+           *
+           * @property axisId
+           * @type String
+           * @default random string
+           */
+          axisId: {
+            type:String,
+            value: '',
+            notify: true,
+            reflectToAttribute: true
+          }
+        },
+
+        observers: [
+          'drawElement(currentDomain,svg,axis,margin)',
+          'drawSeriesBars(completeSeriesConfig.*)',
+          '_muteSeriesBars(mutedSeries.*)'
+        ],
+
+
+        ready: function(){
+          // if there is no dev set unique ID, generate one
+          if(!this.axisId){
+            this.set('axisId', this.generateRandomID('axis_'));
+          }
+        },
+
+        /**
+         * sets up this._axis as a d3 axis object.
+         *
+         * @method defineAxis
+         */
+        defineAxis: function(){
+          switch(this.orientation){
+            case 'bottom':
+              this._axis = Px.d3.axisBottom(this.axis);
+              break;
+
+            case 'top':
+              this._axis = Px.d3.axisTop(this.axis);
+              break;
+
+            case 'right':
+              this._axis = Px.d3.axisRight(this.axis);
+              break;
+
+            default: //case 'left':
+              this._axis = Px.d3.axisLeft(this.axis);
+              break;
+          }
+
+          // change default (10) ticks
+          // this._axis.ticks(10);
+          // change default ticks with specific time
+          // this._axis.ticks(d3.time.months, 1);
+          // this._axis.ticks(d3.time.days, 7);
+          // this._axis.ticks(d3.time.minutes, 15);
+          if(this.tickValues && this.tickValues.length > 0){
+            this._axis.tickValues(this.tickValues);
+          }
+
+          // controls the tick mark size for ticks with numbers
+          // this._axis.innerTickSize(-1000);
+          // this._axis.tickPadding(10);
+          // controls the first and last ticks
+          // TODO rename var names to match new d3
+          this._axis.tickSizeOuter(this.outerTickSize);
+
+          // https://github.com/mbostock/d3/wiki/Formatting#d3_format
+          // this._axis.tickFormat(d3.format(",.0f"));
+
+          // TODO rename var names to match new d3
+          if(this.labelPosition !== 'center'){
+            this._axis.tickSizeInner(this.labelTypeSize);
+          }
+
+        },
+        /**
+         * Draws the axis
+         *
+         * @method drawElement
+         */
+        drawElement: function() {
+          if(this._doesObjHaveValues(this.svg) && this._doesObjHaveValues(this.axis) && this._doesObjHaveValues(this.margin) && this._doesObjHaveValues(this.currentDomain)){
+            this.defineAxis();
+            // TODO unify my orientation checks
+            // TODO suport top and right
+            if(this.orientation === 'bottom'){
+              var h = this.svg.attr('height') - this.margin.bottom - this.margin.top;
+
+              this.translateAmt = [0,h];
+            } else if(this.orientation === 'left'){
+              this.translateAmt = [0,0];
+            }
+
+            // checks to see if the axis already exists. If not, create; if so, update
+            if(this._isObjEmpty(this._axisGroup)) {
+              this._axisGroup = this.svg.append("g")
+                .attr("class", "axis")
+                .attr('axis-id',this.axisId)
+                .attr("transform", "translate(" + this.translateAmt.join(',') + ")")
+                .call(this._axis);
+                // .each(function(d) { d3.select(this).call(_this._axis.scale(_this.axis[d])); })
+
+              this._setLineStyles(this._axisGroup,'line,path');
+              this._setLabelStyles(this._axisGroup);
+
+              if(this.title){
+                this.drawTitle();
+              }
+
+              this.drawSeriesBars();
+
+            } else {
+              this._axisGroup
+              // .duration(750)
+              .attr("transform", "translate(" + this.translateAmt.join(',') + ")")
+              .call(this._axis);
+
+              this._setLineStyles(this._axisGroup,'line');
+              this._setLabelStyles(this._axisGroup);
+            }
+          }
+        },
+        /**
+         * Calculates the dimensions for the label.
+         *
+         * @method setLabelDims
+         */
+        setLabelDims: function(){
+          var label = {};
+          switch(this.orientation){
+            case 'bottom':
+              label.x = this.labelTypeSize / 4;
+              label.y = this.labelTypeSize / 4;
+              label.anchor = (this.labelPosition === 'after') ? 'start' : 'end';
+              break;
+
+            case 'top':
+              label.x = this.labelTypeSize / -4;
+              label.y = this.labelTypeSize / -4;
+              label.anchor = (this.labelPosition === 'after') ? 'start' : 'end';
+              break;
+
+            case 'left':
+              label.x = this.labelTypeSize * -2/3;
+              label.y = (this.labelPosition === 'after') ? this.labelTypeSize * -2/3 : this.labelTypeSize * 2/3;
+              label.anchor = 'end';
+              break;
+
+            case 'right':
+              label.x = this.labelTypeSize * 2/3;
+              label.y = (this.labelPosition === 'after') ? this.labelTypeSize * -2/3 : this.labelTypeSize * 2/3;
+              label.anchor = 'start';
+              break;
+          }
+
+          return label;
+        },
+        /**
+         * Sets the d3 attrs for the labels
+         *
+         * @method _setLabelStyles
+         */
+        _setLabelStyles:function(elem){
+          elem.selectAll('text')
+            .attr('font-size', this.labelTypeSize + 'px')
+            .attr('font-style','GE Inspira Sans');
+
+          if(this.labelPosition !== 'center'){
+            var label = this.setLabelDims();
+
+            elem.selectAll('text')
+              .attr("y", label.y)
+              .attr("x", label.x)
+              .attr("text-anchor", label.anchor)
+              .style("text-anchor", label.anchor)
+              .attr('transform',"translate(" + this.labelTranslation.join(',') + ") rotate(" + this.labelRotation + ")");
+          }
+        },
+        /**
+         * Sets the axis line styles
+         *
+         * @method _setLineStyles
+         */
+        _setLineStyles:function(elem,lines){
+          elem.selectAll(lines)
+            .attr('test','test')
+            .attr('fill','none')
+            .attr('stroke', this.colors.grey9)
+            .attr('shape-rendering', 'crispEdges')
+            .attr("stroke-width", this.strokeWidth);
+        },
+        /**
+         * Draws the axis title
+         *
+         * @method drawTitle
+         */
+        drawTitle:function(){
+          var ext = this._axisGroup.node().getBBox(),
+              location = this._doesObjHaveValues(this.titleLocation) ? 'custom' : this.orientation,
+              x,y,r,anchor;
+
+
+          switch(location){
+            case 'bottom':
+              x = parseFloat(ext['width']) / 2 + this.translateAmt[0];
+              y = this.labelTypeSize * 1.5 + parseFloat(ext['height']) + this.translateAmt[1];
+              r = 0;
+              anchor = "middle";
+              break;
+
+            case 'top':
+              x = parseFloat(ext['width']) / 2 + this.translateAmt[0];
+              y = this.translateAmt[1];
+              r = 0;
+              anchor = "middle";
+              break;
+
+            case 'left':
+              x = (this.labelTypeSize + parseFloat(ext['width'])) * -1 + this.translateAmt[0];
+              y = parseFloat(ext['height']) / 2 + this.translateAmt[1];
+              r = -90;
+              anchor = "middle";
+              break;
+
+            case 'right':
+              x = this.labelTypeSize + parseFloat(ext['width']) + this.translateAmt[0];
+              y = parseFloat(ext['height']) / 2 + this.translateAmt[1];
+              r = 90;
+              anchor = "middle";
+              break;
+
+            case 'custom':
+              x = this.titleLocation.x;
+              y = this.titleLocation.y;
+              r = this.titleLocation.r;
+              anchor = this.titleLocation.anchor;
+              break;
+          }
+
+          this._titleGroup = this.svg.append("g")
+            .attr('class','title-group')
+            .attr('for', this.axisId)
+            .attr('transform',"translate(" + x + ',' + y + ")");
+
+          this._titleGroup.append("text")
+            .attr('class','axis-title')
+            .attr('font-size', this.titleTypeSize + 'px')
+            .attr('font-style','GE Inspira Sans')
+            .text(this.title)
+            .attr("text-anchor", anchor)
+            .style("text-anchor", anchor)
+            .attr('transform',"rotate(" + r + ")");
+        },
+        /**
+         * Draws the color bars for each series
+         *
+         * @method drawSeriesBars
+         */
+        drawSeriesBars:function(){
+          if(this._doesObjHaveValues(this.completeSeriesConfig) && this._doesObjHaveValues(this._axisGroup)){
+            // FIXME do we need to move the title group based on how many series we have
+            var keys = Object.keys(this.completeSeriesConfig),
+                kLen = keys.length,
+                i;
+            for(i = 0; i < kLen; i++){
+              this._drawBar(this._titleGroup,keys[i],this.completeSeriesConfig[keys[i]]['color'],i);
+            }
+          }
+        },
+        /**
+         * Mutes and unmutes the color bars for each series
+         *
+         * @method muteSeriesBars
+         */
+        _muteSeriesBars:function(){
+          var keys = Object.keys(this.mutedSeries);
+          for(var i = 0; i < keys.length; i++){
+            var series = this._titleGroup.select('[series-bar-id=bar_' + keys[i] + ']');
+            // if we want to mute it
+            if(this.mutedSeries[keys[i]]){
+              series.attr('opacity',0.5);
+            } else {
+              series.attr('opacity',1);
+            }
+          }
+        },
+        /**
+         * Helper function to draw the series color bar
+         *
+         * @method drawSeriesBars
+         */
+        _drawBar:function(elem,sid,color,index){
+          var w = elem.select('.axis-title').node().getBoundingClientRect()['height'];
+          elem.append("rect")
+            .attr('height',3)
+            .attr('width',15)
+            .attr('fill',color)
+            .attr('series-bar-id','bar_' + sid)
+            .attr('transform',"translate(-12," + (-w - 8 * index) + ")");
+        }
+    });
+</script>

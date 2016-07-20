@@ -1,0 +1,237 @@
+<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="px-vis-behavior-common.html" />
+<link rel="import" href="px-vis-behavior-d3.html" />
+<link rel="import" href="../px-colors-design/colors.html" />
+
+<!--
+Element which draws lines series onto the chart
+
+##### Usage
+
+    <px-vis-line
+        svg="[[svg]]"
+        clip-path="[[clipPath]]"
+        series-id="[[item.name]]"
+        series-number="[[index]]"
+        chart-data="[[item]]"
+        x="[[x]]"
+        y="[[y]]"
+        current-domain-x="[[currentDomainX]]"
+        current-domain-y="[[currentDomainY]]"
+        muted-series="[[mutedSeries]]">
+    </px-vis-line>
+
+@element px-vis-line
+@blurb Element which draws lines series onto the chart
+@homepage index.html
+@demo demo.html
+-->
+<dom-module id="px-vis-line">
+    <link rel="import" type="css" href="css/px-vis.css"/>
+    <template>
+
+    </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: 'px-vis-line',
+
+    behaviors: [
+      PxVisBehaviorD3.svg,
+      PxVisBehaviorD3.axes,
+      PxVisBehavior.dataset,
+      PxVisBehavior.mutedSeries,
+      PxVisBehavior.commonMethods,
+      PxVisBehaviorD3.clipPath,
+      PxVisBehavior.completeSeriesConfig,
+      commonColors
+    ],
+
+    /**
+     * Properties block, expose attribute values to the DOM via 'reflect'
+     *
+     * @property properties
+     * @type Object
+     */
+    properties: {
+      /**
+       * A unique ID for each line series
+       *
+       * @property seriesId
+       * @type String
+       */
+      seriesId:{
+        type:String
+      },
+      /**
+       * A holder object for the series object
+       *
+       */
+      linePath:{
+        type:Object
+      },
+      /**
+       * A holder object for the series builder
+       *
+       * @property linePath
+       * @type String
+       */
+      lineBuilder:{
+        type:Object,
+        value: function() {return{};}
+      },
+      /**
+       * A holder object for the series group
+       *
+       */
+      lineGroup:{
+        type:Object,
+        value: function() {return{};}
+      },
+      parallelCoordinates: {
+        type: Boolean,
+        value: false
+      },
+
+      multiPath: {
+        type: Boolean,
+        value: false
+      }
+    },
+
+    observers: [
+      // TODO Investigate how to make chartData woth with pushing new data in...
+      'drawElement(svg,currentDomainX,currentDomainY,chartData.*,completeSeriesConfig.*)',
+      'isIdInMuted(mutedSeries.*)',
+      '_addClipPath(clipPath)'
+     ],
+
+    ready:function(){
+      // if there is no dev set unique ID, generate one
+      if(!this.seriesId){
+        this.set('seriesId', this.generateRandomID('line_'));
+      }
+    },
+
+    /**
+     * Draws or updates the line element.
+     * Called from an observer watching for data and the necessary d3 objects
+     *
+     * @method drawElement
+     */
+    drawElement: function() {
+      this.debounce('draw',function(){
+        if(this.parallelCoordinates) {
+          var data = this.chartData,
+              dims = this.completeSeriesConfig[this.seriesId]['x'],
+              path = Px.d3.line(),
+
+              line = function(d) {
+                return path(dims.map(function(p) {
+                  return [~~this.x(p), ~~this.y[p](d[p])];
+                }.bind(this)));
+              }.bind(this);
+        } else {
+          var data = [this.chartData],
+              _this = this,
+              xKey = _this.completeSeriesConfig[_this.seriesId]['x'],
+              yKey = _this.completeSeriesConfig[_this.seriesId]['y'];
+
+          //round pixels values to optimize svg perfs
+          var line = Px.d3.line()
+            .x(function(d) {
+                return ~~_this.x(d[xKey]);
+            })
+            .y(function(d) {
+                return ~~_this.y(d[yKey]);
+            })
+            .defined(function(d) {
+              //tests is equivalent to !isNaN but slightly faster
+              return !isNaN(d[yKey]);
+              // return d[yKey] === d[yKey];
+            });
+        }
+
+        // checks to see if the group already exists. If not, create; if so, update
+        if(this._isObjEmpty(this.lineGroup)) {
+          // draw the path
+          this.lineGroup = this.svg.append("g")
+            .attr("series-id", 'line_' + this.seriesId)
+            .attr("class", "series-line");
+        }
+
+        this.lineBuilder = this.lineGroup.selectAll('path.series-line')
+          .data(data);
+
+        this.lineBuilder.exit().remove();
+
+        this.lineBuilder.enter()
+          .append('path')
+          .attr("class", "series-line")
+          .attr("series-id", function(d,i){
+            return this.multiPath ? 'line_' + d[this.seriesId] : 'line_' + this.seriesId
+          }.bind(this))
+          .attr('fill','none')
+        .merge(this.lineBuilder)
+          .attr("d", line)
+          .attr('stroke',this.completeSeriesConfig[this.seriesId]['color'])
+          .attr('stroke-opacity',1);
+
+        this.linePath = this.lineGroup.selectAll('path.series-line');
+
+        this._addClipPath();
+
+      },10);
+    },
+
+    /**
+     * Helper to call addClipPath with the elem
+     *
+     * @method _addClipPath
+     */
+    _addClipPath: function(){
+      this.addClipPath(this.lineGroup);
+    },
+
+    /**
+     * Checks mutedSeries to see if this ID is in there
+     * Called from an observer watching mutedSeries
+     *
+     * @method isIdInMuted
+     */
+    isIdInMuted: function() {
+      if(this.multiPath && this._doesObjHaveValues(this.linePath)){
+        this.linePath.style("display", function(d) {
+          return this.mutedSeries[d[this.seriesId]] ? 'none' : null;
+        }.bind(this));
+      } else if(this.mutedSeries.hasOwnProperty(this.seriesId)){
+        // if true, mute
+        if(this.mutedSeries[this.seriesId]){
+          this._muteLine();
+        } else {
+          this._colorLine();
+        }
+      }
+    },
+    /**
+     * Adds full color to the line.
+     *
+     * @method _colorLine
+     */
+    _colorLine:function(){
+      this.linePath.attr('stroke',this.completeSeriesConfig[this.seriesId]['color'])
+        .attr('stroke-opacity',1);
+    },
+    /**
+     * Adds muted color to the line.
+     *
+     * @method muteElements
+     TODO add dev set color and opacity
+     */
+     _muteLine:function(){
+       this.linePath.attr('stroke',this.completeSeriesConfig[this.seriesId]['color'])
+         .attr('stroke-opacity',0.3);
+     },
+  });
+</script>

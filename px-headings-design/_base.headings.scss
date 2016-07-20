@@ -1,0 +1,59 @@
+////
+/// PX-HEADINGS-DESIGN
+/// Defines base headings styles
+/// @group px-headings-design
+////
+
+@import "px-defaults-design/_settings.defaults.scss";
+@import "px-mixins-design/_tools.mixins.scss";
+
+/// @type String [default] - Prepend value for all generated classes
+$inuit-headings-namespace   : $inuit-namespace !default;
+
+/// @type Number [default] - Heading size 1
+$inuit-heading-size-1       : 75px !default;
+
+/// @type Number [default] - Heading size 2
+$inuit-heading-size-2       : 60px !default;
+
+/// @type Number [default] - Heading size 3
+$inuit-heading-size-3       : 45px !default;
+
+/// @type Number [default] - Heading size 4
+$inuit-heading-size-4       : 30px !default;
+
+/// @type Number [default] - Heading size 5
+$inuit-heading-size-5       : 20px !default;
+
+/// @type Number [default] - Heading size 6
+$inuit-heading-size-6       : 12px !default;
+  
+.#{$inuit-headings-namespace}alpha,
+%#{$inuit-headings-namespace}alpha {
+  @include inuit-font-size($inuit-heading-size-1);
+}
+
+.#{$inuit-headings-namespace}beta,
+%#{$inuit-headings-namespace}beta {
+  @include inuit-font-size($inuit-heading-size-2);
+}
+
+.#{$inuit-headings-namespace}gamma,
+%#{$inuit-headings-namespace}gamma {
+  @include inuit-font-size($inuit-heading-size-3);
+}
+
+.#{$inuit-headings-namespace}delta,
+%#{$inuit-headings-namespace}delta {
+  @include inuit-font-size($inuit-heading-size-4);
+}
+
+.#{$inuit-headings-namespace}epsilon,
+%#{$inuit-headings-namespace}epsilon {
+  @include inuit-font-size($inuit-heading-size-5);
+}
+
+.#{$inuit-headings-namespace}zeta,
+%#{$inuit-headings-namespace}zeta {
+  @include inuit-font-size($inuit-heading-size-6);
+}
