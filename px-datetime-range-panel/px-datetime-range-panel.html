@@ -168,9 +168,9 @@ Rangepicker modal component.
        *```
        *   [
        *    {
-       *      "displayText": "Last 5 Minutes",
-       *      "startDateTime": "2013-02-04T22:44:30.652Z",
-       *      "endDateTime": "2013-02-04T22:49:30.652Z"
+       *      "displayText": "Yesterday",
+       *      "startDateTime": moment().subtract(1, 'days').toISOString(),
+       *      "endDateTime": moment().startOf('day').toISOString()
        *    },
        *    {
        *      "displayText": "Last 12 Hours",

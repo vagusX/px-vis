@@ -1,3 +1,7 @@
+v0.4.4
+==================
+* Removed # in polymer dependencies
+
 v0.4.3
 ==================
 * Fixed footer

@@ -1,3 +1,7 @@
+v0.5.2
+==================
+* Removed bower resolution
+
 v0.5.1
 ==================
 * Fixed blockFutureDates blockPastDates validation bug
