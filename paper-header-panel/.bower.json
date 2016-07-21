@@ -36,7 +36,7 @@
     "tag": "v1.1.6",
     "commit": "3bf4e4f22eb12dd98039bad0eaaa942c2e869961"
   },
-  "_source": "https://github.com/PolymerElements/paper-header-panel.git",
+  "_source": "git://github.com/PolymerElements/paper-header-panel.git",
   "_target": "^1.0.0",
   "_originalSource": "PolymerElements/paper-header-panel"
 }

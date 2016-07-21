@@ -1,3 +1,7 @@
+v0.0.11
+==================
+* Added new timeseries data in new data type
+
 v0.0.10
 ==================
 * Added new datasets in new data type

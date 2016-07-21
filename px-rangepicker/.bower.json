@@ -1,6 +1,6 @@
 {
   "name": "px-rangepicker",
-  "version": "1.1.1",
+  "version": "1.1.3",
   "main": [
     "px-rangepicker.html"
   ],
@@ -15,7 +15,7 @@
     "OSS_Notice.pdf"
   ],
   "dependencies": {
-    "polymer": "^1.6.0",
+    "polymer": "#^1.5.0",
     "px-theme": "https://github.com/PredixDev/px-theme.git#~0.8.0",
     "px-datetime-common": "~0.5.0",
     "px-datetime-range-field": "~0.3.0",
@@ -34,15 +34,16 @@
     "px-tabs": "~0.4.0",
     "ace-widget": "LostInBrittany/ace-widget#~1.0.13",
     "px-api-viewer": "https://github.com/PredixDev/px-api-viewer.git",
-    "px-clipboard": "^0.0.1",
-    "px-demo-snippet": "https://github.com/predixdev/px-demo-snippet.git"
+    "px-clipboard": "^0.0.4",
+    "px-demo-snippet": "https://github.com/predixdev/px-demo-snippet.git",
+    "px-list-inline-design": "^0.2.11"
   },
   "homepage": "https://github.com/PredixDev/px-rangepicker",
-  "_release": "1.1.1",
+  "_release": "1.1.3",
   "_resolution": {
     "type": "version",
-    "tag": "v1.1.1",
-    "commit": "fc187d35c9c5f274f7fa24801fecbd6a316297c6"
+    "tag": "v1.1.3",
+    "commit": "58b07e6635e2b362694970a6782b8ee68630349b"
   },
   "_source": "https://github.com/PredixDev/px-rangepicker.git",
   "_target": "~1.1.0",

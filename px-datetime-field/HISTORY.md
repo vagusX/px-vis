@@ -1,3 +1,15 @@
+v0.4.3
+==================
+* Fixed footer
+
+v0.4.2
+==================
+* added apiContainer class to demo
+
+v0.4.1
+==================
+* Updated to mega demo
+
 v0.4.0
 ==================
 * Added blockPastDates
