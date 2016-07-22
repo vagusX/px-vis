@@ -1,6 +1,6 @@
 {
   "name": "px-datetime-range-field",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "main": [
     "px-datetime-range-field.html"
   ],
@@ -16,7 +16,7 @@
     "OSS_Notice.pdf"
   ],
   "dependencies": {
-    "polymer": "#^1.5.0",
+    "polymer": "^1.5.0",
     "px-datetime-common": "~0.4.0",
     "px-datetime-field": "~0.3.0",
     "px-actionable-text-icons-design": "^0.0.3",

@@ -1,6 +1,6 @@
 {
   "name": "px-calendar-picker",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "main": [
     "px-calendar-picker.html"
   ],
@@ -41,11 +41,11 @@
     "px-dropdown": "https://github.com/PredixDev/px-dropdown.git#^0.10.1"
   },
   "homepage": "https://github.com/PredixDev/px-calendar-picker",
-  "_release": "0.3.5",
+  "_release": "0.3.6",
   "_resolution": {
     "type": "version",
-    "tag": "v0.3.5",
-    "commit": "ce93e47e1954fb1e05be74cf45f8f2ade1620019"
+    "tag": "v0.3.6",
+    "commit": "585f090180f167d78bf07905e06fbcff0e1b2a01"
   },
   "_source": "https://github.com/PredixDev/px-calendar-picker.git",
   "_target": "~0.3.0",

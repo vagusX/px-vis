@@ -1,3 +1,7 @@
+v0.2.2
+==================
+* Fixed blockPastDates and blockFutureDates logic
+
 v0.2.1
 ==================
 * Added new demos

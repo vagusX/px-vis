@@ -294,49 +294,39 @@ Rangepicker modal component.
 
       //make sure those presets are allowed
       var today = Px.moment.tz(Px.moment(), this.timeZone),
-          startOk = !this.blockFutureDates || (start.isSameOrBefore(today, 'day')),
-          endOk = !this.blockFutureDates || (end.isSameOrBefore(today, 'day')),
-          startPastOk = !this.blockPastDates || (start.isSameOrAfter(today, 'day')),
-          endPastOk = !this.blockPastDates || (end.isSameOrAfter(today, 'day'));
 
-      //if start is later than today and future dates not allowed don't do anything
+          startOk = (!this.blockFutureDates || (start.isSameOrBefore(today, 'day'))) && (!this.blockPastDates || (start.isSameOrAfter(today, 'day'))),
+          endOk = (!this.blockFutureDates || (end.isSameOrBefore(today, 'day'))) && (!this.blockPastDates || (end.isSameOrAfter(today, 'day')));
+
+
+
+      //check if this preset start date is allowed
       if(startOk) {
         this.$.from.fromMoment = start.clone();
         this.$.to.fromMoment = start.clone();
         this.set('fromMoment', this._preserveTime(this.fromMoment, start.clone()));
 
-        //if end is too far in the future use today
+      } else {
+        //start date is not ok but end is, it means we're blocking past date. Set start date to today
         if(endOk) {
-          this.$.from.toMoment = end.clone();
-          this.$.to.toMoment = end.clone();
-          this.set('toMoment', this._preserveTime(this.toMoment, end.clone()));
-        } else {
-          this.$.from.toMoment = today.clone();
-          this.$.to.toMoment = today.clone();
-          this.set('toMoment', this._preserveTime(this.toMoment, today.clone()));
+          this.$.from.fromMoment = today.clone();
+          this.$.to.fromMoment = today.clone();
+          this.set('fromMoment', this._preserveTime(this.fromMoment, today.clone()));
         }
       }
 
-      //if start date is earlier than today and past dates not allowed
-      if(startPastOk) {
-        this.$.from.fromMoment = start.clone();
-        this.$.to.fromMoment = start.clone();
-        this.set('fromMoment', this._preserveTime(this.fromMoment, start.clone()));
-      } else {
-        this.$.from.fromMoment = today.clone();
-        this.$.to.fromMoment = today.clone();
-        this.set('fromMoment', this._preserveTime(this.fromMoment, today.clone()));
-      }
-
-      //if end date is earlier than today and past dates not allowed
-      if(endPastOk) {
+      //check if this preset end date is allowed
+      if(endOk) {
         this.$.from.toMoment = end.clone();
         this.$.to.toMoment = end.clone();
         this.set('toMoment', this._preserveTime(this.toMoment, end.clone()));
       } else {
-        this.$.from.toMoment = today.clone();
-        this.$.to.toMoment = today.clone();
-        this.set('toMoment', this._preserveTime(this.toMoment, today.clone()));
+        //end date is not ok but start is, it means we're blocking future date. Set end date to today
+        if(startOk) {
+          this.$.from.toMoment = today.clone();
+          this.$.to.toMoment = today.clone();
+          this.set('toMoment', this._preserveTime(this.toMoment, today.clone()));
+        }
       }
 
       this._internalSet = false;
