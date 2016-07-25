@@ -39,6 +39,7 @@ Element which draws lines series onto the chart
 
     behaviors: [
       PxVisBehaviorD3.svg,
+      PxVisBehaviorD3.canvas,
       PxVisBehaviorD3.axes,
       PxVisBehavior.dataset,
       PxVisBehavior.mutedSeries,
@@ -97,49 +98,48 @@ Element which draws lines series onto the chart
       multiPath: {
         type: Boolean,
         value: false
-      }
+      },
+
+      line: {
+        type: Object
+      },
+
+      gradientLine: {
+        type: Boolean,
+        value: false
+      },
+       gradientRange: {
+         type: Array,
+         value: []
+       },
+       _colorArr: {
+         type: Array,
+         computed: '_computeColorArr(completeSeriesConfig,seriesId)'
+       }
     },
 
     observers: [
-      // TODO Investigate how to make chartData woth with pushing new data in...
+      'drawCanvas(canvasContext,currentDomainX,currentDomainY,chartData.*,completeSeriesConfig.*)',
       'drawElement(svg,currentDomainX,currentDomainY,chartData.*,completeSeriesConfig.*)',
       'isIdInMuted(mutedSeries.*)',
       '_addClipPath(clipPath)'
      ],
 
-    ready:function(){
-      // if there is no dev set unique ID, generate one
-      if(!this.seriesId){
-        this.set('seriesId', this.generateRandomID('line_'));
-      }
+    _computeColorArr: function(){
+      var c = this.completeSeriesConfig[this.seriesId]['color'].split('(')[1].split(',');
+      return [
+        Number(c[0]),
+        Number(c[1]),
+        Number(c[2].split(')')[0])
+      ];
     },
 
-    /**
-     * Draws or updates the line element.
-     * Called from an observer watching for data and the necessary d3 objects
-     *
-     * @method drawElement
-     */
-    drawElement: function() {
-      this.debounce('draw',function(){
-        if(this.parallelCoordinates) {
-          var data = this.chartData,
-              dims = this.completeSeriesConfig[this.seriesId]['x'],
-              path = Px.d3.line(),
-
-              line = function(d) {
-                return path(dims.map(function(p) {
-                  return [~~this.x(p), ~~this.y[p](d[p])];
-                }.bind(this)));
-              }.bind(this);
-        } else {
-          var data = [this.chartData],
-              _this = this,
-              xKey = _this.completeSeriesConfig[_this.seriesId]['x'],
-              yKey = _this.completeSeriesConfig[_this.seriesId]['y'];
-
-          //round pixels values to optimize svg perfs
-          var line = Px.d3.line()
+    _defineSingleLine: function(){
+      //round pixels values to optimize svg perfs
+      var _this = this,
+          xKey = _this.completeSeriesConfig[_this.seriesId]['x'],
+          yKey = _this.completeSeriesConfig[_this.seriesId]['y'],
+          line = Px.d3.line()
             .x(function(d) {
                 return ~~_this.x(d[xKey]);
             })
@@ -151,37 +151,144 @@ Element which draws lines series onto the chart
               return !isNaN(d[yKey]);
               // return d[yKey] === d[yKey];
             });
+
+      if(this.renderToCanvas){
+        line.context(this.canvasContext);
+      }
+
+      this.set('line',line);
+    },
+
+    _defineMultiLine: function(){
+      var dims = this.completeSeriesConfig[this.seriesId]['x'],
+          path = Px.d3.line(),
+          line = function(d) {
+            return path(dims.map(function(p) {
+              return [~~this.x(p), ~~this.y[p](d[p])];
+            }.bind(this)));
+          }.bind(this);
+
+      if(this.renderToCanvas){
+        path.context(this.canvasContext);
+      }
+
+      this.set('line',line);
+    },
+    /**
+     * Draws or updates the line element.
+     * Called from an observer watching for data and the necessary d3 objects
+     *
+     * @method drawElement
+     */
+    drawElement: function() {
+      this.debounce('draw',function(){
+        if(!this.renderToCanvas){
+          if(this.parallelCoordinates) {
+            var data = this.chartData;
+            this._defineMultiLine();
+          } else {
+            var data = [this.chartData];
+            this._defineSingleLine();
+          }
+
+          // checks to see if the group already exists. If not, create; if so, update
+          if(this._isObjEmpty(this.lineGroup)) {
+            // draw the path
+            this.lineGroup = this.svg.append("g")
+              .attr("series-id", 'line_' + this.seriesId)
+              .attr("class", "series-line");
+          }
+
+          this.lineBuilder = this.lineGroup.selectAll('path.series-line')
+            .data(data);
+
+          this.lineBuilder.exit().remove();
+
+          this.lineBuilder.enter()
+            .append('path')
+            .attr("class", "series-line")
+            .attr("series-id", function(d,i){
+              return this.multiPath ? 'line_' + d[this.seriesId] : 'line_' + this.seriesId
+            }.bind(this))
+            .attr('fill','none')
+          .merge(this.lineBuilder)
+            .attr("d", this.line)
+            .attr('stroke',this.completeSeriesConfig[this.seriesId]['color'])
+            .attr('stroke-opacity',this._svgLine.bind(this));
+
+          this.linePath = this.lineGroup.selectAll('path.series-line');
+
+          this._addClipPath();
+
+          this.isIdInMuted();
+        }
+      },10);
+    },
+
+    /**
+     * Draws or updates the line element.
+     * Called from an observer watching for data and the necessary d3 objects
+     *
+     * @method drawElement
+     */
+    drawCanvas: function() {
+      this.debounce('drawCanvas',function(){
+        var data;
+
+        if(this.parallelCoordinates) {
+          this._defineMultiLine();
+          data = this.chartData;
+        } else {
+          this._defineSingleLine();
+          data = [this.chartData];
         }
 
-        // checks to see if the group already exists. If not, create; if so, update
-        if(this._isObjEmpty(this.lineGroup)) {
-          // draw the path
-          this.lineGroup = this.svg.append("g")
-            .attr("series-id", 'line_' + this.seriesId)
-            .attr("class", "series-line");
+        if(!this.canvasContext._pxLinesSeries[this.seriesId]){
+          this.canvasContext._pxLinesSeries[this.seriesId] = true;
+          this.canvasContext._pxLinesTotal += 1;
         }
 
-        this.lineBuilder = this.lineGroup.selectAll('path.series-line')
-          .data(data);
+        if(this.canvasContext._pxLinesRedraw === this.canvasContext._pxLinesTotal){
+          this.canvasContext._pxLinesRedraw = 0;
+          // (x1,y1,x2,y2) : for some reason, we need y1 to be -1 or it leaves a pixel....
+          this.canvasContext.clearRect(0, -1, this.canvasContext.canvas.width, this.canvasContext.canvas.height);
+        }
 
-        this.lineBuilder.exit().remove();
+        if(this.gradientLine){
+          for(var i = 0; i < data.length; i++){
+            // if the series is not listed or it is false, draw it
+            if(!this.mutedSeries[data[i][this.seriesId]]){
+              // TODO wrap for in a settimeout and go by 1000s?
+              // setTimeout(function(d){
+              //   this.canvasContext.beginPath();
+              //   this.canvasContext.strokeStyle = this._canvasLineColor(d);
+              //   this.canvasContext.lineWidth = 1;
+              //   this.line(d);
+              //   this.canvasContext.stroke();
+              // }.bind(this,data[i]),1);
+              this.canvasContext.beginPath();
+              this.canvasContext.strokeStyle = this._canvasLineColor(data[i]);
+              this.canvasContext.lineWidth = 1;
+              this.line(data[i]);
+              this.canvasContext.stroke();
+            }
+          }
+        } else { //not gradientLine
+          this.canvasContext.beginPath();
+          for(var i = 0; i < data.length; i++){
+            // if the series is not listed or it is false, draw it
+            if(!this.mutedSeries[data[i][this.seriesId]]){
+              this.line(data[i]);
+            }
+          }
+          this.canvasContext.strokeStyle = this.completeSeriesConfig[this.seriesId]['color'];
+          this.canvasContext.lineWidth = 1;
+          this.canvasContext.stroke();
+        }
 
-        this.lineBuilder.enter()
-          .append('path')
-          .attr("class", "series-line")
-          .attr("series-id", function(d,i){
-            return this.multiPath ? 'line_' + d[this.seriesId] : 'line_' + this.seriesId
-          }.bind(this))
-          .attr('fill','none')
-        .merge(this.lineBuilder)
-          .attr("d", line)
-          .attr('stroke',this.completeSeriesConfig[this.seriesId]['color'])
-          .attr('stroke-opacity',1);
-
-        this.linePath = this.lineGroup.selectAll('path.series-line');
-
-        this._addClipPath();
-
+        this.canvasContext.clearRect(0, -1, -50, this.canvasContext.canvas.height);
+        this.canvasContext._pxLinesRedraw += 1;
+        console.timeEnd('draw');
       },10);
     },
 
@@ -201,16 +308,20 @@ Element which draws lines series onto the chart
      * @method isIdInMuted
      */
     isIdInMuted: function() {
-      if(this.multiPath && this._doesObjHaveValues(this.linePath)){
-        this.linePath.style("display", function(d) {
-          return this.mutedSeries[d[this.seriesId]] ? 'none' : null;
-        }.bind(this));
-      } else if(this.mutedSeries.hasOwnProperty(this.seriesId)){
-        // if true, mute
-        if(this.mutedSeries[this.seriesId]){
-          this._muteLine();
-        } else {
-          this._colorLine();
+      if(this.renderToCanvas){
+        this.drawCanvas();
+      } else {
+        if(this.multiPath && this._doesObjHaveValues(this.linePath)){
+          this.linePath.style("display", function(d) {
+            return this.mutedSeries[d[this.seriesId]] ? 'none' : null;
+          }.bind(this));
+        } else if(this.mutedSeries.hasOwnProperty(this.seriesId)){
+          // if true, mute
+          if(this.mutedSeries[this.seriesId]){
+            this._muteLine();
+          } else {
+            this._colorLine();
+          }
         }
       }
     },
@@ -221,7 +332,30 @@ Element which draws lines series onto the chart
      */
     _colorLine:function(){
       this.linePath.attr('stroke',this.completeSeriesConfig[this.seriesId]['color'])
-        .attr('stroke-opacity',1);
+        .attr('stroke-opacity', this._svgLine.bind(this));
+    },
+
+    _svgLine: function(d){
+      if(this.gradientLine){
+        return this._opacityLine(d);
+      }
+      return 1
+    },
+    /**
+     * Returns the correct opacity to use for the line.
+     *
+     */
+    _opacityLine:function(d){
+      if(this.gradientRange.length === 0){
+        this.gradientRange[0] = Number(this.chartData[0][this.seriesId]);
+        this.gradientRange[1] = Number(this.chartData[this.chartData.length - 1][this.seriesId]);
+      }
+      var n = (this.gradientRange[1] - d[this.seriesId]) / (this.gradientRange[1] - this.gradientRange[0]);
+      return 1 - n * 0.8;
+    },
+    _canvasLineColor:function(d){
+      return 'rgba(' + this._colorArr[0] + ',' + this._colorArr[1] + ',' + this._colorArr[2] + ',' + this._opacityLine(d) + ')';
+      ;
     },
     /**
      * Adds muted color to the line.

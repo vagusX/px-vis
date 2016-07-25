@@ -759,6 +759,12 @@ button.btn {
 .title {
   position: relative; }
 
+.anchor {
+  position: relative; }
+
+.wrapper {
+  max-width: 10px; }
+
 /*------------------------------------*    #CLEARFIX
 \*------------------------------------*/
 /**

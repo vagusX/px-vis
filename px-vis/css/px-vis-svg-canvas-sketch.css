@@ -590,50 +590,13 @@ a {
 .viewport--full-height {
   min-height: 100vh; }
 
-:host {
-  min-height: 2rem;
-  min-width: 15rem;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-  display: -webkit-inline-flex;
-  display: -ms-inline-flexbox;
-  display: inline-flex; }
+.rel-container {
+  position: relative; }
 
-#dateTime {
-  margin-bottom: 0.6666666667rem; }
-
-#secondDateTime {
-  font-weight: bold; }
-
-.series {
-  cursor: pointer;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none; }
-
-.seriesMarker {
-  width: 0.3333333333rem;
-  margin-right: 0.3333333333rem; }
-
-.seriesName {
-  margin-right: 0;
-  padding-right: 0; }
-
-.series.wide {
-  margin-bottom: 0.2rem; }
-  .series.wide .seriesMarker {
-    height: 1.3333333333rem; }
-  .series.wide .seriesData {
-    margin-left: auto; }
-
-.series.narrow {
-  margin-right: 1rem; }
-  .series.narrow .seriesMarker {
-    height: 2rem;
-    margin-top: 0.2rem; }
+.abs-elem {
+  position: absolute;
+  top: 0;
+  left: 0; }
 
 /*------------------------------------*    #PX-META-BUTTONS-DESIGN
 \*------------------------------------*/
@@ -773,34 +736,6 @@ button.btn {
 .u-mv {
   margin-top: 1rem !important;
   margin-bottom: 1rem !important; }
-
-/**
-     * Padding helper classes.
-     *
-     * Add paddings.
-     */
-.u-p {
-  padding: 1rem !important; }
-
-.u-pt {
-  padding-top: 1rem !important; }
-
-.u-pr {
-  padding-right: 1rem !important; }
-
-.u-pb {
-  padding-bottom: 1rem !important; }
-
-.u-pl {
-  padding-left: 1rem !important; }
-
-.u-ph {
-  padding-right: 1rem !important;
-  padding-left: 1rem !important; }
-
-.u-pv {
-  padding-top: 1rem !important;
-  padding-bottom: 1rem !important; }
 
 /**
  * A series of width helper classes that you can use to size things like grid
