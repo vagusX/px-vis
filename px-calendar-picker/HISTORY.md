@@ -1,6 +1,22 @@
+v0.3.10
+==================
+* updated gh-pages script to vulcanize 
+
+v0.3.9
+==================
+* added overflow auto to container
+
+v0.3.8
+==================
+* added shrink-to-fit=no inside viewport of demo.
+
+v0.3.7
+==================
+* set the demo container overflow to auto.
+
 v0.3.6
 ==================
-* Updated component discription in demo
+* Updated component description in demo
 
 v0.3.5
 ==================

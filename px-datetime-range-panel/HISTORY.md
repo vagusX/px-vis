@@ -1,3 +1,7 @@
+v0.2.3
+==================
+* updated gh-pages script to vulcanize demo
+
 v0.2.2
 ==================
 * Fixed blockPastDates and blockFutureDates logic

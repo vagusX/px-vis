@@ -1,6 +1,6 @@
 {
   "name": "px-popover",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "main": [
     "px-popover.html"
   ],
@@ -12,25 +12,26 @@
     "bower_components",
     "node_modules",
     "test",
-    "OSS_Notice.pdf"
+    "OSS_Notice.pdf",
+    "scripts",
+    ".github"
   ],
   "dependencies": {
     "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#^1.0.2",
     "polymer": "^1.5.0",
-    "px-theme": "https://github.com/PredixDev/px-theme.git#~0.8.0",
-    "px-overlay": "https://github.com/PredixDev/px-overlay.git#~0.2.0"
+    "px-theme": "~0.8.0",
+    "px-overlay": "~0.2.0"
   },
   "devDependencies": {
-    "px-starter-kit-design": "https://github.com/PredixDev/px-starter-kit-design.git#~0.4.0",
+    "px-starter-kit-design": "~0.4.0",
     "web-component-tester": "~3.3.14",
     "px-forms-design": "#~0.3.15",
     "px-tables-design": "#~0.3.12",
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#~1.2.3",
     "polymer-font-awesome": "~0.1.5",
     "px-tabs": "~0.4.0",
-    "ace-widget": "LostInBrittany/ace-widget#~1.0.13",
-    "px-api-viewer": "https://github.com/PredixDev/px-api-viewer.git",
-    "px-demo-snippet": "https://github.com/predixdev/px-demo-snippet.git",
+    "px-api-viewer": "~0.0.3",
+    "px-demo-snippet": "~0.0.11",
     "px-actionable-text-icons-design": "^0.0.3",
     "px-code-design": "^0.2.11",
     "px-headings-design": "^0.2.14",

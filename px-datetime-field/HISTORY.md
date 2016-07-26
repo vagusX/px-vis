@@ -1,6 +1,10 @@
+v0.4.6
+==================
+* Added vulcanize
+
 v0.4.5
 ==================
-* Updated component discription in demo 
+* Updated component discription in demo
 
 v0.4.4
 ==================
