@@ -78,8 +78,8 @@ Tooltip element that provides additional information to users once hovered over 
         value:''
       },
       /**
-       * The id of the element that the tooltip is anchored to. This element
-       * must be a sibling of the tooltip.
+       * the amount of time in miliseconds before the tooltip should appear when the
+       * target element is hovered over.
        * @property delay
        * @type Number
        * @default 1000
@@ -240,7 +240,7 @@ Tooltip element that provides additional information to users once hovered over 
     _timer: null,
     /**
      * @method _show
-     * This function sets a timeout witht he delay value, and if
+     * This function sets a timeout with the delay value, and if
      * this.cancel has not been called, moves the tooltip to the DOM root,
      * and sets the tooltip as visible.
      *

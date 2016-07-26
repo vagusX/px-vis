@@ -1,3 +1,7 @@
+v1.4.2
+=================
+* added mega demo
+
 v1.4.1
 =================
 * Changed 248px width to be max-width

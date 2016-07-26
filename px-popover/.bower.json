@@ -1,6 +1,6 @@
 {
   "name": "px-popover",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "main": [
     "px-popover.html"
   ],
@@ -21,16 +21,30 @@
     "px-overlay": "https://github.com/PredixDev/px-overlay.git#~0.2.0"
   },
   "devDependencies": {
-    "iron-component-page": "PolymerElements/iron-component-page#~v1.1.0",
     "px-starter-kit-design": "https://github.com/PredixDev/px-starter-kit-design.git#~0.4.0",
-    "web-component-tester": "~3.3.14"
+    "web-component-tester": "~3.3.14",
+    "px-forms-design": "#~0.3.15",
+    "px-tables-design": "#~0.3.12",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#~1.2.3",
+    "polymer-font-awesome": "~0.1.5",
+    "px-tabs": "~0.4.0",
+    "ace-widget": "LostInBrittany/ace-widget#~1.0.13",
+    "px-api-viewer": "https://github.com/PredixDev/px-api-viewer.git",
+    "px-demo-snippet": "https://github.com/predixdev/px-demo-snippet.git",
+    "px-actionable-text-icons-design": "^0.0.3",
+    "px-code-design": "^0.2.11",
+    "px-headings-design": "^0.2.14",
+    "px-list-inline-design": "^0.2.11",
+    "px-dropdown": "^0.10.1",
+    "px-spacing-design": "~0.3.8",
+    "px-toggle-design": "^0.2.12"
   },
   "homepage": "https://github.com/PredixDev/px-popover",
-  "_release": "1.4.1",
+  "_release": "1.4.2",
   "_resolution": {
     "type": "version",
-    "tag": "v1.4.1",
-    "commit": "033e59b39755e1ec5cba4ff1a9aca20fdfd1cb3e"
+    "tag": "v1.4.2",
+    "commit": "95e3461e0d805c7d89dffd3c8cb6b9f0334ccbad"
   },
   "_source": "https://github.com/PredixDev/px-popover.git",
   "_target": "~1.4.0",

@@ -1,6 +1,6 @@
 {
   "name": "px-tooltip",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "main": [
     "px-tooltip.html"
   ],
@@ -17,19 +17,33 @@
   "dependencies": {
     "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#~1.0.2",
     "polymer": "^1.5.0",
-    "px-theme": "https://github.com/PredixDev/px-theme.git#~0.8.0"
+    "px-theme": "~0.8.0"
   },
   "devDependencies": {
-    "iron-component-page": "PolymerElements/iron-component-page#~v1.1.0",
-    "px-starter-kit-design": "https://github.com/PredixDev/px-starter-kit-design.git#~0.4.0",
-    "web-component-tester": "~3.3.14"
+    "px-starter-kit-design": "~0.4.0",
+    "web-component-tester": "~3.3.14",
+    "px-forms-design": "#~0.3.15",
+    "px-tables-design": "#~0.3.12",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#~1.2.3",
+    "polymer-font-awesome": "~0.1.5",
+    "px-tabs": "~0.4.0",
+    "ace-widget": "LostInBrittany/ace-widget#~1.0.13",
+    "px-api-viewer": "~0.0.3",
+    "px-demo-snippet": "~0.0.11",
+    "px-actionable-text-icons-design": "^0.0.3",
+    "px-code-design": "^0.2.11",
+    "px-headings-design": "^0.2.14",
+    "px-list-inline-design": "^0.2.11",
+    "px-dropdown": "^0.10.1",
+    "px-spacing-design": "~0.3.8",
+    "px-toggle-design": "^0.2.12"
   },
   "homepage": "https://github.com/PredixDev/px-tooltip",
-  "_release": "0.7.1",
+  "_release": "0.7.2",
   "_resolution": {
     "type": "version",
-    "tag": "v0.7.1",
-    "commit": "3d79a3351c82a2394527a4a6be70c821a3f97efc"
+    "tag": "v0.7.2",
+    "commit": "d3fea1e007096a9227890356d4308d628de66cc8"
   },
   "_source": "https://github.com/PredixDev/px-tooltip.git",
   "_target": "~0.7.0",
