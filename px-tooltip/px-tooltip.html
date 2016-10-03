@@ -18,12 +18,15 @@ Tooltip element that provides additional information to users once hovered over 
 @homepage index.html
 @demo demo.html
 -->
+<link rel="import" href="css/px-tooltip-styles.html">
+
 <dom-module id="px-tooltip">
-  <link rel="import" type="css" href="css/px-tooltip.css"/>
   <template>
+    <style include="px-tooltip-styles"></style>
+    <style include="px-theme-styles"></style>
     <div id="tooltipWrapper" class="hidden">
-      <div id="carat"></div>
-      <div id="tooltip">
+      <div id="carat" class$="[[_getTooltipStyle(tooltipStyle)]]"></div>
+      <div id="tooltip" class$="[[_getTooltipStyle(tooltipStyle)]]">
         <div id="message">
           <span>{{ tooltipMessage }}</span>
           <content></content>
@@ -143,7 +146,7 @@ Tooltip element that provides additional information to users once hovered over 
         value: false
       },
       /**
-       * This is a private property, which is activates if the user hovers OFF the target element.
+       * This is a private property, which activates if the user hovers OFF the target element.
        *
        * @property _cancel
        * @type Boolean
@@ -152,17 +155,49 @@ Tooltip element that provides additional information to users once hovered over 
       _cancel: {
         type: Boolean,
         value: false
+      },
+      /**
+       * An object referring to the tooltip's parent element.
+       * @property tooltipParent
+       * @type Object
+       * @default {}
+       */
+      _tooltipParent: {
+        type: Object,
+        value: function() {return {};}
+      },
+      followMouse: {
+        type: Boolean,
+        value: false
+      },
+      mouseCoords: {
+        type: Array
+      },
+      tooltipStyle: {
+        type: String,
+        value: 'dark'
       }
     },
+    observers: [
+      '_onMouseMove(mouseCoords.*)'
+    ],
     listeners: {
       'iron-resize': '_onIronResize'
     },
     attached: function() {
       // we want to make sure the target exists-
       if(this._target){
-        this.listen(this._target, 'mouseenter', '_show');
-        this.listen(this._target, 'mouseleave', '_hide');
-        this.listen(this._target, 'mousedown', '_hide');
+        if(Array.isArray(this._target)){
+          for(var i =0; i < this._target.length; i++){
+            this.listen(this._target[i], 'mouseenter', '_show');
+            this.listen(this._target[i], 'mouseleave', '_hide');
+            this.listen(this._target[i], 'mousedown', '_hide');
+          }
+        } else {
+          this.listen(this._target, 'mouseenter', '_show');
+          this.listen(this._target, 'mouseleave', '_hide');
+          this.listen(this._target, 'mousedown', '_hide');
+        }
       }
       else {
         //make sure tooltip find its parent if it has no for
@@ -170,9 +205,41 @@ Tooltip element that provides additional information to users once hovered over 
       }
     },
     detached: function() {
-      this.unlisten(this._target, 'mouseenter', '_show');
-      this.unlisten(this._target, 'mouseleave', '_hide');
-      this.unlisten(this._target, 'mousedown', '_hide');
+      if(Array.isArray(this._target)){
+        for(var i =0; i < this._target.length; i++){
+          this.unlisten(this._target[i], 'mouseenter', '_show');
+          this.unlisten(this._target[i], 'mouseleave', '_hide');
+          this.unlisten(this._target[i], 'mousedown', '_hide');
+        }
+      } else {
+        this.unlisten(this._target, 'mouseenter', '_show');
+        this.unlisten(this._target, 'mouseleave', '_hide');
+        this.unlisten(this._target, 'mousedown', '_hide');
+      }
+    },
+
+    _getTooltipStyle: function(){
+      return this.tooltipStyle;
+    },
+
+    _onMouseMove: function(){
+      if(this.followMouse && this.thisRect){
+        if(this.orientation === 'auto') {
+
+          //auto positioning
+          this._autoPosition();
+        }
+        else if(this.smartOrientation) {
+
+          //smart positioning
+          this._doPosition(this._findValidSmartOrientation(this.orientation));
+        }
+        else {
+
+          //hard coded positioning
+          this._doPosition(this.orientation);
+        }
+      }
     },
     /**
      * @method _onFor
@@ -182,14 +249,28 @@ Tooltip element that provides additional information to users once hovered over 
      */
     _onFor:function(){
       if(this._target){
-        this.unlisten(this._target, 'mouseenter', '_show');
-        this.unlisten(this._target, 'mouseleave', '_hide');
+        if(Array.isArray(this._target)){
+          for(var i =0; i < this._target.length; i++){
+            this.unlisten(this._target[i], 'mouseenter', '_show');
+            this.unlisten(this._target[i], 'mouseleave', '_hide');
+          }
+        } else {
+          this.unlisten(this._target, 'mouseenter', '_show');
+          this.unlisten(this._target, 'mouseleave', '_hide');
+        }
       }
       this.target = this._getTarget();
       this._target = this.target;
       if(this._target){
-        this.listen(this._target, 'mouseenter', '_show');
-        this.listen(this._target, 'mouseleave', '_hide');
+        if(Array.isArray(this._target)){
+          for(var i =0; i < this._target.length; i++){
+            this.listen(this._target[i], 'mouseenter', '_show');
+            this.listen(this._target[i], 'mouseleave', '_hide');
+          }
+        } else {
+          this.listen(this._target, 'mouseenter', '_show');
+          this.listen(this._target, 'mouseleave', '_hide');
+        }
       }
     },
     /**
@@ -222,7 +303,12 @@ Tooltip element that provides additional information to users once hovered over 
 
       if(this.for && typeof(this.for) === 'string') {
         target = Polymer.dom(parentNode).querySelector('#' + this.for);
-      }else if(this.for && typeof(this.for) === 'object') {
+      } else if(this.for && Array.isArray(this.for) && typeof(this.for[0]) === 'string'){
+        target = [];
+        for(var i =0; i < this.for.length; i++){
+          target.push(Polymer.dom(parentNode).querySelector('#' + this.for[i]));
+        }
+      } else if(this.for && typeof(this.for) === 'object') {
         target = this.for;
       }
       //DOCUMENT_FRAGMENT_NODE
@@ -261,7 +347,7 @@ Tooltip element that provides additional information to users once hovered over 
           // and toggle that class on, to ensure we don't have 2 tooltips in the dom root at once.
           Polymer.dom(_this).classList.toggle('movedTooltip');
           // we also want to remember where this tooltip was placed originally.
-          _this.set('tooltipParent', _this.parentNode);
+          _this.set('_tooltipParent', _this.parentNode);
           // now that we are all set, we move the tooltip to the dom root, where the absolute positioning works everytime,
           // and we don't have to worry about overflows, the scourge of css.
           document.body.appendChild(tooltip);
@@ -296,7 +382,7 @@ Tooltip element that provides additional information to users once hovered over 
         //get rid of out movedTooltip class
         Polymer.dom(this).classList.toggle('movedTooltip');
         //and we move the tooltip back to whence it came.
-        this.tooltipParent.appendChild(this);
+        this._tooltipParent.appendChild(this);
         this.$.tooltipWrapper.classList.add('hidden');
         this._isShowing = false;
       }
@@ -320,7 +406,7 @@ Tooltip element that provides additional information to users once hovered over 
        // using this method so that we can calculate the best position
        // in the _positionXXX methods without having to do recursion, plus
        // avoiding issues when in tables in IE and inside scroll panes
-       this.targetRect = this._target.getBoundingClientRect();
+       this.targetRect = this.followMouse ? this.getBoundingClientRect() : this._target.getBoundingClientRect();
        this.thisRect = this.getBoundingClientRect();
        this.margin = parseInt(getComputedStyle(this.$.tooltip).marginTop.replace('px', ''));
 
@@ -527,9 +613,15 @@ Tooltip element that provides additional information to users once hovered over 
       this.$.carat.style.left = (this._getTooltipWidth() / 2) - (this._getCaratWidth() / 2) + 'px';
       this.$.carat.style.top = (this._getTooltipHeight() - this.margin) + 'px';
 
-      // position the tooltip itself
-      this.style.left = this.getTargetPositionCenterOfLeftRight() - (this._getTooltipWidth() / 2) + 'px';
-      this.style.top = this._getTargetPositionTop() - this._getTooltipHeight() + (this.margin / 2) - 5 + 'px';
+      if(this.followMouse){
+        this.style.left = this.mouseCoords[0] - (this._getTooltipWidth() / 2) + 'px'
+        this.style.top = this.mouseCoords[1] - this._getTooltipHeight() + (this.margin / 2) - 10 + 'px';
+
+      } else {
+        // position the tooltip itself
+        this.style.left = this.getTargetPositionCenterOfLeftRight() - (this._getTooltipWidth() / 2) + 'px';
+        this.style.top = this._getTargetPositionTop() - this._getTooltipHeight() + (this.margin / 2) - 5 + 'px';
+      }
 
     },
     /**
@@ -545,9 +637,14 @@ Tooltip element that provides additional information to users once hovered over 
       this.$.carat.style.left = (this._getTooltipWidth() / 2) - (this._getCaratWidth() / 2) + 'px';
       this.$.carat.style.top = null;
 
-      // position the tooltip itself
-      this.style.left = this.getTargetPositionCenterOfLeftRight() - (this._getTooltipWidth() / 2) + 'px';
-      this.style.top = this._getTargetPositionBottom() - this._getCaratHeight() + 5 + 'px';
+      if(this.followMouse){
+        this.style.left = this.mouseCoords[0] - (this._getTooltipWidth() / 2) + 'px'
+        this.style.top = this.mouseCoords[1] - this._getCaratHeight() + 10 + 'px';
+      } else {
+        // position the tooltip itself
+        this.style.left = this.getTargetPositionCenterOfLeftRight() - (this._getTooltipWidth() / 2) + 'px';
+        this.style.top = this._getTargetPositionBottom() - this._getCaratHeight() + 5 + 'px';
+      }
     },
     /**
      * @method _positionLeft
@@ -563,11 +660,17 @@ Tooltip element that provides additional information to users once hovered over 
       this.$.carat.style.left = null;
       this.$.carat.style.top = (this._getTooltipHeight() / 2) - this._getCaratWidth() + 'px';
 
-      top = Math.round(this.getTargetPositionCenterOfTopBottom() - (this._getTooltipHeight() / 2)) + 'px';
+      if(this.followMouse){
+        this.style.left = this.mouseCoords[0] - this._getTooltipWidth() + this.margin / 2 - 10 + 'px';
+        this.style.top = this.mouseCoords[1]  - (this._getTooltipHeight() / 2) + 'px';
 
-      // position the tooltip itself
-      this.style.left = this._getTargetPositionLeft() - this._getTooltipWidth() + this.margin / 2 - 5 + 'px';
-      this.style.top = top;
+      } else {
+        top = Math.round(this.getTargetPositionCenterOfTopBottom() - (this._getTooltipHeight() / 2)) + 'px';
+
+        // position the tooltip itself
+        this.style.left = this._getTargetPositionLeft() - this._getTooltipWidth() + this.margin / 2 - 5 + 'px';
+        this.style.top = top;
+      }
     },
     /**
      * @method _positionRight
@@ -583,11 +686,17 @@ Tooltip element that provides additional information to users once hovered over 
       this.$.carat.style.left = null;
       this.$.carat.style.top = (this._getTooltipHeight() / 2) - (this._getCaratWidth()) + 'px';
 
-      top = Math.round(this.getTargetPositionCenterOfTopBottom() - (this._getTooltipHeight() / 2)) + 'px';
+      if(this.followMouse){
+        this.style.left = this.mouseCoords[0] - this._getCaratWidth() + 10 + 'px';
+        this.style.top = this.mouseCoords[1]  - (this._getTooltipHeight() / 2) + 'px';
 
-      // position the tooltip itself
-      this.style.left = this._getTargetPositionRight() - this._getCaratWidth() + 5 + 'px';
-      this.style.top = top;
+      } else {
+        top = Math.round(this.getTargetPositionCenterOfTopBottom() - (this._getTooltipHeight() / 2)) + 'px';
+
+        // position the tooltip itself
+        this.style.left = this._getTargetPositionRight() - this._getCaratWidth() + 5 + 'px';
+        this.style.top = top;
+      }
     },
     /**
      * @method _styleTheCaratAs

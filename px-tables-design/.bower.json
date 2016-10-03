@@ -39,7 +39,7 @@
     "tag": "v0.3.13",
     "commit": "433b2ee70f1131dbd92559590a81b9db2af6cb27"
   },
-  "_source": "https://github.com/PredixDev/px-tables-design.git",
+  "_source": "https://github.com/predixDev/px-tables-design.git",
   "_target": "~0.3.0",
-  "_originalSource": "https://github.com/PredixDev/px-tables-design.git"
+  "_originalSource": "px-tables-design"
 }

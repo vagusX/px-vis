@@ -1,0 +1,55 @@
+<link rel="import" href="../polymer/polymer.html"/>
+
+<dom-module id="slider-container" attributes="range-values">
+
+  <template>
+    <div>
+      <px-slider
+        start-value="10"
+        end-value="40"
+        min="{{rangeValues.dataMin}}"
+        max="{{rangeValues.dataMax}}">
+      </px-slider>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'slider-container',
+
+      properties: {
+        rangeValues: {
+          type: Object,
+          notify: true,
+          value: {},
+          observer: 'rangeValuesChanged'
+        },
+      },
+
+      ready: function () {
+        console.log('slider-container: ready: rangeValues=' + JSON.stringify(this.rangeValues));
+      },
+
+      attached: function () {
+        console.log('slider-container: attached: rangeValues=' + JSON.stringify(this.rangeValues));
+
+        // initialize to full range (we assume there is only one slider in this component)
+        /* XXX not working because of px-slider bugs */
+        var slider = this.querySelector('px-slider');
+        if (this.rangeValues.dataMin || this.rangeValues.dataMin === 0) {
+          slider.value = this.rangeValues.dataMin;
+          slider.startValue = this.rangeValues.dataMin;
+        }
+        if (this.rangeValues.dataMax) {
+          slider.endValue = this.rangeValues.dataMax;
+        }
+      },
+
+      rangeValuesChanged: function (newValue, oldValue) {
+        console.log('slider-container: rangeValuesChanged: newValue=' + JSON.stringify(newValue) + ' oldValue=' + JSON.stringify(oldValue));
+      }
+    });
+  </script>
+
+</dom-module>
+

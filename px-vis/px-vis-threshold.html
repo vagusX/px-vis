@@ -23,10 +23,14 @@ d3 element which draws a horizontal line at a specified threshold value. The thr
 @homepage index.html
 @demo demo.html
 -->
+
+<link rel="import" href="css/px-vis-styles.html">
+
 <dom-module id="px-vis-threshold">
-    <link rel="import" type="css" href="css/px-vis.css"/>
-    <template>
-    </template>
+  <template>
+    <style include="px-vis-styles"></style>
+    <style include="px-theme-styles"></style>
+  </template>
 </dom-module>
 
 <script>
@@ -169,7 +173,8 @@ d3 element which draws a horizontal line at a specified threshold value. The thr
 
         this.thresholdText = this.thresholdGroup.append("text")
           .attr('font-size', '12px')
-          .attr('font-style','GE Inspira Sans')
+          .style('font-family','GE Inspira Sans')
+          // .attr('font-style','GE Inspira Sans')
           .attr('x', this.x(this.currentDomainX[0]) + 5 + 3)
           .attr('y', function(d,i){ return this._calcYPos(d,i,13); }.bind(this) )
           .text(function(d){ return (d.value).toFixed(2); });
@@ -183,10 +188,18 @@ d3 element which draws a horizontal line at a specified threshold value. The thr
 
       } else {
         this.thresholdLine
+          .attr('x1', this.x(this.currentDomainX[0]))
+          .attr('x2', this.x(this.currentDomainX[1]))
           .attr('y1', function(d){ return this.y(d.value); }.bind(this))
           .attr('y2', function(d){ return this.y(d.value); }.bind(this));
-        this.thresholdRect.attr('y', this._calcYPos.bind(this));
-        this.thresholdText.attr('y', function(d,i){ return this._calcYPos(d,i,13); }.bind(this) );
+        this.thresholdRect.attr('x', this.x(this.currentDomainX[0]) + 5)
+                          .attr('y', this._calcYPos.bind(this));
+
+        this.thresholdText.attr('x', this.x(this.currentDomainX[0]) + 5 + 3)
+                          .attr('y', function(d,i) {
+                              return this._calcYPos(d,i,13);
+                            }.bind(this) );
+
       }
 
     },
@@ -225,9 +238,6 @@ d3 element which draws a horizontal line at a specified threshold value. The thr
           val = (d.value < mid) ? this.y(d.value) -1 + offset: this.y(d.value) -17 + offset;
 
       return val;
-    },
-    _mouseOver: function(){
-      console.log("mouseover");
     }
   });
 </script>

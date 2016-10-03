@@ -1,10 +1,11 @@
-<script type="text/javascript" src="../moment/min/moment.min.js"></script>
-<script type="text/javascript" src="../moment-timezone/builds/moment-timezone-with-data.min.js"></script>
+<link rel="import" href="px-datetime-imports-deep.html" />
 <script>
-  //keep our own version of moment so that timezone is not overriden if
-  //someone else reloads moment
-  if(typeof Px === 'undefined') {
-    Px = {};
-  }
+  
+  //our version of moment now loaded, save it
   Px.moment = moment;
+
+  //and restore other version if needed
+  if(typeof Px.oldMoment !== 'undefined') {
+    moment = Px.oldMoment;
+  }
 </script>

@@ -1,6 +1,6 @@
 {
   "name": "px-datetime-range-field",
-  "version": "0.3.9",
+  "version": "0.4.3",
   "main": [
     "px-datetime-range-field.html"
   ],
@@ -13,40 +13,45 @@
     "node_modules",
     "test",
     ".github",
-    "OSS_Notice.pdf"
+    "OSS_Notice.pdf",
+    "px-datetime-range-field.png",
+    "scripts"
   ],
   "dependencies": {
-    "polymer": "^1.5.0",
-    "px-datetime-common": "~0.5.0",
-    "px-datetime-field": "~0.4.0",
+    "polymer": "^1.6.1",
     "px-actionable-text-icons-design": "^0.0.3",
     "px-toggle-design": "^0.2.12",
     "px-forms-design": "^0.3.16",
-    "px-typography-design": "^0.3.5",
+    "px-typography-design": "^1.1.1",
     "px-headings-design": "^0.2.13",
-    "px-spacing-design": "~0.3.8"
+    "px-spacing-design": "~0.3.8",
+    "px-datetime-common": "~0.6.3",
+    "px-datetime-field": "~0.5.0"
   },
   "devDependencies": {
-    "iron-component-page": "PolymerElements/iron-component-page#~v1.1.0",
-    "px-starter-kit-design": "#~0.5.4",
+    "px-starter-kit-design": "#~0.6.0",
     "px-forms-design": "#~0.3.15",
     "px-tables-design": "#~0.3.12",
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#~1.2.3",
-    "polymer-font-awesome": "~0.1.5",
-    "px-tabs": "~0.4.0",
-    "ace-widget": "LostInBrittany/ace-widget#~1.0.13",
-    "px-api-viewer": "https://github.com/PredixDev/px-api-viewer.git",
-    "px-demo-snippet": "https://github.com/predixdev/px-demo-snippet.git",
-    "px-list-inline-design": "^0.2.11"
+    "px-polymer-font-awesome": "^0.1.9",
+    "px-tabs": "~0.5.2",
+    "px-api-viewer": "~0.1.0",
+    "px-demo-snippet": "^0.5.1",
+    "px-list-inline-design": "^0.2.11",
+    "px-toggle-design": "^0.2.12",
+    "px-headings-design": "^0.2.14",
+    "px-actionable-text-icons-design": "^0.0.3",
+    "px-code-design": "~0.2.11",
+    "px-dropdown": "^0.12.1"
   },
   "homepage": "https://github.com/predixDev/px-datetime-range-field",
-  "_release": "0.3.9",
+  "_release": "0.4.3",
   "_resolution": {
     "type": "version",
-    "tag": "0.3.9",
-    "commit": "1967d0a6ab3bcde797678d9a84d9021de5a027d9"
+    "tag": "v0.4.3",
+    "commit": "2686e17bc336aeabaf5fe7e2a91f62b1e66b019b"
   },
   "_source": "https://github.com/predixDev/px-datetime-range-field.git",
-  "_target": "~0.3.0",
+  "_target": "~0.4.1",
   "_originalSource": "px-datetime-range-field"
 }

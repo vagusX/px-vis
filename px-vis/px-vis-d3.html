@@ -3,12 +3,12 @@
 //keep a ref to d3 if it's loaded already, we're going to load it ourselves right after this
 if(typeof Px === 'undefined') {
   Px = {};
-  if(typeof d3 !== 'undefined') {
+}
+if(typeof d3 !== 'undefined' && !Px.d3) {
     Px.oldD3 = d3;
     d3 = {};
-  }
 }
 
 </script>
 
-<script type="text/javascript" src="../px-d3/d3.min.js"></script>
+<script type="text/javascript" src="../pxd3/d3.min.js"></script>

@@ -1,11 +1,13 @@
-#THIS COMPONENT IS NOT YET RELEASED.
-
 Px-Datetime-Range-Panel [![Build Status](https://travis-ci.org/PredixDev/px-datetime-range-panel.svg?branch=master)](https://travis-ci.org/PredixDev/px-datetime-range-panel)
 -----------------------------------------------
 
+
+[![px-datetime-range-panel demo](px-datetime-range-panel.png?raw=true)](https://github.com/PredixDev/px-datetime-range-panel)
+
+
 ## Overview
 
-Px-Datetime-Range-Panel is a Predix Experience ('Px') component
+px-datetime-range-panel is a Predix UI component
 
 ## Getting Started
 
@@ -70,18 +72,6 @@ watch: {
 }
 ```
 
-### Options
-
-Does this component have runtime configuration options?  If so, they should be able to be passed as attributes on the element with examples shown below.
-
-### Function calls
-
-What is the public API of this component?
-
-### Extending styles
-
-Documented CSS extension points?
-
 ### Extending behavior
 
 See Polymer composition patterns
@@ -93,3 +83,6 @@ GE Coding Style Guide
 
 
 ### Known Issues
+
+
+Please use [Github Issues](https://github.com/PredixDev/px-datetime-range-panel/issues) to submit any bugs you might find.

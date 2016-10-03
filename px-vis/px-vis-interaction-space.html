@@ -33,9 +33,13 @@ Element providing on-chart hover functionality to get data values near the mouse
 TODO implement a dev setting to choose between only showing data at that x, snapping to nearest data, or interpolating value at x
 
 -->
+
+<link rel="import" href="css/px-vis-styles.html">
+
 <dom-module id="px-vis-interaction-space">
-    <link rel="import" type="css" href="css/px-vis.css"/>
     <template>
+      <style include="px-vis-styles"></style>
+      <style include="px-theme-styles"></style>
 
     </template>
 </dom-module>
@@ -83,8 +87,7 @@ TODO implement a dev setting to choose between only showing data at that x, snap
        * @type Object
        */
       _rect:{
-        type:Object,
-        value: function() {return{};}
+        type:Object
       },
       /**
        * an object that contains meta data for the area drawn by the user
@@ -95,6 +98,10 @@ TODO implement a dev setting to choose between only showing data at that x, snap
       _actionArea: {
         type: Object,
         value: function() {return {};}
+      },
+      mouseRect: {
+        type: Object,
+        notify: true
       }
     },
 
@@ -117,6 +124,10 @@ TODO implement a dev setting to choose between only showing data at that x, snap
         this.fire('px-vis-tooltip-updated', { 'dataVar': 'tooltipData', 'data': this.tooltipData, 'method':'set' });
       }
 
+      if(this._doesObjHaveValues(this.mouseRect)){
+        this.fire('px-vis-mouse-rect-updated', {'data': this.mouseRect, 'dataVar': 'mouseRect', 'method': 'set'});
+      }
+
     },
 
     /**
@@ -128,24 +139,33 @@ TODO implement a dev setting to choose between only showing data at that x, snap
     drawElement: function() {
 
       // make sure the tooltip draws on top of everything; returns a set property interactionSvg
-      this.cloneSVGElem(this.svg.node(),'interactionSvg');
-      this.fire('px-vis-interaction-svg-updated', { 'dataVar': 'interactionSvg', 'data': this.interactionSvg, 'method':'set' });
+      if(!this.interactionSvg) {
+        this.cloneSVGElem(this.svg.node(),'interactionSvg');
+        this.fire('px-vis-interaction-svg-updated', { 'dataVar': 'interactionSvg', 'data': this.interactionSvg, 'method':'set' });
+      }
 
 
       // append the rectangle to capture mouse interactions
-      this._rect = this.interactionSvg.append("rect")
-        .attr('id',"mouseCapture")
-        .attr("width", this.width - this.margin.left - this.margin.right)
-        .attr("height", this.height - this.margin.bottom - this.margin.top)
-        .attr("fill", "none")
-        .attr("pointer-events", "all")
-        .on("mouseout.tooltip", this._resetTooltipData.bind(this))
-        .on("mousemove.tooltip",this._calcTooltipData.bind(this))
-        .on("mousedown.action", this._drawActionBox.bind(this))
-        .on("mousemove.action", this._updateActionBox.bind(this))
-        .on("mouseup.action", this._finishActionBox.bind(this))
-        .style("cursor","crosshair");
+      if(!this._rect) {
+        this._rect = this.interactionSvg.append("rect")
+          .attr('id',"mouseCapture")
+          .attr("width", this.width - this.margin.left - this.margin.right)
+          .attr("height", this.height - this.margin.bottom - this.margin.top)
+          .attr("fill", "none")
+          .attr("pointer-events", "all")
+          .on("mouseout.tooltip", this._resetTooltipData.bind(this))
+          .on("mousemove.tooltip",this._calcTooltipData.bind(this))
+          .on("mousedown.action", this._drawActionBox.bind(this))
+          .on("mousemove.action", this._updateActionBox.bind(this))
+          .on("mouseup.action", this._finishActionBox.bind(this))
+          .style("cursor","crosshair");
 
+          this.set("mouseRect", this._rect.node());
+          this.fire('px-vis-mouse-rect-updated', {'data': this.mouseRect, 'dataVar': 'mouseRect', 'method': 'set'});
+      } else {
+        this._rect.attr("width", this.width - this.margin.left - this.margin.right)
+        .attr("height", this.height - this.margin.bottom - this.margin.top);
+      }
 
       // TODO touchevents
       // TODO if there is no register tooltip or cursor, set .tooltip listeners to null

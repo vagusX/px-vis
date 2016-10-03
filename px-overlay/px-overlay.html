@@ -10,24 +10,29 @@
 <!--
 Element providing an overlay for use with other components.
 
-Simply place the the anywhere on the page. Provides a fixed position, 100vw x 100vh overlay at z position 1000.
+You can place the component anywhere on the page, since it has a fixed position, and takes up100vw x 100vh @ z-index position 1000.
+
 Type dark = 65% black
+
 Type light = 15% black
 
-NOTE:
 
 ##### Usage
 
-    <px-overlay type="light" ></px-overlay>
+    <px-overlay type="light"></px-overlay>
 
 @element px-overlay
 @blurb Element providing an overlay for use with other components.
 @homepage index.html
 @demo demo.html
 -->
+
+<link rel="import" href="css/px-overlay-styles.html">
+
 <dom-module id="px-overlay">
-    <link rel="import" type="css" href="css/px-overlay.css"/>
     <template>
+      <style include="px-overlay-styles"></style>
+      <style include="px-theme-styles"></style>
       <div id="overlay" class$="{{_getOverlayClass(type)}}"></div>
     </template>
 </dom-module>
@@ -57,10 +62,9 @@ NOTE:
             // if a parent was transformed and our overlay is no longer at window origin...
             var overlayRect = this.getBoundingClientRect();
             // if the overlay should have a coor of 0,0 unless it has been transformed
-            if(overlayRect['left'] !== 0 || overlayRect['top'] !== 0){
-              var self = this;
-              var originX = -1 * overlayRect['left'] ;
-              var originY = -1 * overlayRect['top'];
+            if (overlayRect['left'] !== 0 || overlayRect['top'] !== 0){
+              var originX = -1 * overlayRect['left'],
+                  originY = -1 * overlayRect['top'];
 
               // make the overlay a bit bigger in case
               this.toggleClass('larger',true, this.$.overlay);
@@ -72,11 +76,17 @@ NOTE:
               window.addEventListener('scroll',function(){
                   // document.documentElement for FF and IE
                   // document.body for webkit
-                  self.style.top = originY + document.body.scrollTop + document.documentElement.scrollTop + 'px';
-                  self.style.left = originX + document.body.scrollLeft + document.documentElement.scrollLeft + 'px';
-              });
+                  this.style.top = originY + document.body.scrollTop + document.documentElement.scrollTop + 'px';
+                  this.style.left = originX + document.body.scrollLeft + document.documentElement.scrollLeft + 'px';
+              }.bind(this));
             }
         },
+        /**
+         *
+         * returns the type of overlay ('light' or 'dark')
+         * @method _getOverlayClass
+         * @return  {String}
+         */
         _getOverlayClass: function() {
           return this.type;
         }

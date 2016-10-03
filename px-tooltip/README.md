@@ -1,5 +1,7 @@
 # Px-Tooltip [![Build Status](https://travis-ci.org/PredixDev/px-tooltip.svg?branch=master)](https://travis-ci.org/PredixDev/px-tooltip)
 
+[![px-tooltip demo](px-tooltip.png?raw=true)](https://github.com/PredixDev/px-tooltip)
+
 ## Overview
 
 Px-Tooltip is a Predix UI component which opens a tooltip message,

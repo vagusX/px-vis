@@ -1,3 +1,23 @@
+v1.1.10
+==================
+* added correct event listener to demo event counter
+
+v1.1.9
+==================
+* Fixed demo event counter
+
+v1.1.8
+==================
+* added overflow to demoContainer and removed flex__wrap from mega-demo
+
+v1.1.7
+==================
+* updated mega demo styles and bower px-demo-snippet to ^
+
+v1.1.6
+==================
+* added image to readme, removed watch, added view on github
+
 v1.1.5
 ==================
 * Added vulcanize

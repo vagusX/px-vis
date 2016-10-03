@@ -1,11 +1,10 @@
 {
   "name": "px-demo-data",
-  "version": "0.0.11",
+  "version": "0.0.17",
   "authors": [
     "GE"
   ],
   "description": "sample test data",
-  "license": "MIT",
   "ignore": [
     "**/.*",
     "node_modules",

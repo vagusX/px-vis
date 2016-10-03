@@ -1,13 +1,185 @@
 <!doctype html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>px-overlay API</title>
-        <script src="../webcomponentsjs/webcomponents-lite.min.js"></script>
-        <link rel="import" href="../iron-component-page/iron-component-page.html"/>
-    </head>
-    <body>
-        <iron-component-page src="px-overlay.html" active="px-overlay"></iron-component-page>
-    </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>px-overlay Demo</title>
+  <link rel="stylesheet" type="text/css" href="css/px-overlay-demo.css"/>
+  <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import" href="../px-theme/px-theme-styles.html">
+  <style include="px-theme-styles" is="custom-style"></style>
+
+  <link rel="import" href="../px-api-viewer/px-api-viewer.html" />
+  <link rel="import" href="../px-tabs/px-tab-set.html" />
+  <link rel="import" href="px-overlay.html"/>
+  <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+  <link rel="import" href="../px-demo-snippet/px-demo-snippet.html">
+  <link rel="import" href="../px-polymer-font-awesome/polymer-font-awesome.html" />
+  <link rel="import" href="../px-dropdown/px-dropdown.html" />
+</head>
+
+<body>
+
+  <!-- Wrap elements with auto-binding template to -->
+  <!-- allow use of Polymer bindings in main document -->
+  <template id="just-for-demo" is="dom-bind" >
+
+    <!-- discription -->
+    <div class="hero u-p++ text--shadow">
+      <a class="actionable flex flex--right flex--middle" href="https://github.com/PredixDev/px-overlay" target="_blank"><iron-icon class="menu__open" icon="fa:fa-github"></iron-icon>View on Github</a>
+  		<h1 class="delta">px-overlay</h1>
+      <div class="description-text">
+    		<p>
+          Px-overlay is a component used for modal dialogues, popovers, and other use cases where the remainder of the application content is obscured or falls away from the primary actionable component.
+          The overlay covers the entire screen and comes in two opacities, light and dark, depending how much contrast is required.
+    		</p>
+      </div>
+  		<div class="flex">
+  			<img class="u-mr--" src="https://img.shields.io/travis/PredixDev/px-overlay.svg?style=flat-square" alt="Travis"/>
+  			<img class="u-mr--" src="https://img.shields.io/bower/v/px-overlay.svg?style=flat-square" alt="Bower"/>
+  			<img class="u-mr--" src="https://img.shields.io/github/issues-raw/PredixDev/px-overlay.svg?style=flat-square" alt="Issues"/>
+  		</div>
+  	</div>
+
+    <!-- mega demo -->
+    <div style="position: relative;" class="u-pb++ flex flex--col" id="defaultTab">
+      <div class="tabContainer u-pt++ u-pl++">
+        <px-tab-set selected="{{selected}}" bare no-bottom-border>
+          <template is="dom-repeat" items="{{optionsArray}}">
+            <px-tab>Option {{indexPlusOne(index)}}</px-tab>
+          </template>
+        </px-tab-set>
+      </div>
+      <px-tab-pages selected="{{selected}}">
+        <template is="dom-repeat" items="{{optionsArray}}">
+          <section class="tab-page">
+            <div class="mega-demo flex u-ph++ u-pb++">
+              <!-- Properties -->
+              <div class="properties u-ph+ u-pb+ u-mt+">
+                <p class="epsilon">Properties</p>
+                <div class="flex">Type:</div>
+                <div class="flex u-mb-">
+                  <px-dropdown id="type{{indexPlusOne(index)}}" style="width:100%;" value="{{item.type}}" display-value="Select">
+                    <px-dropdown-content
+                    items={{items}}>
+                  </px-dropdown-content>
+                  </px-dropdown>
+                </div>
+              </div>
+
+              <div class="demoContainer u-mt+">
+                <!-- demo -->
+                <div class="flex flex--col">
+                  <div class="demo u-p+">
+
+                    <div style="position:relative;">
+                      <button id="btn" class="btn btn--tertiary" data-shade="[[item.type]]">Click me to get a [[item.type]] overlay</button>
+                      <!-- instance 1, "predix" theme -->
+                      <px-overlay id="pxOverlay" class="visuallyhidden" type="[[item.type]]"></px-overlay>
+                    </div>
+
+                  </div>
+                  <div>
+                    <px-demo-snippet
+                      element-properties={{item}}
+                      element-name="px-overlay">
+                    </px-demo-snippet>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="apiContainer">
+              <div class="flex flex--col api u-mt++" >
+                <div>
+                  <px-api-viewer source="px-overlay"></px-api-viewer>
+                </div>
+              </div>
+            </div>
+          </section>
+        </template>
+      </px-tab-pages>
+    </div>
+    <footer class="footer flex flex--center">
+      <div class="footer__container u-pv++">
+        <div>
+          <a href="https://ge.com/digital" >
+            <img src="monogram-wdmk.png" alt="GE Monogram" class="footer__img">
+          </a>
+        </div>
+        <div class="footer__list">
+          <ul class="list-inline list-inline--delimited">
+            <li>
+              <a href="http://predix.io/legal" class="footer__list--lnk">Legal</a>
+            </li>
+            <li>
+              <a href="mailto:info@predix.io" class="footer__list--lnk">Contact Us</a>
+            </li>
+            <li>Copyright &copy; {{year}} General Electric Company. All rights reserved.</li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  </template>
+<script>
+window.addEventListener('WebComponentsReady', function() {
+  var template = document.querySelector('template[is=dom-bind]'),
+      items = [
+        {"key":"one","val":"light"},
+        {"key":"two","val":"dark"}
+      ],
+      optionsArray = [
+        {
+          "type":"light"
+        }
+      ],
+      indexPlusOne = function(num) {
+        return num + 1;
+      },
+      pxTabs = document.querySelector('px-tab-pages'),
+      toggleHidden = function(evt) {
+        var showOrHide,
+            elem = evt.target,
+            overlayElem;
+
+        //we find the overlay component
+        overlayElem = Polymer.dom(pxTabs).querySelector('#pxOverlay');
+
+        //the click on an overlay that's "turned on" is on a div with an id of "overlay". if the id isn't "overlay", we can safely assume it's from a button.
+        showOrHide = (elem.id === 'overlay') ? true : false;
+
+        //we now use Polymer's toggleClass method to show or hide the overlay.
+        Polymer.Base.toggleClass('visuallyhidden',showOrHide, overlayElem);
+      },
+      lightDomLoaded = function() {
+        var btn = Polymer.dom(pxTabs).querySelector('#btn'),
+            pxOverlay = Polymer.dom(pxTabs).querySelector('#pxOverlay'),
+            elemArr = [btn, pxOverlay];
+
+        //we check that the dom is loaded, and that lightBtn is found first.
+        if (elemArr[0]) {
+          //and add an eventListener to each one.
+          elemArr.forEach(function(elem) {
+            elem.addEventListener('click', toggleHidden);
+          });
+        }
+      },
+
+      year = new Date(),
+
+      content = Polymer.dom(pxTabs.root).querySelector('content'),
+      //this calls the lightDomLoaded method when the content is loaded
+      _observer = Polymer.dom(content).observeNodes(lightDomLoaded);
+
+  template.selected = "0";
+  template.optionsArray = optionsArray;
+  template.indexPlusOne = indexPlusOne;
+  template.items = items;
+  template.year = year.getFullYear();
+
+});
+</script>
+
+</body>
 </html>

@@ -1,0 +1,174 @@
+<!--
+    Relative paths assume component is being run from inside an app or another component, where dependencies are flat
+    siblings. When this component is run from its own repo (e.g. ui tests, examples), we assume the server is started with
+    'grunt depserve' (or similar server setup) to enable correct finding of bower dependencies for local runs
+    See https://github.com/jreichenberg/grunt-dep-serve#why-do-we-need-this
+-->
+<link rel="import" href="../polymer/polymer.html" />
+
+
+<!--
+Handle Element expected to be used in px-slider
+
+##### Usage
+
+<px-handle-multi id="myID" class="visuallyHidden" handle-track-event-name="handleTrackStart" on-track="handleTrackStart" handle-rotate></px-handle-multi>
+
+
+@element px-handle-multi
+@blurb Handle Element expected to be used in px-slider
+@homepage index.html
+@demo demo.html
+-->
+
+<link rel="import" href="css/px-handle-styles.html">
+
+<dom-module id="px-handle-multi">
+  <template>
+    <style include="px-handle-styles"></style>
+    <style include="px-theme-styles"></style>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 21" id="multiHandleSVG">
+      <g id="handleTarget" on-down="handleDown" on-up="handleUp" on-track="handleTrack" tabindex="-1">
+        <path id="handleDropShadow" d="M0.76,12.26V4.67a3,3,0,0,1,3-3h15a3,3,0,0,1,3,3v7.59l-10,8.41h-1Z"/>
+        <path id="handleBody" d="M0.76,11.26V3.67a3,3,0,0,1,3-3h15a3,3,0,0,1,3,3v7.59l-10,8.41h-1Z"/>
+        <line class="handleLines" x1="14.09" y1="11" x2="14.09" y2="4"/>
+        <line class="handleLines" x1="8.09" y1="11" x2="8.09" y2="4"/>
+        <line class="handleLines" x1="11.09" y1="11" x2="11.09" y2="4"/>
+      </g>
+    </svg>
+  </template>
+</dom-module>
+
+
+<script>
+  Polymer({
+
+    is: 'px-handle-multi',
+
+    properties: {
+      /**
+       * Indicates whether the handle is currently being dragged.
+       * @property tracking
+       * @type Boolean
+       * @default false
+       */
+      tracking: {
+        type: Boolean,
+        value: false,
+        observer: '_trackingChanged'
+      },
+
+      /**
+       * Boolean to decide which handle to flip around and move down vs up.
+       * @property handleRotate
+       * @type String
+       */
+      handleRotate:{
+        type:Boolean,
+        value:false,
+        observer: '_rotateHandle'
+      },
+      /**
+       * A boolean reflecting whether the slider is disabled or not
+       * @property disabled
+       * @type property
+       * @default false
+       */
+      disabled: {
+        type: Boolean,
+        value: false,
+        observer: '_disabledChanged'
+      }
+    },
+    /**
+     * When the handle is clicked on for a drag, adds class for style
+     * @method _trackingChanged
+     * @param newValue
+     * @param oldValue
+     */
+    _trackingChanged: function(newValue, oldValue) {
+      // toggleClass uses classlist which does not work with SVG on IE
+      // this.toggleClass('tracking', newValue, this.$.handleTarget);
+      // So do it the old fashioned way...
+      this._setClassOnSVG(this.$.handleTarget,newValue,'tracking');
+    },
+    /**
+     * When the slider is disabled, adds class for style
+     * @method _disabledChanged
+     * @param newValue
+     * @param oldValue
+     */
+    _disabledChanged: function(newValue, oldValue) {
+      // toggleClass uses classlist which does not work with SVG on IE
+      // this.toggleClass('tracking', newValue, this.$.handleTarget);
+      // So do it the old fashioned way...
+      this._setClassOnSVG(this.$.handleTarget,newValue,'disabled');
+    },
+    /**
+     * When the handle is clicked on, fire event
+     * @method handleDown
+     * @param event
+     */
+    handleDown: function(event) {
+      this._setTracking(true);
+    },
+    /**
+     * When the handle is let go (after being clicked on), fire event
+     * @method handleUp
+     * @param event
+     */
+    handleUp: function(event) {
+      this._setTracking(false);
+    },
+    /**
+     * When the handle is moving, fire event
+     * @method handleTrack
+     * @param event
+     */
+    handleTrack: function(event) {
+      if (this.tracking) {
+      }
+    },
+    /**
+     * Sets styles on handle when we know if it is a start or end handle
+     * @method _rotateHandle
+     * @param bool
+     */
+    _rotateHandle: function(bool){
+      // toggleClass uses classlist which does not work with SVG on IE
+      // this.toggleClass('start', bool, this.$.multiHandleSVG);
+      // So do it the old fashioned way...
+
+      this._setClassOnSVG(this.$.multiHandleSVG,bool,'start');
+
+      this.toggleClass('start', bool);
+      this.toggleClass('end', !bool);
+      if(bool){
+        this.$.handleDropShadow.setAttribute('transform',"translate(0 -2)");
+      }
+    },
+    /**
+     * Sets the classes on SVG elems
+     * toggleClass uses classlist which does not work with SVG on IE
+     * @method _setClassOnSVG
+     * @param bool
+     * @param elem
+     * @param classname
+     */
+    _setClassOnSVG: function(elem,bool,classname){
+      var existingClass = elem.getAttribute('class');
+
+      if(bool){
+        var allClasses = existingClass + ' ' + classname;
+        elem.setAttribute('class',allClasses);
+      } else {
+        var classArr = existingClass.split(' ');
+        var i = classArr.indexOf(classname);
+
+        if(i !== -1) { classArr.splice(i, 1); }
+
+        elem.setAttribute('class',classArr.join(' '));
+      }
+    }
+  });
+</script>

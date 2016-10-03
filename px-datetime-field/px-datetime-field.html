@@ -23,9 +23,13 @@
 @homepage index.html
 @demo demo.html
 -->
+
+<link rel="import" href="css/px-datetime-field-styles.html">
+
 <dom-module id="px-datetime-field">
-  <link rel="import" type="css" href="css/px-datetime-field.css"/>
   <template>
+    <style include="px-datetime-field-styles"></style>
+    <style include="px-theme-styles"></style>
     <div id="fieldWrapper" class$="{{_getWrapperClass(dateIsValid, timeIsValid, isSelected, _forcedFailedClass)}}">
       <template is="dom-if" if="[[!hideDate]]">
         <px-datetime-entry

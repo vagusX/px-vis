@@ -1,0 +1,50 @@
+{
+  "name": "px-slider",
+  "version": "0.6.1",
+  "main": [
+    "px-slider.html"
+  ],
+  "ignore": [
+    ".*",
+    "npm-debug.log",
+    "Gruntfile.js",
+    "sass",
+    "bower_components",
+    "node_modules",
+    "test",
+    "OSS_Notice.pdf",
+    "scripts",
+    ".github",
+    "px-slider.png"
+  ],
+  "dependencies": {
+    "polymer": "^v1.6.0",
+    "px-theme": "~1.1.2",
+    "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#~v1.0.3"
+  },
+  "devDependencies": {
+    "px-starter-kit-design": "~0.6.0",
+    "px-forms-design": "#~0.3.15",
+    "px-tables-design": "#~0.3.12",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#~1.2.3",
+    "px-polymer-font-awesome": "^0.1.8",
+    "px-tabs": "~0.5.1",
+    "px-api-viewer": "~0.1.0",
+    "px-demo-snippet": "^0.5.1",
+    "px-toggle-design": "^0.2.12",
+    "px-actionable-text-icons-design": "^0.0.3",
+    "px-code-design": "^0.2.11",
+    "px-headings-design": "^0.2.14",
+    "px-list-inline-design": "^0.2.11"
+  },
+  "homepage": "https://github.com/PredixDev/px-slider",
+  "_release": "0.6.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.6.1",
+    "commit": "69ec6e4970a873eba37cbf0ee9fbe54dc4fab6e3"
+  },
+  "_source": "https://github.com/PredixDev/px-slider.git",
+  "_target": "~0.6.0",
+  "_originalSource": "px-slider"
+}

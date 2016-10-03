@@ -1,3 +1,27 @@
+v0.4.13
+==================
+* Fixed demo event counter (issue #3)
+
+v0.4.11
+==================
+* changed moment.tz to Px.moment.tz in tests
+
+v0.4.10
+==================
+* added overflow to demoContainer and removed flex__wrap from mega-demo
+
+v0.4.9
+==================
+* updated mega demo styles and bower px-demo-snippet to ^
+
+v0.4.8
+==================
+* Component screenshot, font reference and github links for demo update
+
+v0.4.7
+==================
+* Added github link
+
 v0.4.6
 ==================
 * Added vulcanize

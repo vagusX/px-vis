@@ -1,0 +1,156 @@
+<!--
+    Relative paths assume component is being run from inside an app or another component, where dependencies are flat
+    siblings. When this component is run from its own repo (e.g. tests, examples), we assume the server is started with
+    'grunt depserve' (or similar server setup) to enable correct finding of bower dependencies for local runs.
+-->
+<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="../hydrolysis/hydrolysis-analyzer.html" />
+<link rel="import" href="../iron-doc-viewer/iron-doc-viewer.html" />
+<link rel="import" href="../px-polymer-font-awesome/polymer-font-awesome.html" />
+<!--
+Element providing API documentation for a requested Polymer component
+
+##### Usage
+
+    <px-api-viewer source="demo_component"></px-api-viewer>
+
+@element px-api-viewer
+@blurb Element providing API documentation for a requested Polymer component
+@homepage index.html
+@demo demo.html
+-->
+
+<link rel="import" href="css/px-api-viewer-styles.html">
+<dom-module id="px-api-viewer">
+  <template>
+    <style include="px-api-viewer-styles"></style>
+    <style include="px-theme-styles"></style>
+    <template is="dom-if" if="[[_behaviorOn]]">
+      <div on-tap="_turnBehaviorOff" class="returnToApi"><iron-icon icon="fa:fa-chevron-left"></iron-icon> Return to [[source]]'s API</div>
+    </template>
+    <iron-doc-viewer descriptor="[[_elementDescriptor]]"></iron-doc-viewer>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+
+    is: 'px-api-viewer',
+
+    /**
+     * Properties block, expose attribute values to the DOM via 'notify'
+     *
+     * @property properties
+     * @type Object
+     */
+    properties: {
+      /*
+      * A json object, created by hydrolysis, which contains the actual
+      * documentation for the component
+      *
+      * @property _elementDescriptor
+      * @type Object
+      */
+      _elementDescriptor: {
+        type: Object,
+        notify: true
+      },
+      /*
+      * A string holding the name of the component.
+      * do not add `.html` to this attribute.
+      *
+      * @property source
+      * @type String
+      */
+      source: {
+        type: String,
+        value: '',
+        notify: true
+      },
+      /*
+      * The initial object created by hydrolysis
+      *
+      * @property _analyzer
+      * @type Object
+      */
+      _analyzer: {
+        type: Object,
+        notify: true
+      },
+      /*
+      * A boolean that tells us if the user is currently viewing a behavior.
+      *
+      *
+      * @property _behaviorOn
+      * @type Boolean
+      */
+      _behaviorOn : {
+        type: Boolean,
+        value:false,
+        notify: true
+      }
+    },
+    listeners: {
+      'iron-doc-viewer-component-selected':'_behaviorClicked'
+    },
+    attached: function() {
+      var hyd = require('hydrolysis');
+      //have hydrolysis analyze the requested component
+      hyd.Analyzer.analyze(this.source + ".html")
+        .then(function(analyzer) {
+          this._setElementDescriptor(analyzer);
+          this.set('_analyzer', analyzer);
+        }.bind(this));
+    },
+    /*
+    * This method is called when the return button is clicked/tapped
+    * it sets behaviorOn to false, and changes the displayed API to the original one.
+    * @method _turnBehaviorOff
+    */
+    _turnBehaviorOff: function() {
+      this.set('_behaviorOn',false);
+      this._setElementDescriptor(this._analyzer);
+    },
+    /*
+    * This listener method is called when a behavior API is requested.
+    * It sets the active API to the clicked on behavior
+    * @method _behaviorClicked
+    */
+    _behaviorClicked: function(evt) {
+      this._setElementDescriptor(this._analyzer, evt.detail);
+    },
+    /*
+    * Fired when hydrolysis successfully passes the json for an element
+    * to iron-doc-viewer successfully.
+    * @event pxElementAPIReceived
+    */
+    /*
+    * Fired when hydrolysis successfully passes the json for a behavior
+    * to iron-doc-viewer successfully.
+    * @event pxBehaviorAPIReceived
+    */
+    /*
+    * Set the _elementDescriptor on the component, and fire an event.
+    * can seet either an element, or behavior.
+    * @method _setElementDescriptor
+    */
+    _setElementDescriptor: function(analyzer, elem) {
+      var behavior = false;
+      if (!elem) { //if an elem wasn't passed it, it's the initial load, and elem should be this.source
+        elem = this.source;
+      } else { //if one WAS passed, this is a behavior.
+        behavior = true;
+      }
+      //if behavior is false, we are analyzing an element
+      if (!behavior) {
+        this.set('_elementDescriptor', analyzer.elementsByTagName[elem]);
+        this.fire('pxElementAPIReceived', analyzer.elementsByTagName[elem]);
+      } else {
+        //if behavior is true, we are analyzing the behavior specified in elem.
+        this.set('_elementDescriptor', analyzer.behaviorsByName[elem]);
+        this.fire('pxBehaviorAPIReceived', analyzer.behaviorsByName[elem]);
+        this.set('_behaviorOn',true);
+      }
+    }
+  });
+</script>

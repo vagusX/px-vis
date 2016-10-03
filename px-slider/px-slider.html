@@ -1,0 +1,683 @@
+<!--
+    Relative paths assume component is being run from inside an app or another component, where dependencies are flat
+    siblings. When this component is run from its own repo (e.g. ui tests, examples), we assume the server is started with
+    'grunt depserve' (or similar server setup) to enable correct finding of bower dependencies for local runs
+    See https://github.com/jreichenberg/grunt-dep-serve#why-do-we-need-this
+-->
+<link rel="import" href="../polymer/polymer.html" />
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html"/>
+<link rel="import" href="px-handle.html" />
+<link rel="import" href="px-handle-multi.html" />
+
+
+<!--
+Allow the user to select a value or range of values within a specified min and max.
+
+##### Usage
+
+    <px-slider value="50" min="1" max="100"></px-slider>
+
+@element px-slider
+@blurb Allow the user to select a value or range of values within a specified min and max.
+@homepage index.html
+@demo demo.html
+-->
+
+<link rel="import" href="css/px-slider-styles.html">
+
+<dom-module id="px-slider">
+  <template>
+    <style include="px-slider-styles"></style>
+    <style include="px-theme-styles"></style>
+    <div class="flex">
+      <input id="inputStart" type="text" class="text-input" value="{{value}}" on-change="_handleStartChange" tabindex="0" disabled="{{disabled}}"/>
+      <div id="sliderContainer" class="slider flex__item" on-click="_jumpToValue">
+        <div id="sliderSelected" class="slider__selected"></div>
+        <px-handle-multi id="startHandle" class="visuallyhidden" on-track="_handleTrackStart" handle-rotate disabled="{{disabled}}"></px-handle-multi>
+        <px-handle-multi id="endHandle" class="visuallyhidden" on-track="_handleTrackEnd" disabled="{{disabled}}"></px-handle-multi>
+        <px-handle id="singleHandle" class="visuallyhidden" on-track="_handleTrackEnd" disabled="{{disabled}}"></px-handle>
+      </div>
+      <input id="inputEnd" type="text" class="text-input visuallyhidden" value="{{endValue}}" on-change="_handleEndChange" tabindex="0" disabled="{{disabled}}"/>
+    </div>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+
+    is: 'px-slider',
+
+    behaviors: [
+      Polymer.IronResizableBehavior
+    ],
+
+    ready: function() {
+      // Must have min and max values
+      // FATAL
+      if (!this.min && this.min !== 0) {
+        throw "Missing a minimum value (min).";
+      } else if (!this.max && this.max !== 0) {
+        throw "Missing a maximum value (max).";
+      }
+
+      // Do we have a start value and end value?
+      if ( (this.startValue || this.startValue === 0) &&
+           (this.endValue || this.endValue === 0) ) {
+
+        // If so, this is a range.
+        this._range = true;
+        this.value = this.startValue;
+
+        // Show the start handle and the end input and end handle
+        this.toggleClass('visuallyhidden', false, this.$.startHandle);
+        this.toggleClass('visuallyhidden', false, this.$.endHandle);
+        this.toggleClass('visuallyhidden', false, this.$.inputEnd);
+
+        // add class to make style adjustments specific to the multi handle version
+        this.toggleClass('slider__multi', true, this.$.sliderContainer);
+
+        // Let's do some extra error checking to protect developers from themselves
+        // Not fatal, but probably not intentional.
+        if ( this.value > this.endvalue) {
+          console.warn("Your starting value can't be greater than your ending value.");
+          this.value = this.endValue;
+        } else if (this.value % this.step !== 0 ) {
+          console.warn("Your value doesn't match your step: the value needs to be evenly divisible by the step attribute.");
+        } else if (this.endValue % this.step !== 0 ) {
+          console.warn("Your end value doesn't match your step: the end value needs to be evenly divisible by the step attribute.");
+        }
+
+        // Cleanup values, just in case
+        this.value = this._cleanValue(this.value);
+        this.endValue = this._cleanValue(this.endValue);
+
+        // Have to wait for the DOM to finish loading
+        // And then refire these
+        this.async(function() {
+          // calculate the amount to offset the range on the right for handle width
+          this.offsetForHandleWidth = this._calcOffsetWidth(2);
+
+          // move handles into starting position
+          this._updateHandle(this.$.startHandle, this.value);
+          this._updateHandle(this.$.endHandle, this.endValue);
+        }, 1);
+      } else {
+
+        if (!this.value && this.value !== 0) {
+          throw "Oops, I need a starting value. Did you set the 'value' attribute?";
+        }
+
+        // Show the single handle
+        this.toggleClass('visuallyhidden', false,  this.$.singleHandle);
+
+        this.async(function() {
+          // calculate the amount to offset the range on the right for handle width
+          this.offsetForHandleWidth = this._calcOffsetWidth(22);
+
+          // move handle into initial position
+          this._updateHandle(this.$.singleHandle, this.value);
+        }, 1);
+      }
+    },
+
+    /**
+     * Properties block, expose attribute values to the DOM via 'reflect'
+     *
+     * @property properties
+     * @type Object
+     */
+    properties: {
+      /**
+       * a Boolean property reflecting whether range is true or false
+       */
+      _range: {
+        type: Boolean,
+        value: false
+      },
+      /**
+       * The starting value for the slider's handle.
+       */
+      value: {
+        type: Number,
+        notify: true,
+        observer: '_valueChanged'
+      },
+      /**
+       * For multi-handled/ranged sliders, the value of the left handle or start of the selected range.
+       */
+      startValue: {
+        type: Number,
+        notify: true
+      },
+      /**
+       * For multi-handled/ranged sliders, the value of the right handle or end of the selected range.
+       */
+      endValue: {
+        type: Number,
+        notify: true,
+        observer: '_endValueChanged'
+      },
+      /**
+       * A min value for the slider. The user cannot choose less than the min
+       */
+      min: {
+        type: Number,
+        value: 1,
+        observer: '_minChanged'
+      },
+      /**
+       * A max value for the slider. The user cannot choose greater than the max
+       */
+      max: {
+        type: Number,
+        value: 100,
+        observer: '_maxChanged'
+      },
+      /**
+       * All allowed values will be a multiple of the step.
+       * So if you want the user only to be able to select 10, 20, 30, 40, etc. you would set the step to 10.
+       * The default is 1, which ensures that you only get integers for your value.
+       */
+      step: {
+        type: Number,
+        value: 1,
+        observer: '_stepChanged'
+      },
+      /**
+       * A boolean reflecting whether the slider is disabled or not
+       */
+      disabled: {
+        type: Boolean,
+        value: false
+      }
+    },
+
+    listeners: {
+      'iron-resize': '_onIronResize'
+    },
+
+    /**
+     * This will be called by the parents through the iron-resizable-behavior
+     * when they know the slider has been resized or made visible.
+     * @method _onIronResize
+     */
+    _onIronResize: function() {
+      var slider = this;
+
+      //debounce resize events
+      if (slider.debounce) {
+        slider.debounce(
+          'slider_resize', function() {
+            var handleWidth  = this._range ? 2 : 22;
+            this.offsetForHandleWidth = this._calcOffsetWidth(handleWidth);
+            if(this._range) {
+              this._updateHandle(this.$.startHandle, this.value);
+              this._updateHandle(this.$.endHandle, this.endValue);
+            }
+            else {
+              this._updateHandle(this.$.singleHandle, this.value);
+            }
+          }, 50);
+        }
+    },
+
+    /**
+     * Function called when a value changes
+     * --Ensures the value is valid, matches step size, etc
+     * --Moves single or start handle into position
+     * @method _valueChanged
+     * @param newValue
+     * @param oldValue
+     */
+    _valueChanged: function(newValue, oldValue) {
+        var slider = this;
+        //this is here to ensure that when we get many consecutive jumps, we debounce them, instead of calculating each one.
+        if (slider.debounce) {
+          slider.debounce(
+            'slider_move', function() {
+              var clean = this._cleanValue(newValue);
+
+              // If this is a range, don't go higher than the end value
+              if (this._range && clean > this.endValue) {
+                clean = this.endValue;
+              }
+
+              // If it's a range, we update the start handle; otherwise update the single handle
+              var handle = (this._range) ? this.$.startHandle : this.$.singleHandle;
+              this._updateHandle(handle, this.value);
+
+              // For the sake of ranges, we keep start value and value in sync
+              this.startValue = clean;
+              this.value = clean;
+            }, 1);
+        }
+
+    },
+    /**
+     * Similar to _valueChanged but affects end handle:
+     * --Ensures the value is valid, matches step size, etc
+     * --Moves single or end handle into position
+     * @method _endValueChanged
+     * @param newValue
+     * @param oldValue
+     */
+    _endValueChanged: function(newValue, oldValue) {
+      var slider = this;
+      //this is here to ensure that when we get many consecutive jumps, we debounce them, instead of calculating each one.
+      if (slider.debounce) {
+        slider.debounce(
+          'slider_move_end', function() {
+            var clean = this._cleanValue(newValue);
+
+            // If this is a range, don't go below the start value
+            if (this._range && clean < this.value) {
+              clean = this.value;
+            }
+
+            // If it's a range, we update the end handle; otherwise update the single handle
+            var handle = (this._range) ? this.$.endHandle : this.$.singleHandle;
+            this._updateHandle(handle, clean);
+
+            // Update endValue with the cleaned value
+            this.endValue = clean;
+          }, 1);
+        }
+    },
+    /**
+     * Function that is called if the min attribute on px-slider is changed
+     * --Ensures the value is valid, matches step size, etc
+     * @method _minChanged
+     * @param newValue
+     * @param oldValue
+     */
+    _minChanged: function(newValue, oldValue) {
+      // Step not always defined at load?
+      if (!this.step) {
+        return;
+      }
+
+      // Do the values match the step size?
+      // Just warn, don't throw an exception
+      if (this.min % this.step !== 0) {
+        console.warn("WARNING: min value does not match step size.");
+        this.min = this.min - (this.min % this.step);
+      }
+
+      // Since we are changing the min, let's go ahead and recheck the start value
+      this.value = this._cleanValue(this.value);
+    },
+    /**
+     * Function that is called if the max attr on px-slider is changed
+     * --Ensures the value is valid, matches step size, etc
+     * @method _maxChanged
+     * @param newValue
+     * @param oldValue
+     */
+    _maxChanged: function(newValue, oldValue) {
+      // if no step attr, we dont need to check anything
+      if (!this.step) {
+        return;
+      }
+
+      // make sure max is a number and not string
+      this.max = Number(this.max);
+
+      var tempMax,tempStep;
+      var decimalPlaces = 0;
+
+      //if step is a float, get the number of decimals
+      if(this.step.toString().indexOf(".") > -1) {
+        decimalPlaces = this.step.toString().split(".")[1].length;
+      }
+
+      // Convert floats to ints
+      tempMax = this.max * Math.pow(10,decimalPlaces);
+      tempStep = this.step * Math.pow(10,decimalPlaces);
+
+      // Do the values match the step size?
+      // Just warn, don't throw an exception
+      if (tempMax % tempStep !== 0) {
+        console.warn("WARNING: max value does not match step size.");
+        this.max = (tempMax - (tempMax % tempStep))/Math.pow(10,decimalPlaces);
+      }
+
+      // Since we are changing the max, let's go ahead and recheck the end value
+      if (this._range) {
+        this.endValue = this._cleanValue(this.endValue);
+      } else {
+        this.value = this._cleanValue(this.value);
+      }
+    },
+    /**
+     * Function that is called if the step size attr on px-slider is changed
+     * --Ensures the value is valid, matches step size, etc
+     * @method _stepChanged
+     * @param newValue
+     * @param oldValue
+     */
+    _stepChanged: function(newValue, oldValue) {
+      // When the step changes, recheck EVERYTHING!
+      this.value = this._checkStep(this.value);
+      this.min = this._checkStep(this.min);
+      this.max = this._checkStep(this.max);
+      if (this._range) {
+        this.endValue = this._checkStep(this.endValue);
+      }
+    },
+    /**
+     * Helper function that calls checkStep and makes sure the new value
+     * is within bounds.
+     * - Sets to max or min if not.
+     * @method _cleanValue
+     * @param dirty
+     */
+    _cleanValue: function(dirty) {
+      var clean = dirty;
+
+      // Account for 'steps'
+      clean = this._checkStep(clean);
+
+      // Check against min and max values
+      if (clean > this.max) {
+        clean = this.max;
+      } else if (clean < this.min) {
+        clean = this.min;
+      }
+
+      return clean;
+    },
+    /**
+     * Helper function that makes sure the new value matches the
+     * specified step size.
+     *  - Rounds value if not
+     *  - Also sets val to number of decimal places as step size
+     * @method _checkStep
+     * @param dirty
+     */
+    _checkStep: function(dirty) {
+      // Bad values on start
+      if (!dirty && dirty !== 0) {
+        return;
+      }
+
+      var clean = dirty;
+      var decimalPlaces = 0;
+
+      clean = (Math.round(dirty/this.step) * this.step);
+
+      if(this.step.toString().indexOf(".") > -1) {
+        decimalPlaces = this.step.toString().split(".")[1].length;
+        clean = clean.toFixed(decimalPlaces);
+      }
+
+      return clean;
+    },
+    /**
+     * Helper func to calc the "left:Xpx" style used to moving the handle and progress bar
+     * - Progress bar for multi-handle needs add a bit to make minor alignment adjustments.
+     * @method _translateValueToPosition
+     * @param myvalue
+     * @param extra
+     */
+    _translateValueToPosition: function(myvalue,extra) {
+      // if extra was passed in, use it, otherwise it is 0.
+      extra = extra || 0;
+
+      // add offset so end handle stops at end of tracking
+      var cW = this.offsetForHandleWidth;
+
+      // What is the ratio of the value to the max?
+      var ratio = myvalue / this.max;
+
+      // Multiple by the width of the container
+      var position = ratio * cW;
+
+      return position + extra + 'px';
+    },
+    /**
+     * Helper function to calc a value from a handle position
+     * @method _translatePositionToValue
+     * @param mypos
+     */
+    _translatePositionToValue: function(mypos) {
+      // add offset so end handle stops at end of tracking
+      var cW = this.offsetForHandleWidth;
+
+      // Have we loaded the container?
+      if (cW === 0) {
+        return;
+      }
+
+      // What is the ratio of my position to the container?
+      var ratio = mypos / cW;
+
+      // Convert to value; have to account min values other than 0
+      var value = ratio * (this.max - this.min);
+
+      return this._cleanValue(value);
+    },
+    /**
+     * Function updates the position of a handle by setting it's left style
+     * - calls function to update progress bar
+     * @method _updateHandle
+     * @param handle
+     * @param value
+     */
+    _updateHandle: function(handle, value) {
+
+      // Determine new x position from value
+      var newPos = this._translateValueToPosition(value);
+
+      // Set px value of left position
+      handle.style.left = newPos;
+
+      // Update the progress bar, too
+      this._updateProgressBar();
+    },
+
+    /**
+     * Update the progress bar based on change in values
+     *
+     * @method _updateProgressBar
+     */
+    _updateProgressBar: function() {
+      // Value is coming up as undefined, for some reason
+      // 0 value is ok, though.
+      if (!this.value && this.value !== 0) {
+        return;
+      }
+
+      var progressValue,
+          progressPosition;
+
+      // Am I a range or a single value?
+      if(this._range){
+        progressValue = this.endValue - this.value;
+        progressPosition = this.value;
+
+        // Set the width and the position (for ranges)
+        this.$.sliderSelected.style.width = this._translateValueToPosition(progressValue,2);
+        this.$.sliderSelected.style.left = this._translateValueToPosition(progressPosition,-1);
+      } else {
+        progressValue = this.value;
+        progressPosition = 0;
+
+        // Set the width and the position (for ranges)
+        this.$.sliderSelected.style.width = this._translateValueToPosition(progressValue);
+        this.$.sliderSelected.style.left = this._translateValueToPosition(progressPosition);
+      }
+
+    },
+
+    /**
+     * Where is the mouse in relation to the slider? Keep it in bounds.
+     *
+     * @method _findPosition
+     * @param event
+     */
+    _findPosition: function(event) {
+      // Is this a drag or a click?
+      var mX = (event.detail.x) ? event.detail.x : event.clientX;
+      // add offset so end handle stops at end of tracking
+      var cL = this.$.sliderContainer.getBoundingClientRect().left;
+      var cR = this.$.sliderContainer.getBoundingClientRect().right;
+      var cW = this.offsetForHandleWidth;
+      var position = 0;
+
+      // Check to make sure Mouse is on the screen.
+      if (isNaN(mX)) {
+        mX = 0;
+      }
+
+      if (mX > cR) {
+        // Is the mouse passed the right of our container?
+        // If so, set the position to the width of the container
+        position = cW;
+      } else if (mX < cL) {
+        // Is the mouse passed the left of our container?
+        // If so, set the position to zero
+        position = 0;
+      } else {
+        // Otherwise, position is based on the mouseX minus the offset
+        position = mX - cL;
+      }
+
+      return position;
+    },
+
+    /**
+     * Handles updating the value when the START handle is moved
+     *
+     * @method _handleTrackStart
+     * @param event
+     */
+    _handleTrackStart: function(event) {
+      var slider = this;
+      if(slider.disabled) {
+        return false;
+      }
+
+      if (slider.debounce) {
+        slider.debounce(
+          'slider_track_end', function() {
+            var newPos = this._findPosition(event);
+
+            // Update the value for the new position
+            var newValue = this._translatePositionToValue(newPos);
+
+            // We know this is range
+            if (newValue > this.endValue) {
+              newValue = this.endValue;
+            }
+            this.value = newValue;
+          }, 1
+        );
+      }
+    },
+
+    /**
+     * Handles updating the value when the END handle is moved
+     *
+     * @method _handleEndChange
+     * @param event
+     */
+    _handleTrackEnd: function(event) {
+      var slider = this;
+      if(slider.disabled) {
+        return false;
+      }
+
+      if (slider.debounce) {
+        slider.debounce(
+          'slider_track_end', function() {
+            var newPos = this._findPosition(event);
+
+            // Update the value based on the new position
+            var newValue = this._translatePositionToValue(newPos);
+            if (this._range) {
+              if (newValue < this.value) {
+                newValue = this.value;
+              }
+              this.endValue = newValue;
+            } else {
+              this.value = newValue;
+            }
+          }, 1 );
+      }
+    },
+
+    /**
+     * Handles updating the value when the START input textbox is changed
+     *
+     * @method _handleStartChange
+     * @param event
+     */
+    _handleStartChange: function(event) {
+      // Two way data binding not working?
+      this.value = this.$.inputStart.value;
+    },
+
+    /**
+     * Handles updating the value when the END input textbox is changed
+     *
+     * @method _handleEndChange
+     * @param event
+     */
+    _handleEndChange: function(event) {
+      // Two way data binding not working?
+      this.endValue = this.$.inputEnd.value;
+    },
+
+    /**
+     * When the user clicks on the slider itself, jump to the corresponding value.
+     *
+     * @method _jumpToValue
+     * @param event
+     */
+    _jumpToValue: function(event) {
+      var slider = this;
+      if(slider.disabled) {
+        return false;
+      }
+      if (slider.debounce) {
+        slider.debounce(
+          'slider_jump', function() {
+            // if the user clicks on the slider bar (not just clicking the handles), jump the value
+            if(event.target.id === 'sliderContainer' || event.target.id === 'sliderSelected' ){
+              var newPos = this._findPosition(event);
+              // Update the value based on the new position
+              var newValue = this._translatePositionToValue(newPos);
+
+              if (this._range) {
+                // Which handle do you move?
+                if (newValue < this.value) {
+                  // If it's less than the start value, move the left slider
+                  this.value = newValue;
+
+                } else if (newValue > this.endValue) {
+                  // If it's greater than the end value, move the right slider
+                  this.endValue = newValue;
+                } else {
+                  // We are somewhere in the middle - which handle do we move?!
+                }
+              } else {
+                // Move the only handle
+                this.value = newValue;
+              }
+            }
+          }, 1
+        );
+      }
+    },
+    /**
+     * Helper function to calculate the amount of space that is left on the slider
+     * to accomodate the handle width.
+     * @method _calcOffsetWidth
+     * @param cO
+     *
+     */
+    _calcOffsetWidth: function(cO){
+      return this.$.sliderContainer.offsetWidth - cO;
+    }
+  });
+</script>

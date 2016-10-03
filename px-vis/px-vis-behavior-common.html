@@ -20,7 +20,8 @@ PxVisBehavior.sizing = {
     *
     */
     width: {
-      type: Number
+      type: Number,
+      notify: true
     },
 
     /**
@@ -29,6 +30,7 @@ PxVisBehavior.sizing = {
     */
     height: {
       type: Number,
+      notify: true
     },
 
     /**
@@ -37,6 +39,7 @@ PxVisBehavior.sizing = {
     */
     margin:{
       type:Object,
+      notify: true,
       value: function() {
         return {
           left: 0,
@@ -46,6 +49,72 @@ PxVisBehavior.sizing = {
         };
       }
     }
+  }
+};
+
+/*
+    Name:
+    PxVisBehavior.truncating
+
+    Description:
+    Polymer behavior that provides the string truncation method
+
+    @polymerBehavior PxVisBehavior.truncating
+*/
+PxVisBehavior.truncating = {
+  properties: {
+    /**
+     * Defines if the label should get truncated and to how many characters.
+     *
+     * Default length is 10 characters, not including the ellipsis which gets inserted.
+     *
+     * The length must be at least 2.
+     *
+     * To disable truncation, set the value to -1
+     *
+     * @property truncationLength
+     * @type Number
+     * @default 10
+    */
+    truncationLength: {
+      type: Number,
+      value: 10
+    },
+  },
+  /**
+   * _truncateName takes a string and string length [optional].
+   * Returns a truncated string with the middle replaced by an ellipsis. The ellipsis does not count towards the total character count.
+   * Follows these truncation principles: http://www.gesdh.com/predix/product/principles/truncation/
+   * Example: LNG_BAH_HOT_EFFECTIVENESS_CORE8 --> LNG_B...CORE8
+   *
+   * Length cannot be less than 2 characters.
+   * Default length is 10 characters.
+   *
+   * If the string is less than or equal to the length or the length is invalid, returns the original string.
+   *
+   * @param {String} name, {Integer} len
+   * @return {String} truncatedString
+  */
+  _truncateName:function(name,len) {
+    var len = len || this.truncationLength;
+
+    // make sure length is legit
+    if(len < 2) {
+      return name;
+    }
+
+    //check that name is greater than length; if not, return it
+    if(name.length <= len) {
+      return name;
+    }
+
+    // truncate
+    var frontLen = Math.ceil(len / 2),
+        backLen = Math.floor(len / 2),
+        front = name.slice(0,frontLen),
+        back = name.slice(-backLen);
+
+    return front + '...' + back;
   }
 };
 
@@ -61,7 +130,7 @@ PxVisBehavior.sizing = {
 
     @polymerBehavior PxVisBehavior.formatting
 */
-PxVisBehavior.formatting = {
+PxVisBehavior.formatting = [{
   properties: {
     /**
      * Defines how a display number should be formatted:
@@ -175,44 +244,8 @@ PxVisBehavior.formatting = {
       notify: true,
       value:''
     }
-
-  },
-  /**
-   * _truncateName takes a string and string length [optional].
-   * Returns a truncated string with the middle replaced by an ellipsis. The ellipsis does not count towards the total character count.
-   * Follows these truncation principles: http://www.gesdh.com/predix/product/principles/truncation/
-   * Example: LNG_BAH_HOT_EFFECTIVENESS_CORE8 --> LNG_B...CORE8
-   *
-   * Length cannot be less than 2 characters.
-   * Default length is 10 characters.
-   *
-   * If the string is less than or equal to the length or the length is invalid, returns the original string.
-   *
-   * @param {String} name, {Integer} len
-   * @return {String} truncatedString
-  */
-  _truncateName:function(name,len){
-    var len = len || 10;
-
-    // make sure length is legit
-    if(len < 2) {
-      return name;
-    }
-
-    //check that name is greater than length; if not, return it
-    if(name.length <= len){
-      return name;
-    }
-
-    // truncate
-    var frontLen = Math.ceil(len / 2),
-        backLen = Math.floor(len / 2),
-        front = name.slice(0,frontLen),
-        back = name.slice(-backLen);
-
-    return front + '...' + back;
   }
-};
+}, PxVisBehavior.truncating];
 
 /*
     Name:
@@ -308,6 +341,35 @@ PxVisBehavior.mutedSeries = {
     },
   }
 };
+
+/*
+    Name:
+    PxVisBehavior.progressiveRendering
+
+    Description:
+    Polymer behavior that provides canvas progressive rendering options
+
+    Dependencies:
+    -
+
+    @polymerBehavior PxVisBehavior.progressiveRendering
+*/
+PxVisBehavior.progressiveRendering = {
+  properties: {
+    /**
+    * By default the lines are rendered progressively for a better user experience.
+    * However this can have a performance impact, minimal on chrome (+15% rendering
+    * time) but important on IE (+200% rendering time...)
+    * Use this to prevent progressive rendering if you plan rendering a lot fo <datalist>
+    * and using IE
+    */
+    noCanvasProgressiveRendering: {
+      type: Boolean,
+      value: false
+    }
+  }
+};
+
 
 /*
     Name:
@@ -421,7 +483,7 @@ PxVisBehavior.commonMethods = {
    * @return {bool}
    */
   _isObjEmpty:function(obj){
-    if(typeof(obj) === 'undefined'){
+    if(typeof(obj) === 'undefined') {
       return false;
     }
     return Object.keys(obj).length === 0;
@@ -433,7 +495,7 @@ PxVisBehavior.commonMethods = {
    * @return {bool}
    */
   _doesObjHaveValues:function(obj){
-    if(typeof(obj) === 'undefined'){
+    if(typeof(obj) === 'undefined' || obj === null) {
       return false;
     }
     return Object.keys(obj).length > 0;
@@ -596,7 +658,6 @@ PxVisBehavior.chartExtents = {
     @polymerBehavior PxVisBehavior.events
 */
 
-
 PxVisBehavior.events = {
   properties: {
     /**
@@ -718,34 +779,102 @@ PxVisBehavior.events = {
   }
 };
 
+/*
+     Name:
+    PxVisBehavior.dimensions
+
+    Description:
+    Polymer behavior that provides dimension behaviors
+
+
+    @polymerBehavior PxVisBehavior.dimensions
+*/
+
 PxVisBehavior.dimensions = {
   properties: {
     /**
-    *
-    *```
-    *  {
-    *      "x": [0,100],
-    *      "y": [5,50],
-    *  }
-    *```
-    *
-    * For an ordinal dataset, chart extents can be set like this:
-    *```
-    *  {
-    *      "x": ['low','medium','high'],
-    *      "y": [5,50],
-    *  }
-    *```
+     * An optional dev set array to specify which dimensions to plot
+     *
+     */
+    axes: {
+      type: Array,
+      notify: true
+    },
+    /**
+    * An array of dimensions which the chart uses.
+    * @private
     */
     dimensions: {
       type: Array,
       notify: true
     },
-
+    /**
+    * A string specifying which key to use as the series
+    *
+    */
     seriesKey: {
       type: String,
       notify: true
     },
+  }
+};
+
+/*
+     Name:
+    PxVisBehavior.categories
+
+    Description:
+    Polymer behavior that provides categories definitions which can be used to color the series lines by category
+
+
+    @polymerBehavior PxVisBehavior.categories
+*/
+
+PxVisBehavior.categories = {
+  properties: {
+    /**
+     * A dev set string speciying which key to use as the category to use to color the series lines
+     *
+     */
+    categoryKey: {
+      type: String,
+      notify: true
+    },
+    /**
+     * A dev set array defining the categories values.
+     *
+     */
+    categories: {
+      type: Array,
+      notify: true,
+      value: function(){ return []; }
+    }
+  }
+};
+
+
+/*
+    Name:
+    PxVisBehaviorD3.commonAxis
+
+    Description:
+    Polymer behavior that provides a boolean to specify a common axis for a chart.
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorD3.commonAxis
+*/
+PxVisBehavior.commonAxis = {
+  properties: {
+    /**
+     * A boolean specifying if all axes should share the same range
+     *
+     */
+    commonAxis: {
+      type: Boolean,
+      value: false
+    }
   }
 };
 

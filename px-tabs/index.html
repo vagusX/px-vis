@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>px-tabs Demo</title>
+  <link rel="stylesheet" type="text/css" href="css/px-tabs-demo.css"/>
+  <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import" href="../px-theme/px-theme-styles.html">
+  <style include="px-theme-styles" is="custom-style"></style>
+
+  <link rel="import" href="../px-api-viewer/px-api-viewer.html" />
+  <link rel="import" href="px-tab-set.html" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+  <link rel="import" href="../px-demo-snippet/px-demo-snippet.html">
+  <link rel="import" href="../px-polymer-font-awesome/polymer-font-awesome.html" />
+  <link rel="import" href="../px-dropdown/px-dropdown.html" />
+  <link rel="import" href="demo-bare-tabs.html"/>
+  <link rel="import" href="demo-bare-tabs-no-border.html"/>
+  <link rel="import" href="demo-custom-tabs.html"/>
+</head>
+
+<body>
+
+  <!-- Wrap elements with auto-binding template to -->
+  <!-- allow use of Polymer bindings in main document -->
+  <template id="just-for-demo" is="dom-bind" >
+
+    <!-- discription -->
+    <div class="hero u-p++ text--shadow">
+      <a class="actionable flex flex--right flex--middle" href="https://github.com/PredixDev/px-tabs" target="_blank"><iron-icon class="menu__open" icon="fa:fa-github"></iron-icon>View on Github</a>
+  		<h1 class="delta">px-tabs</h1>
+      <div class="description-text">
+    		<p>
+          A classic design for organizing content on multiple tabs.
+    		</p>
+      </div>
+  		<div class="flex">
+  			<img class="u-mr--" src="https://img.shields.io/travis/PredixDev/px-tabs.svg?style=flat-square" alt="Travis"/>
+  			<img class="u-mr--" src="https://img.shields.io/bower/v/px-tabs.svg?style=flat-square" alt="Bower"/>
+  			<img class="u-mr--" src="https://img.shields.io/github/issues-raw/PredixDev/px-tabs.svg?style=flat-square" alt="Issues"/>
+  		</div>
+  	</div>
+
+    <!-- mega demo -->
+    <div style="position: relative;" class="u-pb++ flex flex--col" id="defaultTab">
+      <div class="tabContainer u-pt++ u-pl++">
+        <px-tab-set selected="{{selected}}" bare no-bottom-border>
+          <template is="dom-repeat" items="{{optionsArray}}">
+            <px-tab>Option {{indexPlusOne(index)}}</px-tab>
+          </template>
+        </px-tab-set>
+      </div>
+      <px-tab-pages selected="{{selected}}">
+        <template is="dom-repeat" items="{{optionsArray}}">
+          <section class="tab-page">
+            <div class="mega-demo flex u-ph++ u-pb++">
+
+              <div class="demoContainer u-mt+">
+                <!-- demo -->
+                <div class="flex flex--col">
+                  <div class="demo u-p+">
+
+                    <div style="position:relative;">
+
+                      <template is="dom-if" if="{{_isFirstTab(index)}}">
+                        <h4>This is a Polymer component that implements a set of custom tabs:</h4>
+                        <demo-custom-tabs></demo-custom-tabs>
+                      </template>
+
+                      <template is="dom-if" if="{{_isSecondTab(index)}}">
+                        <h4>This is a Polymer component that implements a set of custom tabs with the bare option</h4>
+                        <demo-bare-tabs></demo-bare-tabs>
+                      </template>
+
+                      <template is="dom-if" if="{{_isThirdTab(index)}}">
+                        <h4>This is a Polymer component that implements a set of custom tabs with the bare option, and no bottom border</h4>
+                        <demo-bare-tabs-no-border></demo-bare-tabs-no-border>
+                      </template>
+                    </div>
+                  </div>
+                  <div>
+                    <px-demo-snippet
+                      element-properties={{item}}
+                      element-name="px-tabs">
+                    </px-demo-snippet>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="apiContainer">
+              <div class="flex flex--col api u-mt++" >
+                <div>
+                  <px-api-viewer source="px-tab-set"></px-api-viewer>
+                </div>
+              </div>
+            </div>
+          </section>
+        </template>
+      </px-tab-pages>
+    </div>
+  <footer class="footer flex flex--center">
+    <div class="footer__container u-pv++">
+      <div>
+        <a href="https://ge.com/digital" >
+          <img src="monogram-wdmk.png" alt="GE Monogram" class="footer__img">
+        </a>
+      </div>
+      <div class="footer__list">
+        <ul class="list-inline list-inline--delimited">
+          <li>
+            <a href="http://predix.io/legal" class="footer__list--lnk">Legal</a>
+          </li>
+          <li>
+            <a href="mailto:info@predix.io" class="footer__list--lnk">Contact Us</a>
+          </li>
+          <li>Copyright &copy; {{year}} General Electric Company. All rights reserved.</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+</template>
+<script>
+window.addEventListener('WebComponentsReady', function() {
+  var template = document.querySelector('template[is=dom-bind]'),
+      items = [
+        {"key":"one","val":"light"},
+        {"key":"two","val":"dark"}
+      ],
+      optionsArray = [
+        {
+          "lightDomContent": '<px-tab id="tab1">Bengal Tiger</px-tab><px-tab id="tab2">Black Spider Monkey</px-tab><px-tab id="tab3">Sumatran Elephant</px-tab><px-tab id="tab4">Ganges River Dolphin</px-tab>',
+          "selected": "1"
+        },
+        {
+          "lightDomContent": '<px-tab id="tab1">Bengal Tiger</px-tab><px-tab id="tab2">Black Spider Monkey</px-tab><px-tab id="tab3">Sumatran Elephant</px-tab><px-tab id="tab4">Ganges River Dolphin</px-tab>',
+          "bare": true,
+          "selected": "1"
+        },
+        {
+          "lightDomContent": '<px-tab id="tab1">Bengal Tiger</px-tab><px-tab id="tab2">Black Spider Monkey</px-tab><px-tab id="tab3">Sumatran Elephant</px-tab><px-tab id="tab4">Ganges River Dolphin</px-tab>',
+          "bare": true,
+          "noBottomBorder": true,
+          "selected": "1"
+        }
+      ],
+      indexPlusOne = function(num) {
+        return num + 1;
+      },
+      year = new Date(),
+      _isFirstTab = function(index) {
+        return index === 0;
+      },
+      _isSecondTab = function(index) {
+        return index === 1;
+      },
+      _isThirdTab = function(index) {
+        return index === 2;
+      };
+
+  template.selected = "0";
+  template.optionsArray = optionsArray;
+  template.indexPlusOne = indexPlusOne;
+  template.items = items;
+  template.year = year.getFullYear();
+  template._isFirstTab = _isFirstTab;
+  template._isSecondTab = _isSecondTab;
+  template._isThirdTab = _isThirdTab;
+
+});
+</script>
+
+</body>
+</html>

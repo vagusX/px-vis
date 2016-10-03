@@ -96,6 +96,10 @@ var pxDatetimeRangeBehavior = [{
     toMoment: {
       type: Object,
       notify: true
+    },
+    _preventRangeUpdate: {
+      type: Boolean,
+      value: false
     }
   },
   listeners: [
@@ -105,7 +109,9 @@ var pxDatetimeRangeBehavior = [{
    * for legacy purposes
    */
   _setRange: function() {
-    this._setMomentFromRange();
+    if(!this._preventRangeUpdate) {
+      this._setMomentFromRange();
+    }
   },
   /**
    * Converts range into from and to moments
@@ -189,16 +195,23 @@ var pxDatetimeRangeBehavior = [{
    */
   _notifyRangeChanged: function(evt) {
 
-    //make sure we keep the moment synchronized in case range has been changed externally
-    if(!this.fromMoment || this.fromMoment.toISOString() !== this.range.from) {
-      this.set('fromMoment', this._convertISOtoMoment(this.range.from));
-    }
-    if(!this.toMoment || this.toMoment.toISOString() !== this.range.to) {
-      this.set('toMoment', this._convertISOtoMoment(this.range.to));
-    }
+    if(!this._preventRangeUpdate) {
+      this._preventRangeUpdate = true;
 
-    //notify the range has changed
-    this.fire('px-datetime-range-submitted', {range: this.range, momentObjs: {from: this.fromMoment, to: this.toMoment}});
+      //make sure we keep the moment synchronized in case range has been changed externally
+      if(!this.fromMoment || this.fromMoment.toISOString() !== evt.from) {
+        this.set('fromMoment', this._convertISOtoMoment(evt.from));
+      }
+      if(!this.toMoment || this.toMoment.toISOString() !== evt.to) {
+        this.set('toMoment', this._convertISOtoMoment(evt.to));
+      }
+
+      this.range = evt;
+
+      //notify the range has changed
+      this.fire('px-datetime-range-submitted', {range: this.range, momentObjs: {from: this.fromMoment, to: this.toMoment}});
+      this._preventRangeUpdate = false;
+    }
   }
 }, pxDatetimeSharedBehavior];
 

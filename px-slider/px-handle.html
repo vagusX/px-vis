@@ -1,0 +1,113 @@
+<!--
+    Relative paths assume component is being run from inside an app or another component, where dependencies are flat
+    siblings. When this component is run from its own repo (e.g. ui tests, examples), we assume the server is started with
+    'grunt depserve' (or similar server setup) to enable correct finding of bower dependencies for local runs
+    See https://github.com/jreichenberg/grunt-dep-serve#why-do-we-need-this
+-->
+<link rel="import" href="../polymer/polymer.html" />
+
+
+<!--
+Handle element for the single handle for px-slider
+
+##### Usage
+
+  <px-handle id="singleHandle" class="visuallyhidden" handle-track-event-name="handleTrackEnd" on-track="handleTrackEnd"></px-handle>
+
+@element px-handle
+@blurb Handle element for the single handle for px-slider
+@homepage index.html
+@demo demo.html
+-->
+
+<link rel="import" href="css/px-handle-styles.html">
+
+<dom-module id="px-handle">
+  <template>
+    <style include="px-handle-styles"></style>
+    <style include="px-theme-styles"></style>
+    <button id="handleTarget" on-down="handleDown" on-up="handleUp" on-track="handleTrack" tabindex="-1">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+        <rect x="0" y="3" width="1" height="7" />
+        <rect x="3" y="3" width="1" height="7" />
+        <rect x="6" y="3" width="1" height="7" />
+      </svg>
+    </button>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+
+    is: 'px-handle',
+
+    properties: {
+      /**
+       * Indicates whether the handle is currently being dragged.
+       * @property tracking
+       * @type Boolean
+       * @default false
+       */
+      tracking: {
+        type: Boolean,
+        value: false,
+        readOnly: true,
+        observer: '_trackingChanged'
+      },
+      /**
+       * A boolean reflecting whether the slider is disabled or not
+       * @property disabled
+       * @type Boolean
+       * @default false
+       */
+      disabled: {
+        type: Boolean,
+        value: false,
+        observer: '_disabledChanged'
+      }
+    },
+    /**
+     * When the handle is clicked on for a drag, toggles "tracking" class
+     * @method _trackingChanged
+     * @param newValue
+     * @param oldValue
+     */
+    _trackingChanged: function(newValue, oldValue) {
+      this.toggleClass('tracking', newValue, this.$.handleTarget);
+    },
+    /**
+     * If the slider is disabled, apply the right class for styling
+     * @method _disabledChanged
+     * @param newValue
+     * @param oldValue
+     */
+    _disabledChanged: function(newValue, oldValue) {
+      this.toggleClass('disabled', newValue, this.$.handleTarget);
+    },
+    /**
+     * When the handle is clicked on, fire event
+     * @method handleDown
+     * @param event
+     */
+    handleDown: function(event) {
+      this._setTracking(true);
+    },
+    /**
+     * When the handle is let go (after being clicked on), fire event
+     * @method handleUp
+     * @param  event
+     */
+    handleUp: function(event) {
+      this._setTracking(false);
+    },
+    /**
+     * When the handle is moving, fire event
+     * @method handleTrack
+     * @param event
+     */
+    handleTrack: function(event) {
+      if (this.tracking) {
+      }
+    }
+  });
+</script>

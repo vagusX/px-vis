@@ -13,9 +13,12 @@ Date time button component.
     </px-rangepicker-modal>
 -->
 
+<link rel="import" href="css/px-datetime-buttons-styles.html">
+
 <dom-module id="px-datetime-buttons">
-  <link rel="import" type="css" href="css/px-datetime-buttons.css"/>
   <template>
+    <style include="px-datetime-buttons-styles"></style>
+    <style include="px-theme-styles"></style>
     <template is="dom-if" if="{{ !hideCancel }}">
       <button class="btn u-mr--" on-tap="_fireCancelEvent">Cancel</button>
     </template>

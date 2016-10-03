@@ -24,9 +24,12 @@ Element providing a dropdown solution.
 @homepage index.html
 @demo demo.html
 -->
+<link rel="import" href="css/px-dropdown-styles.html">
+
 <dom-module id="px-dropdown">
-  <link rel="import" type="css" href="css/px-dropdown.css" />
   <template>
+    <style include="px-dropdown-styles"></style>
+    <style include="px-theme-styles"></style>
     <div
     on-tap="triggerClicked"
     on-mouseover="_hoverOn"
@@ -46,6 +49,18 @@ Element providing a dropdown solution.
 <script>
   Polymer({
 
+    /**
+     * dropdown_content_value_changed event, fired when an element is selected.
+     * evt.details contains:
+     * { textValue: "text of the selected element",
+     *   key: "key of the selected element"
+     * }
+     *
+     * @event dropdown_content_value_changed
+     * @type {object}
+     * @property {string} textValue - The text value of the newly selected item
+     * @property {string} key - The key of the newly selected item
+     */
     is: 'px-dropdown',
     properties: {
       /**
@@ -172,6 +187,15 @@ Element providing a dropdown solution.
         type: String,
         value: '',
         notify: true
+      },
+      /**
+       * After an item has been selected from the dropdown content this represents the
+       * key of this item. Empty if no item has been selected yet
+       */
+      selectedKey: {
+        type: String,
+        value: '',
+        notify: true
       }
     },
     observers: [
@@ -209,6 +233,7 @@ Element providing a dropdown solution.
     _newTextValue: function(evt) {
       this.set('value', evt.detail.textValue);
       this.set('displayValue',evt.detail.textValue);
+      this.set('selectedKey', evt.detail.key);
 
       this.fire('change');
 

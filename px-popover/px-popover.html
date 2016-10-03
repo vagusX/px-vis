@@ -44,9 +44,13 @@ elements are not supported.
 @homepage index.html
 @demo demo.html
 -->
+
+<link rel="import" href="css/px-popover-styles.html">
+
 <dom-module id="px-popover">
-    <link rel="import" type="css" href="css/px-popover.css"/>
     <template>
+      <style include="px-popover-styles"></style>
+      <style include="px-theme-styles"></style>
       <template is="dom-if" if="{{!hideOverlay}}">
         <px-overlay type="light" class="fadeFromVisible"></px-overlay>
       </template>

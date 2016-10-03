@@ -1,3 +1,31 @@
+v0.2.8
+==================
+* fixed demo bugs
+
+v0.2.7
+==================
+* updated mega demo styles and bower px-demo-snippet to ^
+
+v0.2.6
+==================
+* Fix demo page button style & add grunt bump task
+
+v0.2.5
+==================
+* added mega demo, changed self to .bind in the component
+
+v0.2.4
+==================
+* added image to readme
+
+v0.2.3
+==================
+* added vulcanize to the demo gh-pages
+
+v0.2.2
+==================
+* Added vulcanize
+
 v0.2.1
 ==================
 * Fix in shadow dom

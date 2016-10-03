@@ -20,9 +20,13 @@ Rangepicker modal component.
 @homepage index.html
 @demo demo.html
 -->
+
+<link rel="import" href="css/px-datetime-range-panel-styles.html">
+
 <dom-module id="px-datetime-range-panel">
-  <link rel="import" type="css" href="css/px-datetime-range-panel.css"/>
   <template>
+    <style include="px-datetime-range-panel-styles"></style>
+    <style include="px-theme-styles"></style>
     <div id="rangepickerModal" class="rangepicker__box inline--flex flex--col">
       <!-- Calendar + time inputs + presets -->
       <div class="flex">
@@ -125,7 +129,7 @@ Rangepicker modal component.
         type: Object,
         notify: true,
         value: function() {
-          return Px.moment.tz(Px.moment(), this.timezone).subtract(1,'months');
+          return Px.moment.tz(Px.moment(), this.timeZone).subtract(1,'months');
         },
         observer: '_fromBaseDateChanged'
       },
@@ -141,7 +145,7 @@ Rangepicker modal component.
         type: Object,
         notify: true,
         value: function() {
-          return Px.moment.tz(Px.moment(), this.timezone);
+          return Px.moment.tz(Px.moment(), this.timeZone);
         },
         observer: '_toBaseDateChanged'
       },

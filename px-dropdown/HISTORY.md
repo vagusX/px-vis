@@ -1,3 +1,43 @@
+v0.12.1
+===============
+* Fixed dropdown-content demo
+
+v0.12.0
+===============
+* Uprev
+
+v0.11.5
+===============
+* fixed demo bug
+
+v0.11.4
+===============
+* removed the text and chevron demo pages, since they are internal, and made the components load with parentComponent, so they can work with codepen.
+
+v0.11.3
+===============
+* added parent-name to demo-snippet and changed over the polymer-font-awesome library
+
+v0.11.2
+===============
+* added other demo pages to vulcanize
+
+v0.11.1
+===============
+* updated demo bugs
+
+v0.11.0
+===============
+* Added 'selectedKey' attribute to dropdown, representing the key of the currently selected item
+
+v0.10.5
+===============
+* updated mega demo styles and bower px-demo-snippet to ^
+
+v0.10.4
+===============
+* added image to readme, removed watch, added view on github
+
 v0.10.3
 ===============
 * updated gh-pages script to vulcanize demo

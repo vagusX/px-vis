@@ -3,6 +3,8 @@
 Px-Datetime-field [![Build Status](https://travis-ci.org/PredixDev/px-datetime-field.svg?branch=master)](https://travis-ci.org/PredixDev/px-datetime-field)
 -----------------------------------------------
 
+[![px-datetime-field demo](px-datetime-field.png?raw=true)](https://github.com/PredixDev/px-datetime-field)
+
 ## Overview
 
 Px-Datetime-field is a Predix Experience ('Px') component

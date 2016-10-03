@@ -1,6 +1,6 @@
 {
   "name": "px-datetime-range-panel",
-  "version": "0.2.3",
+  "version": "0.3.1",
   "main": [
     "px-datetime-range-panel.html"
   ],
@@ -11,41 +11,43 @@
     "sass",
     "bower_components",
     "node_modules",
-    "test"
+    "test",
+    "scripts",
+    ".github",
+    "px-datetime-range-panel.png",
+    "OSS_Notice.pdf"
   ],
   "dependencies": {
-    "polymer": "^1.5.0",
-    "px-theme": "~0.8.0",
-    "px-calendar-picker": "~0.3.0",
-    "px-datetime-common": "~0.5.0",
-    "px-datetime-field": "~0.4.0"
+    "polymer": "^1.6.1",
+    "px-theme": "~1.1.2",
+    "px-calendar-picker": "~0.4.0",
+    "px-datetime-common": "~0.6.3",
+    "px-datetime-field": "~0.5.0"
   },
   "devDependencies": {
-    "iron-component-page": "PolymerElements/iron-component-page#~v1.1.0",
-    "px-starter-kit-design": "#~0.5.4",
+    "px-starter-kit-design": "#~0.6.0",
     "px-forms-design": "#~0.3.15",
     "px-tables-design": "#~0.3.12",
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#~1.2.3",
-    "polymer-font-awesome": "~0.1.5",
-    "px-tabs": "~0.4.0",
-    "ace-widget": "LostInBrittany/ace-widget#~1.0.13",
-    "px-api-viewer": "https://github.com/PredixDev/px-api-viewer.git",
-    "px-clipboard": "^0.0.4",
-    "px-demo-snippet": "https://github.com/predixdev/px-demo-snippet.git",
+    "px-polymer-font-awesome": "^0.1.9",
+    "px-tabs": "~0.5.2",
+    "px-api-viewer": "~0.1.0",
+    "px-demo-snippet": "^0.5.1",
     "px-headings-design": "^0.2.14",
     "px-actionable-text-icons-design": "^0.0.3",
     "px-toggle-design": "^0.2.12",
     "px-list-inline-design": "^0.2.11",
-    "px-code-design": "^0.2.11"
+    "px-code-design": "~0.2.11",
+    "px-dropdown": "^0.12.1"
   },
   "homepage": "https://github.com/PredixDev/px-datetime-range-panel",
-  "_release": "0.2.3",
+  "_release": "0.3.1",
   "_resolution": {
     "type": "version",
-    "tag": "v0.2.3",
-    "commit": "83e778f11ad707078463f22a7ec6e706bdef2ac5"
+    "tag": "v0.3.1",
+    "commit": "4d3c4e41fe605d400c637d259ad16f4a7119106e"
   },
   "_source": "https://github.com/PredixDev/px-datetime-range-panel.git",
-  "_target": "~0.2.0",
+  "_target": "~0.3.0",
   "_originalSource": "px-datetime-range-panel"
 }

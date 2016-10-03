@@ -1,3 +1,35 @@
+v0.7.11
+=================
+* fixed style link issue
+
+v0.7.10
+=================
+* fixed style link issue
+
+v0.7.9
+=================
+* made tooltip be able to follow mouse cursor
+
+v0.7.8
+=================
+* updated bower to bring in codepen
+
+v0.7.7
+=================
+* Added tooltipParent property definition
+
+v0.7.6
+=================
+* added overflow to demoContainer and removed flex__wrap from mega-demo
+
+v0.7.5
+=================
+* updated mega demo styles and bower px-demo-snippet to ^
+
+v0.7.4
+=================
+* added image to readme, removed watch, added view on github
+
 v0.7.3
 =================
 * updated gh-pages script to vulcanize demo

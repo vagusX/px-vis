@@ -1,0 +1,209 @@
+
+<!--
+    Relative paths assume component is being run from inside an app or another component, where dependencies are flat
+    siblings. When this component is run from its own repo (e.g. ui tests, examples), we assume the server is started with
+    'grunt depserve' (or similar server setup) to enable correct finding of bower dependencies for local runs
+    See https://github.com/jreichenberg/grunt-dep-serve#why-do-we-need-this
+-->
+<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="px-tab.html"/>
+<link rel="import" href="px-tab-pages.html"/>
+<link rel="import" href="../iron-selector/iron-selectable.html"/>
+
+<!--
+The px-tab-set and px-tab components together provide the tabbed interface.
+
+The tabbed content is expected to be contained in a separate px-tab-pages component.
+
+In this example, each < section > corresponds to a px-tab in the px-tab-set list.
+
+Note: There is no limit on number of tabs in the set, but there is no scrolling support.
+
+
+## Usage
+```
+    <px-tab-set selected="{{selected}}">
+        <px-tab>Tab 1</px-tab>
+        <px-tab>Tab 2</px-tab>
+        <px-tab>Tab 3</px-tab>
+    </px-tab-set>
+    <px-tab-pages selected="{{selected}}">
+        <div>Tab 1 content</div>
+        <div>Tab 2 content</div>
+        <div>Tab 3 content</div>
+    </px-tab-pages>
+```
+@element px-tab-set
+@blurb Container for px-tab elements
+@homepage index.html
+@demo index.html
+-->
+
+<link rel="import" href="css/px-tab-set-styles.html">
+
+<dom-module id="px-tab-set">
+    <template>
+      <style include="px-tab-set-styles"></style>
+      <style include="px-theme-styles"></style>
+      <div class="tabs-container">
+        <div class$="{{_setTabSetClass(bare, noBottomBorder)}} flex">
+          <content id="tabdefs" select="*"></content>
+        </div>
+      </div>
+    </template>
+</dom-module>
+
+<script>
+    Polymer({
+
+      is: 'px-tab-set',
+
+      /**
+       * Properties block, expose attribute values to the DOM via 'reflect'
+       *
+       * @property properties
+       * @type String
+       */
+      properties: {
+        selected: {
+          type: String,
+          notify: true
+        },
+
+        /**
+         * Use the bare attribute underlined styles in the tabs (instead of the default squared tabs)
+         *
+         *      <px-tab-set bare></px-tab-set>
+         *
+         * @default false
+         */
+        bare: {
+          type: Boolean,
+          value: false
+        },
+        noBottomBorder: {
+          type: Boolean,
+          value: false
+        },
+        _previousTab: {
+          type: Object
+        }
+      },
+
+      listeners: {
+        'iron-resize': '_onResize',
+        'iron-select': '_onIronSelect',
+        'iron-deselect': '_onIronDeselect'
+      },
+
+      ready: function() {
+        var boundHandler = this._setBareProperty.bind(this);
+        this._observer = Polymer.dom(this.$.tabdefs).observeNodes(boundHandler);
+      },
+
+      _setBareProperty: function(tabSet){
+        var tabsDefined = tabSet.addedNodes.filter(function(node) {
+          return (node.nodeType === Node.ELEMENT_NODE && node.nodeName === 'PX-TAB');
+        });
+
+        if (this.bare){
+          tabsDefined.forEach(function(tab){
+            Polymer.dom(tab).setAttribute('bare', true);
+          });
+        }
+      },
+
+      _setTabSetClass: function() {
+
+        if(this.bare && this.noBottomBorder){
+          return "tabs-container__nav--bare-no-border";
+        } else if(this.bare){
+          return "tabs-container__nav--bare";
+        } else {
+          return "tabs-container__nav";
+        }
+      },
+
+      /**
+       * This method debounces the resize action, and calls the _scroll and the _tabChanged methods
+       *
+       * @method {_onResize}
+       *
+       */
+      _onResize: function() {
+        this.debounce('_onResize', function() {
+          this._scroll();
+          this._tabChanged(this.selectedItem);
+        }, 10);
+      },
+      /**
+       * this method changes the tab and cancels the tab-changed debounce
+       *
+       * @method {_onIronSelect}
+       * @param {event}
+       */
+      _onIronSelect: function(event) {
+        this._tabChanged(event.detail.item, this._previousTab);
+        this.set('_previousTab',event.detail.item);
+        this.cancelDebouncer('tab-changed');
+      },
+      /**
+       * this method debounces calls to the _tabChanged method
+       *
+       * @method {_onIronDeselect}
+       * @param {event}
+       */
+      _onIronDeselect: function(event) {
+        this.debounce('tab-changed', function() {
+          this._tabChanged(null, this._previousTab);
+          // See polymer/polymer#1305
+        }, 1);
+      },
+      /**
+       * this method either removes or adds different styles to the tab.
+       *
+       * @method {_changeTabStyle}
+       * @param {selectedStyle}
+       * @param {tab}
+       */
+      _changeTabStyle: function(tab, selectedStyle) {
+
+        var constructedClass = "tab-title";
+
+        //check if configured with bare styles
+        if (tab) {
+          if (this.bare){
+            constructedClass = constructedClass + '-bare';
+          }
+
+          var constructedClassMod =  constructedClass + '--selected';
+          var cl = tab.$.tabtitle.classList;
+
+          if (selectedStyle && !cl.contains(constructedClassMod)) {
+            cl.add(constructedClassMod);
+          }
+          else if (!selectedStyle && cl.contains(constructedClassMod)) {
+            cl.remove(constructedClassMod);
+          }
+        }
+      },
+
+      /**
+       * this method sets the style on the old tab to false, and
+       * the new tab to true,
+       * @method {_tabChanged}
+       * @param {old}
+       * @param {tab}
+       */
+      _tabChanged: function(tab, old) {
+        this._changeTabStyle(old, false);
+        this._changeTabStyle(tab, true);
+        //raises an event when tab changes, if it has an ID it sends it along.
+        this.fire('px-tab-changed', {'tabID':tab.id});
+      },
+
+      behaviors: [
+        Polymer.IronSelectableBehavior
+      ]
+    });
+</script>

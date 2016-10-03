@@ -1,3 +1,23 @@
+v0.0.17
+==================
+* Remove string quotes for polar data
+
+v0.0.16
+==================
+* Data for polar
+
+v0.0.15
+==================
+* New dataset for parallel charts demo
+
+v0.0.14
+==================
+* Updated large dataset time to milisec timestamp
+
+v0.0.13
+==================
+* Changed formating again
+
 v0.0.11
 ==================
 * Added new timeseries data in new data type

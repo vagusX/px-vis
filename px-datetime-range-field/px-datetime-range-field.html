@@ -19,9 +19,13 @@ Px datetime component that displays and validates a date time range.
 
 @demo demo.html
 -->
+
+<link rel="import" href="css/px-datetime-range-field-styles.html">
+
 <dom-module id="px-datetime-range-field">
-  <link rel="import" type="css" href="css/px-datetime-range-field.css"/>
   <template>
+    <style include="px-datetime-range-field-styles"></style>
+    <style include="px-theme-styles"></style>
     <div class="form flex flex--middle flex--wrap">
       <div id="fromFields" class="flex flex--middle">
         <span class=a11y>from</span>
@@ -39,7 +43,7 @@ Px datetime component that displays and validates a date time range.
           block-past-dates="{{blockPastDates}}">
         </px-datetime-field>
       </div>
-      <span class="caps u-mh-">to</span>
+      <span class="caps u-mh- to">to</span>
       <div id="toFields" class="flex flex--middle">
         <px-datetime-field
           id="toDate"

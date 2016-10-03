@@ -7,16 +7,18 @@
   <link rel="stylesheet" type="text/css" href="css/px-calendar-picker-demo.css"/>
   <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
   <script src="../webcomponentsjs/webcomponents-lite.js"></script>
-  <link rel="import" href="../px-theme/px-theme.html"/>
+
+  <link rel="import" href="../px-theme/px-theme-styles.html">
+  <style include="px-theme-styles" is="custom-style"></style>
+
   <link rel="import" href="../px-api-viewer/px-api-viewer.html" />
   <link rel="import" href="../px-tabs/px-tab-set.html" />
   <link rel="import" href="../px-dropdown/px-dropdown.html" />
-  <link rel="import" href="../iron-component-page/iron-component-page.html"/>
   <link rel="import" href="px-calendar-picker.html"/>
   <link rel="icon" href="favicon.ico" type="image/x-icon"/>
 
   <link rel="import" href="../px-demo-snippet/px-demo-snippet.html">
-  <link rel="import" href="../polymer-font-awesome/polymer-font-awesome.html">
+  <link rel="import" href="../px-polymer-font-awesome/polymer-font-awesome.html" />
   <!-- Requires Webcomponents.js polyfill is provided by the page for browsers that don't support html imports -->
 
   </head>
@@ -28,37 +30,41 @@
   <template id="just-for-demo" is="dom-bind" >
     <!-- discription -->
     <div class="hero u-p++ text--shadow">
+      <a class="actionable flex flex--right flex--middle" href="https://github.com/PredixDev/px-calendar-picker" target="_new">
+        <iron-icon class="menu__open" icon="fa:fa-github"></iron-icon>View on Github
+      </a>
   		<h1 class="delta">px-calendar-picker</h1>
-  		<p>
-  			The	<code>px-calendar-picker</code> component includes various elements used for structuring responsive layouts.
-  		</p>
-      <p class="description-text">
-        This component allows the user to select a date or date range.
-        The main use of this component is to be used in the px-range-panel.
-      </p>
+      <div class="description-text">
+    		<p>
+    			The	<code>px-calendar-picker</code> component includes various elements used for structuring responsive layouts.
+    		</p>
+        <p>
+          This component allows the user to select a date or date range.
+          The main use of this component is to be used in the px-range-panel.
+        </p>
+      </div>
   		<div class="flex">
   			<img class="u-mr--" src="https://img.shields.io/travis/PredixDev/px-calendar-picker.svg?style=flat-square" alt="Travis" onerror="this.style.display='none'"/>
   			<img class="u-mr--" src="https://img.shields.io/bower/v/px-calendar-picker.svg?style=flat-square" alt="Bower" onerror="this.style.display='none'"/>
   			<img class="u-mr--" src="https://img.shields.io/github/issues-raw/PredixDev/px-calendar-picker.svg?style=flat-square" alt="Issues" onerror="this.style.display='none'"/>
-  			<img class="u-mr--" src="https://img.shields.io/github/watchers/PredixDev/px-calendar-picker.svg?style=social&label=Watch" onerror="this.style.display='none'"/>
   		</div>
   	</div>
-    <br />
+
     <!-- mega demo -->
     <div style="position: relative;" class="u-pb++ flex flex--col" id="defaultTab">
       <div class="tabContainer u-pt++ u-pl++">
         <px-tab-set selected="{{selected}}" bare no-bottom-border>
           <template is="dom-repeat" items="{{optionsArray}}">
-            <px-tab>Configuration {{indexPlusOne(index)}}</px-tab>
+            <px-tab>Option {{indexPlusOne(index)}}</px-tab>
           </template>
         </px-tab-set>
       </div>
       <px-tab-pages selected="{{selected}}">
         <template is="dom-repeat" items="{{optionsArray}}">
-          <section class="tab-page flex flex--right flex--wrap">
-            <div class="mega-demo flex u-pb++">
-            <!-- Properties -->
-            <div class="properties u-ph+ u-pb+ u-mt++ u-mh++" id="properties">
+          <section class="tab-page">
+            <div class="mega-demo flex u-ph++ u-pb++">
+              <!-- Properties -->
+              <div class="properties u-ph+ u-pb+ u-mt+">
               <p class="epsilon">Properties</p>
               <div class="flex u-mb-">
                 <input id="togglePreventRange{{indexPlusOne(index)}}" class="toggle__input toggle__input--small" type="checkbox" checked="{{item.preventRangeSelection::change}}">
@@ -102,11 +108,12 @@
               <div>More info on date and time format at <a href="http://momentjs.com/docs/#/parsing/string-format/" target="_blank" class="actionable">momentjs</a></div>
             </div>
 
-            <div class="demoContainer u-mr++" style="overflow-x:auto;">
-              <!-- demo -->
-              <div class="flex flex--col">
-                <div class="flex__item demo u-ph+ u-pb+ u-mt++">
-                  <div class="container">
+            <div class="demoContainer u-mt+">
+                <!-- demo -->
+                <div class="flex flex--col">
+                  <div class="demo u-p+">
+
+                  <div style="width:250px">
                     <px-calendar-picker
                       display-mode="{{item.displayMode}}"
                       block-future-dates="{{item.blockFutureDates}}"
@@ -120,7 +127,7 @@
                     </px-calendar-picker>
                   </div>
                 </div>
-                <div class="flex__item">
+                <div>
                   <px-demo-snippet
                     element-properties={{item}}
                     element-name="px-calendar-picker">
@@ -186,8 +193,8 @@ window.addEventListener('WebComponentsReady', function() {
       "blockPastDates":false,
       "blockDatesBefore":blockDatesBefore[1],
       "blockDatesAfter":blockDatesAfter[1],
-      "hideNextButton":true,
-      "hidePreviousButton":true
+      "hideNextButton":false,
+      "hidePreviousButton":false
     },
     {
       "displayMode":displayMode[1],

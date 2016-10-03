@@ -1,10 +1,42 @@
+v0.4.2
+==================
+* added correct event listener to demo event counter 
+
+v0.4.1
+==================
+* Fixed demo event counter
+
+v0.4.0
+==================
+* Uprev
+
+v0.3.14
+==================
+* changed moment.tz to Px.moment.tz in tests
+
+v0.3.13
+==================
+* added overflow to demoContainer and removed flex__wrap from mega-demo
+
+v0.3.12
+==================
+* updated mega demo styles and bower px-demo-snippet to ^
+
+v0.3.11
+==================
+* Added --px-datetime-range-field-to-color
+
+v0.3.10
+==================
+* added image to readme, removed watch, added view on github
+
 v0.3.9
 ==================
 * Added vulcanize
 
 v0.3.8
 ==================
-* Updated component discription in demo
+* Updated component description in demo
 
 v0.3.7
 ==================

@@ -1,0 +1,81 @@
+<!doctype html>
+
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>px-slider Demo</title>
+    <!-- Requires Webcomponents.js polyfill is provided by the page for browsers that don't support html imports -->
+    <script src="../webcomponentsjs/webcomponents-lite.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
+    <link rel="import" href="../px-theme/px-theme.html" />
+    <link rel="import" href="px-slider.html" />
+    <link rel="import" href="demo-nested.html" />
+    <style>
+      html {
+        font-size: .9375rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h3>Demo</h3>
+    <p>
+      Although related, examples are /not/ the same as the test fixtures. Tests are tests, examples are examples.
+    </p>
+    <p>
+      Also see the <a href="index.html">documentation</a> and the <a href="test/fixture.html">UI test fixture</a>.
+    </p>
+    <h4>Single Value</h4>
+    <div style="width: 200px">
+
+      <h4>Demonstrate px-slider bugs</h4>
+      <template id="my-slider" is="dom-bind">
+
+        <!--
+        <slider-container range-values="{{rangeValues}}">
+        </slider-container>
+        <br>
+      -->
+
+        <slider-container range-values="{{infiniteLoopRangeValues}}">
+        </slider-container>
+
+        <!-- this part is fine
+        <px-slider id="slider1"
+          start-value="10"
+          end-value="40"
+          min="{{dataMin}}"
+          max="{{dataMax}}">
+        </px-slider>
+        <px-slider id="slider2"
+                   start-value="10"
+                   end-value="60"
+                   min="{{dataMin}}"
+                   max="{{dataMax}}">
+        </px-slider>
+        -->
+      </template>
+    </div>
+      <script>
+        var tmpl = document.querySelector('#my-slider');
+        var slider1 = document.querySelector('#slider1')
+        var slider2 = document.querySelector('#slider2')
+        $(document).ready(function() {
+          tmpl.dataMin = 0;
+          tmpl.dataMax = 50;
+
+          tmpl.rangeValues = {
+            dataMin: 0, dataMax: 1000, startValue: 10, endValue: 150
+          };
+
+          tmpl.infiniteLoopRangeValues = {
+            dataMin: 0.25, dataMax: 251.35, startValue: 10, endValue: 252
+          };
+        });
+      </script>
+  </body>
+
+</html>

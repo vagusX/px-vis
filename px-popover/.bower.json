@@ -1,6 +1,6 @@
 {
   "name": "px-popover",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "main": [
     "px-popover.html"
   ],
@@ -14,40 +14,41 @@
     "test",
     "OSS_Notice.pdf",
     "scripts",
-    ".github"
+    ".github",
+    "px-popover.png"
   ],
   "dependencies": {
     "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#^1.0.2",
-    "polymer": "^1.5.0",
-    "px-theme": "~0.8.0",
-    "px-overlay": "~0.2.0"
+    "polymer": "^1.6.0",
+    "px-theme": "~1.1.2",
+    "px-overlay": "~0.3.0",
+    "px-buttons-design": "^0.4.26"
   },
   "devDependencies": {
-    "px-starter-kit-design": "~0.4.0",
-    "web-component-tester": "~3.3.14",
+    "px-starter-kit-design": "~0.6.0",
     "px-forms-design": "#~0.3.15",
     "px-tables-design": "#~0.3.12",
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#~1.2.3",
-    "polymer-font-awesome": "~0.1.5",
-    "px-tabs": "~0.4.0",
-    "px-api-viewer": "~0.0.3",
-    "px-demo-snippet": "~0.0.11",
+    "px-polymer-font-awesome": "^0.1.8",
+    "px-tabs": "~0.5.1",
+    "px-api-viewer": "~0.1.0",
+    "px-demo-snippet": "^0.5.1",
     "px-actionable-text-icons-design": "^0.0.3",
     "px-code-design": "^0.2.11",
     "px-headings-design": "^0.2.14",
     "px-list-inline-design": "^0.2.11",
-    "px-dropdown": "^0.10.1",
+    "px-dropdown": "^0.12.0",
     "px-spacing-design": "~0.3.8",
     "px-toggle-design": "^0.2.12"
   },
   "homepage": "https://github.com/PredixDev/px-popover",
-  "_release": "1.4.3",
+  "_release": "1.5.0",
   "_resolution": {
     "type": "version",
-    "tag": "v1.4.3",
-    "commit": "13e3f5655ccf59edfe61ce5bcd2984abe1c2acdb"
+    "tag": "v1.5.0",
+    "commit": "c5471f8f630215b089baf396aa3da6d73736a6e7"
   },
   "_source": "https://github.com/PredixDev/px-popover.git",
-  "_target": "~1.4.0",
+  "_target": "~1.5.0",
   "_originalSource": "px-popover"
 }

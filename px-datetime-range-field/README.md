@@ -1,6 +1,8 @@
 Px-Datetime-Range-Field [![Build Status](https://travis-ci.org/PredixDev/px-datetime-range-field.svg?branch=master)](https://travis-ci.org/PredixDev/px-datetime-range-field)
 -----------------------------------------------
 
+[![px-datetime-range-field demo](px-datetime-range-field.png?raw=true)](https://predixdev.github.io/px-datetime-range-field)
+
 ## Overview
 
 Px-Datetime-Range-Field is a Predix Experience ('Px') component

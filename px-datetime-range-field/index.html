@@ -7,15 +7,17 @@
   <link rel="stylesheet" type="text/css" href="css/px-datetime-range-field-demo.css"/>
   <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
   <script src="../webcomponentsjs/webcomponents-lite.js"></script>
-  <link rel="import" href="../px-theme/px-theme.html"/>
+
+  <link rel="import" href="../px-theme/px-theme-styles.html">
+  <style include="px-theme-styles" is="custom-style"></style>
+
   <link rel="import" href="../px-api-viewer/px-api-viewer.html" />
   <link rel="import" href="../px-tabs/px-tab-set.html" />
-  <link rel="import" href="../iron-component-page/iron-component-page.html"/>
   <link rel="import" href="px-datetime-range-field.html"/>
   <link rel="icon" href="favicon.ico" type="image/x-icon"/>
 
   <link rel="import" href="../px-demo-snippet/px-demo-snippet.html">
-  <link rel="import" href="../polymer-font-awesome/polymer-font-awesome.html">
+  <link rel="import" href="../px-polymer-font-awesome/polymer-font-awesome.html" />
   <!-- Requires Webcomponents.js polyfill is provided by the page for browsers that don't support html imports -->
 
   </head>
@@ -27,25 +29,26 @@
   <template id="just-for-demo" is="dom-bind" >
     <!-- discription -->
     <div class="hero u-p++ text--shadow">
+      <a class="actionable flex flex--right flex--middle" href="https://github.com/PredixDev/px-datetime-range-field" target="_blank"><iron-icon class="menu__open" icon="fa:fa-github"></iron-icon>View on Github</a>
   		<h1 class="delta">px-datetime-range-field</h1>
-  		<p>
-  			The	<code>px-datetime-range-field</code> component includes various elements used for structuring responsive layouts.
-  		</p>
-      <p class="description-text">
-      This component allows the user to select a date and time range precisely to the second or millisecond.
-      <br>
-      This counter represents when the px-datetime-range-field event/range property of the
-      range fields are being fired/updated. The behavior depends on whether the range field uses
-      buttons. It is defined as followed:
-      <br>
-      - If it has buttons then it is fired when the user clicks the apply button AND the date/time is valid<br>
-      - If it doesn't have buttons then it is fired every time a valid change is made to the date or time
-      </p>
+      <div class="description-text">
+    		<p>
+    			The	<code>px-datetime-range-field</code> component includes various elements used for structuring responsive layouts.
+    		</p>
+        <p class="description-text">
+        This component allows the user to select a date and time range precisely to the second or millisecond.
+        This counter represents when the px-datetime-range-field event/range property of the
+        range fields are being fired/updated. The behavior depends on whether the range field uses
+        buttons. It is defined as followed:
+        <br>
+        - If it has buttons then it is fired when the user clicks the apply button AND the date/time is valid<br>
+        - If it doesn't have buttons then it is fired every time a valid change is made to the date or time
+        </p>
+      </div>
   		<div class="flex">
   			<img class="u-mr--" src="https://img.shields.io/travis/PredixDev/px-datetime-range-field.svg?style=flat-square" alt="Travis" onerror="this.style.display='none'"/>
   			<img class="u-mr--" src="https://img.shields.io/bower/v/px-datetime-range-field.svg?style=flat-square" alt="Bower" onerror="this.style.display='none'"/>
   			<img class="u-mr--" src="https://img.shields.io/github/issues-raw/PredixDev/px-datetime-range-field.svg?style=flat-square" alt="Issues" onerror="this.style.display='none'"/>
-  			<img class="u-mr--" src="https://img.shields.io/github/watchers/PredixDev/px-datetime-range-field.svg?style=social&label=Watch" onerror="this.style.display='none'"/>
   		</div>
   	</div>
     <br />
@@ -54,122 +57,123 @@
       <div class="tabContainer u-pt++ u-pl++">
         <px-tab-set selected="{{selected}}" bare no-bottom-border>
           <template is="dom-repeat" items="{{optionsArray}}">
-            <px-tab>Configuration {{indexPlusOne(index)}}</px-tab>
+            <px-tab>Option {{indexPlusOne(index)}}</px-tab>
           </template>
         </px-tab-set>
       </div>
       <px-tab-pages selected="{{selected}}">
         <template is="dom-repeat" items="{{optionsArray}}">
-          <section class="tab-page flex flex--right flex--wrap">
-            <div class="mega-demo flex u-pb++">
-            <!-- Properties -->
-            <div class="properties u-ph+ u-pb+ u-mt++ u-mh++" id="properties">
-              <p class="epsilon">Properties</p>
-              <div class="flex u-mb-">
-                <input id="toggleTime{{indexPlusOne(index)}}" class="toggle__input toggle__input--small" type="checkbox" checked="{{item.hideTime::change}}">
-                <label for$="toggleTime{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
-                <div class="u-ml-">Hide time</div>
-              </div>
-              <div class="flex u-mb-">
-                <input id="toggleDate{{indexPlusOne(index)}}" class="toggle__input toggle__input--small" type="checkbox" checked="{{item.hideDate::change}}">
-                <label for$="toggleDate{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
-                <div class="u-ml-">Hide date</div>
-              </div>
-              <div class="flex u-mb-">
-                <input id="toggleButtons{{indexPlusOne(index)}}" class="toggle__input toggle__input--small" type="checkbox" checked="{{item.showButtons::change}}">
-                <label for$="toggleButtons{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
-                <div class="u-ml-">Show buttons</div>
-              </div>
-              <div class="flex u-mb-">
-                <input id="toggleFutureDates{{indexPlusOne(index)}}" class="toggle__input toggle__input--small" type="checkbox" checked="{{item.blockFutureDates::change}}">
-                <label for$="toggleFutureDates{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
-                <div class="u-ml-">Block future dates</div>
-              </div>
-              <div class="u-mb-">Date format: <input id="dateFormat" class="text-input" type="text" placeholder="YYYY/MM/DD" value="{{item.dateFormat::input}}" /></div>
-              <div class="u-mb-">Time format: <input id="timeFormat" class="text-input" type="text" placeholder="hh:mm:ss A" value="{{item.timeFormat::input}}" /></div>
-              <div class="u-mb-">Time zone: <input id="timeZone" class="text-input" type="text" placeholder="UTC" value="{{item.timeZone::input}}" /></div>
-              <div class="u-mb-">Show time zone:
-                <div style="width: 100%;">
-                  <px-dropdown id="showTimeZone" value="{{item.showTimeZone}}" display-value="{{item.showTimeZone}}" bound-target="properties">
-                    <px-dropdown-content
-                      items='[
-                        {"key":"one", "val": "none"},
-                        {"key":"two", "val": "dropdown"},
-                        {"key":"three", "val": "extendedDropdown"},
-                        {"key":"four", "val": "text"},
-                        {"key":"five", "val": "abbreviatedText"}]'>
-                    </px-dropdown-content>
-                  </px-dropdown>
+          <section class="tab-page">
+            <div class="mega-demo flex u-ph++ u-pb++">
+              <!-- Properties -->
+              <div class="properties u-ph+ u-pb+ u-mt+">
+                <p class="epsilon">Properties</p>
+                <div class="flex u-mb-">
+                  <input id="toggleTime{{indexPlusOne(index)}}" class="toggle__input toggle__input--small" type="checkbox" checked="{{item.hideTime::change}}">
+                  <label for$="toggleTime{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
+                  <div class="u-ml-">Hide time</div>
                 </div>
-              </div>
-              <div>More info on date and time format at <a href="http://momentjs.com/docs/#/parsing/string-format/" target="_blank" class="actionable">momentjs</a></div>
-            </div>
-
-            <div class="demoContainer u-mr++">
-              <!-- demo -->
-              <div class="flex flex--col">
-                <div class="flex__item demo u-ph+ u-pb+ u-mt++">
-                  <br />
-                  <span id="counter"><strong>px-datetime-range-submitted</strong> fired <strong>0</strong> time</span>
-                  <div>
-                    Current range object: From: <strong>{{item.range.from}}</strong> To: <strong>{{item.range.to}}</strong>
+                <div class="flex u-mb-">
+                  <input id="toggleDate{{indexPlusOne(index)}}" class="toggle__input toggle__input--small" type="checkbox" checked="{{item.hideDate::change}}">
+                  <label for$="toggleDate{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
+                  <div class="u-ml-">Hide date</div>
+                </div>
+                <div class="flex u-mb-">
+                  <input id="toggleButtons{{indexPlusOne(index)}}" class="toggle__input toggle__input--small" type="checkbox" checked="{{item.showButtons::change}}">
+                  <label for$="toggleButtons{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
+                  <div class="u-ml-">Show buttons</div>
+                </div>
+                <div class="flex u-mb-">
+                  <input id="toggleFutureDates{{indexPlusOne(index)}}" class="toggle__input toggle__input--small" type="checkbox" checked="{{item.blockFutureDates::change}}">
+                  <label for$="toggleFutureDates{{indexPlusOne(index)}}" class="toggle__label toggle__label--small"></label>
+                  <div class="u-ml-">Block future dates</div>
+                </div>
+                <div class="u-mb-">Date format: <input id="dateFormat" class="text-input" type="text" placeholder="YYYY/MM/DD" value="{{item.dateFormat::input}}" /></div>
+                <div class="u-mb-">Time format: <input id="timeFormat" class="text-input" type="text" placeholder="hh:mm:ss A" value="{{item.timeFormat::input}}" /></div>
+                <div class="u-mb-">Time zone: <input id="timeZone" class="text-input" type="text" placeholder="UTC" value="{{item.timeZone::input}}" /></div>
+                <div class="u-mb-">Show time zone:
+                  <div style="width: 100%;">
+                    <px-dropdown id="showTimeZone" value="{{item.showTimeZone}}" display-value="{{item.showTimeZone}}" bound-target="properties">
+                      <px-dropdown-content
+                        items='[
+                          {"key":"one", "val": "none"},
+                          {"key":"two", "val": "dropdown"},
+                          {"key":"three", "val": "extendedDropdown"},
+                          {"key":"four", "val": "text"},
+                          {"key":"five", "val": "abbreviatedText"}]'>
+                      </px-dropdown-content>
+                    </px-dropdown>
                   </div>
-                  <br />
-                  <px-datetime-range-field
-                    id="range"
-                    range={{item.range}}
-                    date-format="{{item.dateFormat}}"
-                    time-format="{{item.timeFormat}}"
-                    show-buttons="{{item.showButtons}}"
-                    block-future-dates="{{item.blockFutureDates}}"
-                    hide-time="{{item.hideTime}}"
-                    hide-date="{{item.hideDate}}"
-                    show-time-zone="{{item.showTimeZone}}"
-                    is-valid="{{item.isValid}}"
-                    time-zone="{{item.timeZone}}">
-                  </px-datetime-range-field>
                 </div>
-                <div class="flex__item">
-                  <px-demo-snippet
-                    element-properties={{item}}
-                    element-name="px-datetime-range-field">
-                  </px-demo-snippet>
+                <div>More info on date and time format at <a href="http://momentjs.com/docs/#/parsing/string-format/" target="_blank" class="actionable">momentjs</a></div>
+              </div>
+
+              <div class="demoContainer u-mt+">
+                <!-- demo -->
+                <div class="flex flex--col">
+                  <div class="demo u-p+">
+
+                    <span id="counter{{indexPlusOne(index)}}"><strong>px-datetime-range-submitted</strong> fired <strong>0</strong> time(s)</span>
+                    <div>
+                      Current range object: From: <strong>{{item.range.from}}</strong> To: <strong>{{item.range.to}}</strong>
+                    </div>
+                    <br />
+                    <px-datetime-range-field
+                      id="range"
+                      range={{item.range}}
+                      date-format="{{item.dateFormat}}"
+                      time-format="{{item.timeFormat}}"
+                      show-buttons="{{item.showButtons}}"
+                      block-future-dates="{{item.blockFutureDates}}"
+                      hide-time="{{item.hideTime}}"
+                      hide-date="{{item.hideDate}}"
+                      show-time-zone="{{item.showTimeZone}}"
+                      is-valid="{{item.isValid}}"
+                      time-zone="{{item.timeZone}}">
+                    </px-datetime-range-field>
+
+                  </div>
+                  <div>
+                    <px-demo-snippet
+                      element-properties={{item}}
+                      element-name="px-datetime-range-field">
+                    </px-demo-snippet>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="apiContainer">
-            <div class="flex flex--col api u-mt++" >
-              <div>
-                <px-api-viewer source="px-datetime-range-field"></px-api-viewer>
+            <div class="apiContainer">
+              <div class="flex flex--col api u-mt++" >
+                <div>
+                  <px-api-viewer source="px-datetime-range-field"></px-api-viewer>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-      </template>
-    </px-tab-pages>
-  </div>
-  <footer class="footer flex flex--center">
-    <div class="footer__container u-pv++">
-      <div>
-        <a href="https://ge.com/digital" >
-          <img src="monogram-wdmk.png" alt="GE Monogram" class="footer__img">
-        </a>
-      </div>
-      <div class="footer__list">
-        <ul class="list-inline list-inline--delimited">
-          <li>
-            <a href="http://predix.io/legal" class="footer__list--lnk">Legal</a>
-          </li>
-          <li>
-            <a href="mailto:info@predix.io" class="footer__list--lnk">Contact Us</a>
-          </li>
-          <li>Copyright &copy; {{year}} General Electric Company. All rights reserved.</li>
-        </ul>
-      </div>
+          </section>
+        </template>
+      </px-tab-pages>
     </div>
-  </footer>
-</template>
+    <footer class="footer flex flex--center">
+      <div class="footer__container u-pv++">
+        <div>
+          <a href="https://ge.com/digital" >
+            <img src="monogram-wdmk.png" alt="GE Monogram" class="footer__img">
+          </a>
+        </div>
+        <div class="footer__list">
+          <ul class="list-inline list-inline--delimited">
+            <li>
+              <a href="http://predix.io/legal" class="footer__list--lnk">Legal</a>
+            </li>
+            <li>
+              <a href="mailto:info@predix.io" class="footer__list--lnk">Contact Us</a>
+            </li>
+            <li>Copyright &copy; 2016 General Electric Company. All rights reserved.</li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  </template>
 <script>
 window.addEventListener('WebComponentsReady', function() {
   var template = document.querySelector('template[is=dom-bind]'),
@@ -177,8 +181,8 @@ window.addEventListener('WebComponentsReady', function() {
       dateFormat = ["YYYY/MM/DD","MM/DD/YY"],
       timeFormat = ["hh:mm:ss A","HH:mm:ss.SSS"],
       showTimeZone = ["text","dropdown"],
-      year = new Date(),
-      timeZone =["UTC","America/Los_Angeles"];
+      timeZone =["UTC","America/Los_Angeles"],
+      counter = 0;
 
   var optionsArray = [
     {
@@ -218,12 +222,18 @@ window.addEventListener('WebComponentsReady', function() {
       return num + 1;
     };
 
-    year = year.getFullYear();
+    document.addEventListener('px-datetime-range-submitted', function(evt) {
+      counter++;
+      for(var i=1; i<=optionsArray.length; i++) {
+        var span = document.getElementById('counter'+i);
+        span.innerHTML = '<strong>px-datetime-range-submitted</strong> fired <strong>' + counter + '</strong> time(s)';
+      }
+    });
+
 
     template.selected = "0";
     template.optionsArray = optionsArray;
     template.indexPlusOne = indexPlusOne;
-    template.year = year;
 });
 </script>
 
