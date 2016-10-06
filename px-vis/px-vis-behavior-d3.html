@@ -1,5 +1,6 @@
 <link rel="import" href="px-vis-d3.html" />
 <link rel="import" href="px-vis-imports.html" />
+<link rel="import" href="px-vis-behavior-common.html" />
 <script>
 /*
   Polyfill to add .remove() for IE11.
@@ -89,11 +90,16 @@ PxVisBehaviorD3.svg = {
    * @param {element}
    * @param {string}
   */
-  cloneSVGElem: function(svg,prop) {
+  cloneSVGElem: function(svg,prop,onBottom) {
     var tempSVG = svg,
         clone = tempSVG.cloneNode();
 
-    tempSVG.parentNode.appendChild(clone);
+    if(!onBottom || tempSVG.parentNode.childNodes.length === 0) {
+      tempSVG.parentNode.appendChild(clone);
+    } else {
+
+      tempSVG.parentNode.insertBefore(clone, tempSVG.parentNode.firstChild );
+    }
 
     this.set(prop,Px.d3.select(clone));
   },
@@ -260,10 +266,10 @@ PxVisBehaviorD3.canvas = {
       notify:true
     },
     /**
-     * Boolean to specify if drawings should render to canvas instead of svg
-     *
-     */
-    renderToCanvas: {
+    * Boolean to specify if drawings should render to svg instead of canvas
+    *
+    */
+    renderToSvg: {
       type: Boolean,
       value: false,
       notify: true
@@ -779,16 +785,398 @@ PxVisBehaviorD3.axisConfig = {
       type: Number,
       value: 1
     },
-
+    /**
+     * Defines the axis outerTickSize. Default is to hide them
+     *
+     * See: https://github.com/d3/d3-axis#axis_tickSizeOuter
+     */
     outerTickSize: {
       type: Number,
       value: 0
     },
-
+    /**
+     * Defines the what values the axis should use
+     *
+     * See: https://github.com/d3/d3-axis#axis_tickValues
+     */
     tickValues: {
       type: Array
+    },
+    /**
+     * Defines the tick number and format
+     *
+     * See: https://github.com/d3/d3-axis#axis_ticks
+     *
+     * Can be either a Number or an Object
+     *
+     * Obj format:
+     * ```
+     *    {
+     *         "interval": Number,
+     *         "format": String or d3 object,
+     *    }
+     * ```
+     */
+    ticks: {},  //yes, this doesnt have a type because both Number and Object are valid
+    /**
+     * Defines the color for axis lines, ticks, labels, and title
+     *
+     */
+    axisColor: {
+      type: String,
+      value: "grey9"
+    },
+    /**
+     * Returned tick values from the axis
+     *
+     */
+    drawnTickValues: {
+      type: Array,
+      notify: true
     }
   }
 };
+
+
+
+/*
+    Name:
+    PxVisBehaviorD3.radialAxisConfig
+
+    Description:
+    Polymer behavior that provides shared behaviors for radial axes elements.
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorD3.radialAxisConfig
+*/
+PxVisBehaviorD3.radialAxisConfig = {
+  properties: {
+    centerOffset: {
+      type: Number,
+      value: 0,
+      notify: true
+    },
+  }
+};
+
+/*
+    Name:
+    PxVisBehaviorD3.radialLineGenerator
+
+    Description:
+    Polymer behavior that provides function to create a radial line generator
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorD3.radialLineGenerator
+*/
+PxVisBehaviorD3.radialLineGenerator = [{
+
+  properties: {
+    /**
+    * A holder object for the line generator
+    *
+    */
+    line: {
+      type: Object
+    },
+
+    lineRadiusLimit: {
+      type: Number
+    }
+  },
+  /**
+   * Defines a multi-scale d3 line generator and its attrs
+   *
+   */
+  _defineRadialLine: function(toCanvas, multiLine, counterClockwise, useDegrees) {
+    //get our dimensions
+    var _this = this,
+        renderToCanvas = (typeof(toCanvas) !== 'undefined') ? toCanvas : false,
+        //omg; need to make a copy or else completing the circle breaks dragging.
+        dims = JSON.parse(JSON.stringify(this.completeSeriesConfig[this.seriesId]['x'])),
+        path,
+        line,
+        clockwiseFactor = counterClockwise ? -1 : 1;
+
+    if(multiLine) {
+
+      var processAngle;
+
+      if(this.interpolationFunction === 'bofCompleteManually') {
+        //manually complete the circle.
+        // if we use a d3 interpolator, it adds 'Z' to the path which cause all broken paths to complete. We want to keep broken paths broken
+        dims.push(dims[0]);
+      }
+
+      path = Px.d3.radialLine()
+      .angle(function(d) {
+        return _this.x(d[0]) * clockwiseFactor;
+      })
+      .radius(function(d) {
+        // ~~ --> round pixels values to optimize svg perfs
+        var radius = ~~_this.y(Number(d[1]));
+
+        if(typeof _this.lineRadiusLimit === 'number' && radius < _this.lineRadiusLimit) {
+          return _this.lineRadiusLimit;
+        }
+        return radius
+      }).defined(function(d) {
+        return !isNaN(_this.x(d[0])) && !isNaN(_this.y(Number(d[1])));
+      });
+
+      //be sneaky: iterate through the data like normal
+      line = function(d) {
+        //for each datapoint, iterate through the dimensions
+        return path(dims.map(function(p) {
+          //check that we have data; if not, return false so it doesnt draw a line
+          if(typeof(d[p]) === 'undefined' || d[p] === null) {
+            return false
+          }
+          //return [x,y] to path: x is ordinal based on dim; get the y-scale for the dim and use that particular scale on the data
+          return [p,d[p]];
+        }));
+      };
+    } else {
+      var xId = this.completeSeriesConfig[this.seriesId]['x'],
+          yId = this.completeSeriesConfig[this.seriesId]['y'],
+          processAngle;
+
+      if(useDegrees) {
+        processAngle = function(d) {
+          return d[xId] * clockwiseFactor;
+        };
+      } else {
+        processAngle = function(d) {
+          return d[xId]/180 * Math.PI * clockwiseFactor;
+        };
+      }
+
+      path = Px.d3.radialLine()
+      .angle(function(d) {
+        return processAngle(d);
+      })
+      .radius(function(d) {
+        return _this.y(d[yId]);
+      }).defined( function(d) {
+        return !isNaN(d[xId]) && !isNaN(d[yId]);
+      });
+
+      line = function(d) {
+        return path(d);
+      }
+    }
+
+    if(typeof this.interpolationFunction === 'function') {
+      path.curve(this.interpolationFunction);
+    }
+
+    // add the canvas context if relevant
+    if(renderToCanvas) {
+      path.context(this.canvasContext);
+    }
+    this.set('line', line);
+  }
+}, PxVisBehavior.completeSeriesConfig];
+
+/*
+    Name:
+    PxVisBehaviorD3.lineShared
+
+    Description:
+    Polymer behavior that provides shared behaviors for line elements.
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorD3.lineShared
+*/
+PxVisBehaviorD3.lineShared = [{
+  properties: {
+    /**
+    * A dev set boolean specifying if the chart is for a parallel coordinates chart
+    *
+    */
+    parallelCoordinates: {
+      type: Boolean,
+      value: false
+    },
+    /**
+    * A dev set boolean specifying if the line is using radial(polar) data
+    *
+    */
+    radialLine: {
+      type: Boolean,
+      value: false
+    },
+    /**
+    * A boolean spceifying if a opacity gradient should get applied to the line
+    *
+    */
+    gradientLine: {
+      type: Boolean,
+      value: false
+    },
+    /**
+    * Calculated range values for the gradient scale
+    *
+    */
+    gradientRange: {
+      type: Array,
+      computed: '_computeGradientRange(chartData.*,selectedDomain.*,seriesId)'
+    },
+    /**
+    * Gets and saves the rgb so we can make an rgba to apply to the line
+    *
+    */
+    _colorArr: {
+      type: Array,
+      computed: '_computeColorArr(categories,completeSeriesConfig,seriesId)'
+    },
+    /**
+    * Counter to track progressive rendering requests and only draw the latest one
+    */
+    interpolationFunction: {
+      type: Object
+    },
+    /**
+     * A boolean spcifying if multiple paths get drawn by the line
+     *
+     */
+    multiPath: {
+      type: Boolean,
+      value: false
+    },
+  },
+
+  _computeColorArr: function(categories,completeSeriesConfig,seriesId){
+    //start with the RGB value and split it
+    var c = completeSeriesConfig[seriesId]['color'].split('(')[1].split(','),
+        colors = {};
+
+    //save each color individually for use later
+    colors[seriesId] = {
+      "r": Number(c[0]),
+      "g": Number(c[1]),
+      "b": Number(c[2].split(')')[0])
+    };
+
+    // if coloring by category
+    if(categories.length > 0){
+      for(var i = 0; i < categories.length; i++){
+        c = completeSeriesConfig[categories[i]]['color'].split('(')[1].split(',');
+        colors[categories[i]] = {
+          "r": Number(c[0]),
+          "g": Number(c[1]),
+          "b": Number(c[2].split(')')[0])
+        };
+      }
+    }
+
+    return colors;
+  },
+
+  /**
+   * Returns the correct opacity to use for all lines.
+   *
+   */
+  _opacityLine:function(d){
+    // calulate the percentage through the dataset
+    var n = (this.gradientRange[1] - d[this.seriesId]) / (this.gradientRange[1] - this.gradientRange[0]);
+    // scale the gradient by that resulting in a gradient from 20% - 100%
+    return 1 - n * 0.8;
+  },
+
+  /**
+   * Computes the data range.
+   *
+   */
+  _computeGradientRange: function(chartData, selectedDomain,seriesId){
+    if(chartData.value.length > 0){
+      var x1,x2;
+      if(selectedDomain.value.x.length > 0){
+        x1 = Number(selectedDomain.value.x[0]);
+        x2 = Number(selectedDomain.value.x[1]);
+      } else {
+        x1 = Number(chartData.value[0][seriesId]);
+        x2 = Number(chartData.value[chartData.value.length - 1][seriesId]);
+      }
+      return [x1,x2];
+    }
+  },
+
+  /**
+   * Defines the d3 line generator and its attrs
+   *
+   */
+  _defineSingleLine: function(toCanvas){
+    var _this = this,
+        renderToCanvas = (typeof(toCanvas) !== 'undefined') ? toCanvas : false,
+        xKey = _this.completeSeriesConfig[_this.seriesId]['x'],
+        yKey = _this.completeSeriesConfig[_this.seriesId]['y'],
+        line = Px.d3.line()
+          .x(function(d) {
+            // ~~ --> round pixels values to optimize svg perfs
+            return ~~_this.x(d[xKey]);
+          })
+          .y(function(d) {
+              return ~~_this.y(d[yKey]);
+          })
+          .defined(function(d) {
+            return !isNaN(d[yKey]);
+          });
+
+    if(this.interpolationFunction){
+      line.curve(this.interpolationFunction);
+    }
+
+    // If using canvas, tell it the context to draw to.
+    if(renderToCanvas){
+      line.context(this.canvasContext);
+    }
+
+    this.set('line',line);
+  },
+  /**
+   * Defines a multi-scale d3 line generator and its attrs
+   *
+   */
+  _defineMultiLine: function(toCanvas) {
+    //get our dimensions
+    var renderToCanvas = (typeof(toCanvas) !== 'undefined') ? toCanvas : false,
+        dims = this.completeSeriesConfig[this.seriesId]['x'],
+        //define a normal d3 line generator
+        path = Px.d3.line().defined(function(d) {
+          //only draw a line through the axis if we have data
+          return d;
+        }),
+        //be sneaky: iterate through the data like normal
+        line = function(d) {
+          //for each datapoint, iterate through the dimensions
+          return path(dims.map(function(p) {
+            //check that we have data; if not, return false so it doesnt draw a line
+            if(!d[p]) {
+              return false
+            }
+            //return [x,y] to path: x is ordinal based on dim; get the y-scale for the dim and use that particular scale on the data
+            return [~~this.x(p), ~~this.y[p](d[p])];
+          }.bind(this)));
+        }.bind(this);
+
+    if(this.interpolationFunction){
+      path.curve(this.interpolationFunction);
+    }
+
+    // add the canvas context if relevant
+    if(renderToCanvas){
+      path.context(this.canvasContext);
+    }
+
+    this.set('line',line);
+  }
+},PxVisBehaviorD3.radialLineGenerator, PxVisBehavior.seriesId];
 
 </script>

@@ -51,6 +51,7 @@ This element draw the box over the axis signifying the active area to mute the s
       PxVisBehavior.mutedSeries,
       PxVisBehaviorD3.selectedDomain,
       PxVisBehaviorD3.domainUpdate,
+      PxVisBehaviorD3.radialAxisConfig,
       commonColors
     ],
 
@@ -88,34 +89,40 @@ This element draw the box over the axis signifying the active area to mute the s
        },
        parentSvg: {
          type: Object
+       },
+       brushToRemove: {
+         type: Boolean,
+         value: false
        }
     },
 
     observers: [
-      'drawElement(svg)',
+      'drawElement(svg, margin.* , height)',
       'recalcBrush(domainChanged)'
     ],
     /**
      * Creates the brushes
      */
     drawElement: function() {
-      this.debounce('drawBrushAxis', function(){
+      if(this.domainChanged !== null && this.svg) {
         var _this = this,
-            domain = [
+            domain = this.radial ? // [ [x1,y1] , [x2,y2] ]
+            [
+              [-10,this.centerOffset],
+              [10,_this.height]
+            ] :
+            [
               [-10,0],
               [_this.margin.top,_this.height - _this.margin.top - _this.margin.bottom]
             ];
 
         if(!this._previousDomain){
-          this._previousDomain = [
-            [-10,0],
-            [_this.margin.top,_this.height- _this.margin.top - _this.margin.bottom]
-          ];
+          this._previousDomain = domain;
         }
 
         // Add and store a brush for each axis.
         this.svg.each(function(d) {
-          if(Px.d3.select(this).select('g.brush').node()){
+          if(Px.d3.select(this).select('g.brush').node()) {
             // now handled in recalcBrush...
 
             // //update the brush when resize occurs
@@ -164,12 +171,12 @@ This element draw the box over the axis signifying the active area to mute the s
         b.selectAll("rect.selection")
           .attr("fill", _this.colors.black)
           .attr("fill-opacity", 0.15)
-          .attr("stroke", _this.colors["primary-blue"])
+          .attr("stroke", _this.colors["primary-blue"]);
 
         // save these brushes for access in brush()
         this.set('_brushes', b);
         this.set('_previousDomain', domain);
-      }.bind(this),5);
+      }
     },
 
     /**
@@ -179,6 +186,8 @@ This element draw the box over the axis signifying the active area to mute the s
       if(Px.d3.event.sourceEvent && Px.d3.event.sourceEvent.type !== 'end') {
       	Px.d3.event.sourceEvent.stopPropagation();
       }
+      Px.d3.select(this).select("rect.selection")
+      .attr("width", 20);
     },
 
     /**
@@ -207,9 +216,9 @@ This element draw the box over the axis signifying the active area to mute the s
       // for each brush, figure out if it was brushed and build an array of obj with the extents and the dimension
       this._brushes.each(function(d) {
         if(Px.d3.brushSelection(this)) {
-
           var ext = _this._checkMinSize(Px.d3.brushSelection(this),Px.d3.select(this));
           extents[d] = ext;
+
         }
       });
       this._calcMutedSeries(extents);
@@ -229,11 +238,10 @@ This element draw the box over the axis signifying the active area to mute the s
     /**
      * when new data is added or the chart is resized, recalc the brush and resize
      */
-    recalcBrush: function(){
-      if(this._brushes){
+    recalcBrush: function() {
+      if(this._brushes) {
         var _this = this,
             extents = {};
-
 
         // for each brush, figure out if it was brushed and build an array of obj with the extents and the dimension
         this._brushes.each(function(d) {
@@ -241,11 +249,10 @@ This element draw the box over the axis signifying the active area to mute the s
           _this.deleteBrush(Px.d3.select(this));
           //if there is a brush and the axis still exists draw a new one
           if(_this._brushDomains[d] && _this.dimensions.indexOf(d) !== -1) {
-            console.log(_this._brushDomains);
 
             // if the axis exists, then lets check out the extents
             var oldBrushDomain = _this._brushDomains[d],
-                newAxisDomain = _this.axis[d].domain(),
+                newAxisDomain = typeof _this.axis === 'object' ? _this.axis[d].domain() : _this.axis.domain(),
                 newBrushRange,
                 elem;
 
@@ -263,6 +270,8 @@ This element draw the box over the axis signifying the active area to mute the s
             extents[d] = newBrushRange;
           }
         });
+        //reapply the brushes
+        this.drawElement();
         //create the muted list
         this._calcMutedSeries(extents);
       }
@@ -274,7 +283,7 @@ This element draw the box over the axis signifying the active area to mute the s
       //check the size of the box and make sure it is some min
       if((sel[1] - sel[0]) < 4) {
         // increase size of extents while checking if we hit the top
-        var ext = (sel[0] - 4) < 0 ? [ sel[0] , sel[1] + 4 ] : [ sel[0] -4 , sel[1] ];
+        var ext = (sel[0] - 4 - this.centerOffset) < 0 ? [ sel[0] , sel[1] + 4 ] : [ sel[0] -4 , sel[1] ];
         // increase size of box
         elem.call(this._brush.move, ext);
 
@@ -291,21 +300,39 @@ This element draw the box over the axis signifying the active area to mute the s
         var series = {},
             domains = {},
             keys = Object.keys(extents),
+            lower = 1,
+            upper = 0,
             dim,y0,y1;
 
-          for(var j = 0; j < keys.length; j++){
-            dim = keys[j];
+        if(this.radial){
+          lower = 0;
+          upper = 1
+        }
 
-            y0 = this.axis[dim].invert(extents[dim][1]);
-            y1 = this.axis[dim].invert(extents[dim][0]);
+        for(var j = 0; j < keys.length; j++){
+          dim = keys[j];
 
-            for(var i = 0; i < this.chartData.length; i++){
-              if(y0 > this.chartData[i][dim] || this.chartData[i][dim] > y1){
+          if(typeof(this.axis) === 'object'){
+            y0 = this.axis[dim].invert(extents[dim][lower]);
+            y1 = this.axis[dim].invert(extents[dim][upper]);
+          } else {
+            y0 = this.axis.invert(extents[dim][lower]);
+            y1 = this.axis.invert(extents[dim][upper]);
+          }
+
+          for(var i = 0; i < this.chartData.length; i++){
+            if(this.brushToRemove){
+              if(y0 <= this.chartData[i][dim] && this.chartData[i][dim] <= y1){
+                series[this.chartData[i][this.seriesKey]] = true;
+              }
+            } else {
+              if(y0 >= this.chartData[i][dim] || this.chartData[i][dim] >= y1){
                 series[this.chartData[i][this.seriesKey]] = true;
               }
             }
             domains[dim] = [y0,y1];
           }
+        }
 
         this.set('_brushDomains',domains);
 
@@ -327,10 +354,9 @@ This element draw the box over the axis signifying the active area to mute the s
       var newBrushRange = [];
       // if the brushExts fall within the new axis domain
       if(newAxisDomain[0] <= oldBrushDomain[0] && newAxisDomain[1] >= oldBrushDomain[1]){
-        // resize brush
 
-        newBrushRange[0] = this.axis[d](oldBrushDomain[1]);
-        newBrushRange[1] = this.axis[d](oldBrushDomain[0]);
+        // resize brush
+        newBrushRange = this._getNewBrushRange(oldBrushDomain[1],oldBrushDomain[0]);
 
         //clear listeners
         elem.call(this._brush
@@ -344,10 +370,9 @@ This element draw the box over the axis signifying the active area to mute the s
 
       //bottom of brush is below new domain, top is within
       } else if(newAxisDomain[0] > oldBrushDomain[0] && newAxisDomain[0] < oldBrushDomain[1] && newAxisDomain[1] >= oldBrushDomain[1]) {
-        //move bottom to the min newAxisRange
 
-        newBrushRange[0] = this.axis[d](oldBrushDomain[1]);
-        newBrushRange[1] = this.axis[d](newAxisDomain[0]);
+        //move bottom to the min newAxisRange
+        newBrushRange = this._getNewBrushRange(oldBrushDomain[1],newAxisDomain[0]);
 
         elem.call(this._brush
           .on("start.brush", null)
@@ -358,25 +383,46 @@ This element draw the box over the axis signifying the active area to mute the s
 
       //bottom of brush within new domain, top is out
       } else if(newAxisDomain[0] <= oldBrushDomain[0] && newAxisDomain[1] < oldBrushDomain[1] && newAxisDomain[1] > oldBrushDomain[0]) {
-        //move top to the max newAxisRange
 
-        newBrushRange[0] = this.axis[d](newAxisDomain[1]);
-        newBrushRange[1] = this.axis[d](oldBrushDomain[0]);
+        //move top to the max newAxisRange
+        newBrushRange = this._getNewBrushRange(newAxisDomain[1],oldBrushDomain[0]);
 
         elem.call(this._brush
           .on("start.brush", null)
           .on("end.brush", null));
         elem.call(this._brush.move, newBrushRange);
 
-        newBrushRange = _this._checkMinSize(newBrushRange,elem);
+        newBrushRange = this._checkMinSize(newBrushRange,elem);
 
       } else {
         //delete and move on to the next brush
-        _this.deleteBrush(Px.d3.select(brushThis));
+        this.deleteBrush(Px.d3.select(brushThis));
         return null
       }
 
       return newBrushRange;
+    },
+
+    _getNewBrushRange: function(d1, d2) {
+      var newRange = [],
+          domain1, domain2;
+      // if radial, we need to flip our order
+      if(this.radial){
+        domain1 = d2;
+        domain2 = d1;
+      } else {
+        domain1 = d1;
+        domain2 = d2;
+      }
+
+      if(typeof(this.axis) === 'object'){
+        newRange[0] = this.axis[d](domain1);
+        newRange[1] = this.axis[d](domain2);
+      } else {
+        newRange[0] = this.axis(domain1);
+        newRange[1] = this.axis(domain2);
+      }
+      return newRange;
     },
 
     deleteAllBrushes: function(){

@@ -1,3 +1,10 @@
+v0.6.4
+==================
+* changed bower from px-moment to pxmoment, added px-polygit-imports-datetime for code pen 
+
+
+
+
 v0.5.7
 ==================
 * Prevent range being changed when already being processed internally

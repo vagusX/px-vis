@@ -68,7 +68,7 @@ Single-handled slider with step
 ### Layout
 
 The slider will always take the full-width of whatever container it is in.
-If resized or made visible for the first time (if the slider was in a modal for example) then the slider will need to be notified through the (iron-resizable-behavior)[https://elements.polymer-project.org/elements/iron-resizable-behavior?active=Polymer.IronResizableBehavior], by - for example - manually calling notifyResize() on it.
+If resized or made visible for the first time (if the slider was in a modal for example) then the slider will need to be notified through the [iron-resizable-behavior](https://elements.polymer-project.org/elements/iron-resizable-behavior?active=Polymer.IronResizableBehavior), by - for example - manually calling `notifyResize()` on it.
 
 
 ## Local Development
@@ -78,25 +78,17 @@ From the component's directory...
 ```
 $ npm install
 $ bower install
-$ grunt sass
+$ gulp sass
 ```
 
 From the component's directory, to start a local server run:
 
 ```
-$ grunt depserve
+$ gulp serve
 ```
 
 Navigate to the root of that server (e.g. http://localhost:8080/) in a browser to open the API documentation page, with link to the "Demo" / working examples.
 
-
-### DevMode
-Devmode runs `grunt depserve` and `grunt watch` concurrently so that when you make a change to your source files and save them, your preview will be updated in any browsers you have opened and turned on LiveReload.
-From the component's directory run:
-
-```
-$ grunt devmode
-```
 
 ### GE Coding Style Guide
 [GE JS Developer's Guide](https://github.com/GeneralElectric/javascript)

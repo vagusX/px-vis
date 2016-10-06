@@ -1,0 +1,157 @@
+<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="px-vis-behavior-common.html" />
+<link rel="import" href="px-vis-behavior-d3.html" />
+<link rel="import" href="../px-colors-design/colors.html" />
+
+
+<!--
+Drawing object which adds radial (circular) gridlines to the chart.
+
+Orintation has two options:
+- `bottom`
+- `left`
+
+Using `bottom` specifies vertical gridlines drawn from the x-axis. Using `left` specifes horizontal gridlines from the y-axis.
+
+##### Usage
+
+    <px-vis-radial-gridlines
+        svg="[[svg]]"
+        axis="[[x]]"
+        margin="[[margin]]"
+        length="[[height]]"
+        orientation="bottom"
+        current-domain="[[currentDomainX]]">
+    </px-vis-radial-gridlines>
+
+##### d3 reference
+https://github.com/mbostock/d3/wiki/SVG-Axes
+The gridlines still make use of the d3.axis object, just with different settings
+
+@element px-vis-radial-gridlines
+@blurb Drawing object which adds gridlines to the chart.
+@homepage index.html
+@demo demo.html
+-->
+<dom-module id="px-vis-radial-gridlines">
+    <link rel="import" type="css" href="css/px-vis-radial-gridlines.css"/>
+    <template>
+
+    </template>
+</dom-module>
+
+<script>
+    Polymer({
+
+        is: 'px-vis-radial-gridlines',
+
+        behaviors: [
+          PxVisBehaviorD3.svg,
+          PxVisBehavior.commonMethods,
+          PxVisBehaviorD3.axis,
+          PxVisBehaviorD3.axisConfig,
+          commonColors,
+          PxVisBehaviorD3.domainUpdate
+        ],
+
+        /**
+         * Properties block, expose attribute values to the DOM via 'reflect'
+         *
+         * @property properties
+         * @type Object
+         */
+        properties: {
+          
+          /**
+           * Holder for the instantiated d3 grid
+           *
+           * @property _grid
+           * @type Object
+           */
+          gridSvg: {
+            type: Object
+          },
+          /**
+           * An x,y amount to move the grid to allow for labels and titles
+           *
+           * @property translateAmt
+           * @type Array
+           */
+          translateAmt: {
+            type: Array,
+            value: function() { return [0,0]; }
+          },
+          tickValues: {
+              type: Array,
+              value: []
+          }
+        },
+
+        observers: [
+          'drawElement(domainChanged, axis, margin, svg, tickValues)'
+        ],
+
+
+        ready:function() {
+          // if there is no dev set unique ID, generate one
+          if(!this.gridId) {
+            this.set('gridId', this.generateRandomID('grid_'));
+          }
+        },
+
+        /**
+         * Method fired via observer which draws the gridlines
+         *
+         * @method _drawElement
+         */
+        drawElement: function() {
+          this.debounce('draw_grid', function() {
+
+         //   if(!this.gridSvg) {
+             
+             //clean the svg
+            var node = this.svg.node();
+            while (node.firstChild) {
+                node.removeChild(node.firstChild);
+            }
+             
+          /*  } else {
+                this.gridSvg.selectAll('*').remove();
+                //make sure the grid svg is being kept in sync...
+                this.gridSvg.width = this.svg.width;
+                this.gridSvg.
+            }*/
+
+            var radius = this.axis.range()[1] - this.axis.range()[0];
+
+            //draw the lines
+            var ga = this.svg.append('g')
+                .attr('class', 'a axis')
+                .attr('stroke', this.colors.grey4)
+                .attr('stroke-width', '1')
+            .selectAll('g')
+                .data([30,60,120,150,210,240,310,340])
+            .enter().append('g')
+                .attr('transform', function(d) { return 'rotate(' + -d + ')'; });
+
+            ga.append('line')
+                .attr('x2', radius);
+
+            //draw the circles
+            var r = Px.d3.scaleLinear()
+                            .domain(this.axis.domain())
+                            .range(this.axis.range()),
+                gr = this.svg.append('g')
+                .attr('class', 'r axis')
+                .attr('fill', 'none')
+                .attr('stroke', this.colors.grey4)
+            .selectAll('g')
+                .data(this.tickValues.length > 0 ? this.tickValues : r.ticks(5).slice(1))
+            .enter().append('g');
+
+            gr.append('circle')
+                .attr('r', r);
+          },5);
+        }
+    });
+</script>

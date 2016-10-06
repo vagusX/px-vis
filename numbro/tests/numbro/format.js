@@ -211,6 +211,97 @@ exports.format = {
         test.done();
     },
 
+    foreignCurrency: function (test) {
+        var currentCulture = numbro.culture();
+
+        numbro.culture('test1', {
+            delimiters: {
+                thousands: ',',
+                decimal: '.'
+            },
+            abbreviations: {
+                thousand: 'k',
+                million: 'm',
+                billion: 'b',
+                trillion: 't'
+            },
+            currency: {
+                symbol: '$',
+                position: 'postfix',
+                spaceSeparated: false
+            },
+            defaults: {
+                currencyFormat: '(0.00a)'
+            }
+        });
+
+        numbro.culture('test1');
+
+        var tests = [
+                [1000.234,'€','$0,0.00','€1,000.23'],
+                [1001,'€','$ 0,0.[00]','€ 1,001'],
+                [1000.234,'€','+$0,0.00','+€1,000.23'],
+                [1000.234,'€','$+0,0.00','€+1,000.23'],
+                [1000.234,'€','0,0.00 $','1,000.23 €'],
+                [-1000.234,'€','($0,0)','(€1,000)'],
+                [-1000.234,'€','(0,0$)','(1,000€)'],
+                [-1000.234,'€','$0.00','-€1000.23'],
+                [-1000.234,'€','+$0,0.00','-€1,000.23'],
+                [1230974,'€','($0.00 a)','€1.23 m'],
+                [1000.234,'€','+$0a','+€1k'],
+
+                // test symbol position before negative sign / open parens
+                [-1000.234,'€','$ (0,0)','€ (1,000)'],
+                [-1000.234,'€','$(0,0)','€(1,000)'],
+                [-1000.234,'€','$ (0,0.00)','€ (1,000.23)'],
+                [-1000.234,'€','$(0,0.00)','€(1,000.23)'],
+                [-1000.238,'€','$(0,0.00)','€(1,000.24)'],
+                [-1000.238,'€','$(-0,0.00)','€(-1,000.24)'],
+                [-1000.234,'€','$-0,0','€-1,000'],
+                [-1000.234,'€','$ -0,0','€ -1,000'],
+
+                [1000.234,'€','$ (0,0)','€ 1,000'],
+                [1000.234,'€','$(0,0)','€1,000'],
+                [1000.234,'€','$ (0,0.00)','€ 1,000.23'],
+                [1000.234,'€','$(0,0.00)','€1,000.23'],
+                [1000.238,'€','$(0,0.00)','€1,000.24'],
+                [1000.234,'€','$-0,0)','€1,000'],
+                [1000.234,'€','$ -0,0','€ 1,000'],
+
+                // small numbers - see issue #145
+                [-0.00000000000001,'€','$0,0','€0'],
+                [-0.00000000000001,'€','$0,0.00','€0.00']
+            ],
+            i;
+
+        var testsWithoutFormatString = [
+                [0.1,'$','0 $'],
+                [25,'$','25 $'],
+                [107, '$', '107 $'],
+                [9288,'$','9.288 $'],
+                [10965, '$','10.965 $'],
+                [100522, '$', '100.522 $'],
+                [1999999, '$', '1.999.999 $'],
+                [23333333, '$', '23.333.333 $']
+            ],
+            j;
+
+        test.expect(tests.length + testsWithoutFormatString.length);
+
+        for (i = 0; i < tests.length; i++) {
+            test.strictEqual(numbro(tests[i][0]).formatForeignCurrency(tests[i][1], tests[i][2]), tests[i][3], tests[i][2]);
+        }
+
+        numbro.culture('de-DE');
+
+        for (j = 0; j < testsWithoutFormatString.length; j++) {
+            test.strictEqual(numbro(testsWithoutFormatString[j][0]).formatForeignCurrency(testsWithoutFormatString[j][1]), testsWithoutFormatString[j][2]);
+        }
+
+        numbro.culture(currentCulture);
+        test.done();
+    },
+
     formatPostfixedCurrency: function (test) {
         var i;
         var currentCulture = numbro.culture();
@@ -524,24 +615,43 @@ exports.format = {
 
     bytes: function (test) {
         var tests = [
+                [0,'0 bd','0 B'],
+                [100,'0bd','100B'],
+                [1024*2,'0 bd','2 KB'],
+                [1024*1024*5,'0bd','5MB'],
+                [1024*1024*1024*7.343,'0.[0] bd','7.3 GB'],
+                [1024*1024*1024*1024*3.1536544,'0.000bd','3.154TB'],
+                [1024*1024*1024*1024*1024*2.953454534534,'0bd','3PB'],
+                [1024*1024*1024*1024*1024*1024*1024*1024*1024, '0 bd', '1024 YB'],
+                [0,'0 b','0 B'],
                 [100,'0b','100B'],
                 [1024*2,'0 b','2 KiB'],
                 [1024*1024*5,'0b','5MiB'],
                 [1024*1024*1024*7.343,'0.[0] b','7.3 GiB'],
                 [1024*1024*1024*1024*3.1536544,'0.000b','3.154TiB'],
                 [1024*1024*1024*1024*1024*2.953454534534,'0b','3PiB'],
+                [1024*1024*1024*1024*1024*1024*1024*1024*1024, '0 b', '1024 YiB'],
+                [0,'0 d','0 B'],
+                [100,'0d','100B'],
                 [1000*2,'0 d','2 KB'],
                 [1000*1000*5,'0d','5MB'],
                 [1000*1000*1000*7.343,'0.[0] d','7.3 GB'],
                 [1000*1000*1000*1000*3.1536544,'0.000d','3.154TB'],
-                [1000*1000*1000*1000*1000*2.953454534534,'0d','3PB']
-            ],
+                [1000*1000*1000*1000*1000*2.953454534534,'0d','3PB'],
+                [1000*1000*1000*1000*1000*1000*1000*1000*1000, '0 d', '1000 YB'],
+            ].reduce(function (tests, test) {
+              tests.push(test);
+              if (test[0] > 0) {
+                tests.push([test[0] * -1, test[1], '-' + test[2]]);
+              }
+              return tests;
+            }, []),
             i;
 
         test.expect(tests.length);
 
         for (i = 0; i < tests.length; i++) {
-            test.strictEqual(numbro(tests[i][0]).format(tests[i][1]), tests[i][2], tests[i][1]);
+            test.strictEqual(numbro(tests[i][0]).format(tests[i][1]), tests[i][2], tests[i][1] + "(" + i + ")");
         }
 
         test.done();

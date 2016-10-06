@@ -190,11 +190,13 @@ Tooltip element that provides additional information to users once hovered over 
         if(Array.isArray(this._target)){
           for(var i =0; i < this._target.length; i++){
             this.listen(this._target[i], 'mouseenter', '_show');
+            this.listen(this._target[i], 'mouseup', '_show');
             this.listen(this._target[i], 'mouseleave', '_hide');
             this.listen(this._target[i], 'mousedown', '_hide');
           }
         } else {
           this.listen(this._target, 'mouseenter', '_show');
+          this.listen(this._target, 'mouseup', '_show');
           this.listen(this._target, 'mouseleave', '_hide');
           this.listen(this._target, 'mousedown', '_hide');
         }
@@ -208,11 +210,13 @@ Tooltip element that provides additional information to users once hovered over 
       if(Array.isArray(this._target)){
         for(var i =0; i < this._target.length; i++){
           this.unlisten(this._target[i], 'mouseenter', '_show');
+          this.unlisten(this._target[i], 'mouseup', '_show');
           this.unlisten(this._target[i], 'mouseleave', '_hide');
           this.unlisten(this._target[i], 'mousedown', '_hide');
         }
       } else {
         this.unlisten(this._target, 'mouseenter', '_show');
+        this.unlisten(this._target, 'mouseup', '_show');
         this.unlisten(this._target, 'mouseleave', '_hide');
         this.unlisten(this._target, 'mousedown', '_hide');
       }
@@ -223,6 +227,7 @@ Tooltip element that provides additional information to users once hovered over 
     },
 
     _onMouseMove: function(){
+
       if(this.followMouse && this.thisRect){
         if(this.orientation === 'auto') {
 
@@ -433,7 +438,6 @@ Tooltip element that provides additional information to users once hovered over 
       *
       */
      _autoPosition: function() {
-
        // smart position to right automatically for now
        this._doPosition(this._findValidSmartOrientation(this._values.TYPE.right));
      },

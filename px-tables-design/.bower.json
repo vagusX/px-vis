@@ -40,6 +40,6 @@
     "commit": "433b2ee70f1131dbd92559590a81b9db2af6cb27"
   },
   "_source": "https://github.com/predixDev/px-tables-design.git",
-  "_target": "~0.3.0",
+  "_target": "~0.3.13",
   "_originalSource": "px-tables-design"
 }

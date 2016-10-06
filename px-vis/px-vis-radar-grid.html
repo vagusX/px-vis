@@ -1,0 +1,161 @@
+<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="px-vis-behavior-common.html" />
+<link rel="import" href="px-vis-behavior-d3.html" />
+<link rel="import" href="../px-colors-design/colors.html" />
+<link rel="import" href="px-vis-line.html"/>
+
+<!--
+Element which draws lines series onto the chart
+
+##### Usage
+
+    <px-vis-radar-grid
+        svg="[[svg]]"
+        tick-values="[[gridTicks]]"
+        dimensions="[[dimensions]]"
+        domain-changed="[[domainChanged]]">
+    </px-vis-radar-grid>
+
+@element px-vis-line
+@blurb Element which draws lines series onto the chart
+@homepage index.html
+@demo demo.html
+-->
+<link rel="import" href="css/px-vis-styles.html">
+
+<dom-module id="px-vis-radar-grid">
+  <template>
+    <style include="px-vis-styles"></style>
+    <style include="px-theme-styles"></style>
+    <px-vis-line
+      id="line"
+      radial-line
+      multi-path
+      svg="[[svg]]"
+      series-id="[[_seriesKey]]"
+      chart-data="[[_gridData]]"
+      complete-series-config="[[_completeSeriesConfig]]"
+      x="[[x]]"
+      y="[[y]]"
+      domain-changed="[[domainChanged]]"
+      stroke-width="[[strokeWidth]]"
+      interpolation-function="[[_returnInterpolation()]]">
+    </px-vis-line>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: 'px-vis-radar-grid',
+
+    behaviors: [
+      PxVisBehaviorD3.svg,
+      PxVisBehaviorD3.axes,
+      PxVisBehavior.commonMethods,
+      commonColors
+    ],
+
+    /**
+     * Properties block, expose attribute values to the DOM via 'reflect'
+     *
+     * @property properties
+     * @type Object
+     */
+    properties: {
+      /**
+       * The calculated grid data
+       *
+       */
+      _gridData: {
+        type: Array,
+        notify: true
+      },
+      /**
+       * The color for the grid lines
+       *
+       */
+      axisColor: {
+        type: "String",
+        value: "grey7"
+      },
+      /**
+       * A configuration file for the gridlines
+       *
+       */
+      _completeSeriesConfig: {
+        type: Object,
+        notify: true
+      },
+      /**
+       * The access key for the seriesConfig
+       *
+       */
+      _seriesKey: {
+        type: String,
+        value: "radarGrids"
+      },
+      /**
+       * The values obtained from the axis where we want our gridlines
+       *
+       */
+      tickValues: {
+        type: Array,
+        notify: true
+      },
+      /**
+       * The dimensions of or chart
+       *
+       */
+      dimensions: {
+        type: Array,
+        notify: true
+      },
+      strokeWidth: {
+        type: Number,
+        value: 1
+      }
+    },
+
+    observers: [
+      'createGridData(dimensions.*,tickValues.*)'
+    ],
+
+    createGridData: function() {
+      this.debounce('radarGrids', function(){
+        if(this.tickValues && this.dimensions && this.tickValues.length > 0 && this.dimensions.length > 0) {
+          var data = [],
+              config = {},
+              domain = this.y.domain();
+
+          if(domain[0] !== this.tickValues[0]){
+            this.tickValues.push(domain[0]);
+          }
+
+          if(domain[1] !== this.tickValues[this.tickValues.length - 1]){
+            this.tickValues.push(domain[1]);
+          }
+
+          for(var i = 0; i < this.tickValues.length; i++) {
+            data.push({});
+            for(var j = 0; j < this.dimensions.length; j++) {
+              data[i][this.dimensions[j]] = this.tickValues[i];
+            }
+          }
+
+          config[this._seriesKey] = {
+            "color" : this.colors[this.axisColor],
+            'x' : this.dimensions
+          };
+
+          this.set('_completeSeriesConfig', config);
+          this.set('_gridData', data);
+        }
+      },10);
+    },
+
+    _returnInterpolation: function(){
+      return Px.d3.curveLinearClosed;
+    }
+
+  });
+</script>

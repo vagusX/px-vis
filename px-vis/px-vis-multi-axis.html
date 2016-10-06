@@ -41,11 +41,12 @@ https://github.com/mbostock/d3/wiki/SVG-Axes
           svg="[[_returnGroup(index, _internalDimensionsChanged)]]"
           axis="[[_returnY(item, _internalDimensionsChanged)]]"
           series-id="[[item]]"
-          height="[[height]]"
+          height="[[_heightOrLen]]"
+          width="[[_heightOrLen]]"
           margin="[[margin]]"
           orientation="left"
-          title="[[_getTitle(item)]]"
-          title-location='[[titleLocation]]'
+          title="[[_getTitle(item,completeSeriesConfig)]]"
+          title-location='[[_computeTitleLocation(item,titleLocation, _pokeTitleLocation)]]'
           title-type-size="12"
           label-type-size="10"
           current-domain="[[currentDomainY]]"
@@ -58,25 +59,36 @@ https://github.com/mbostock/d3/wiki/SVG-Axes
           prevent-series-bar
           domain-changed="[[_internalDimensionsChanged]]"
           selected-domain="[[selectedDomain]]"
-          title-truncation>
+          title-truncation
+          disable-ticks="[[_calcDisableTicks(item,recalcTicks)]]"
+          label-position="[[labelPosition]]"
+          axis-color="[[axisColor]]"
+          ticks="[[ticks]]"
+          label-rotation="[[labelRotation]]"
+          label-translation="[[labelTranslation]]"
+          drawn-tick-values={{drawnTickValues}}>
         </px-vis-axis>
       </template>
       <px-vis-axis-brush
         id="axisBrush"
         svg="[[axisGroups]]"
         parent-svg="[[svg]]"
-        height="[[height]]"
+        height="[[_heightOrLen]]"
         axis="[[y]]"
         margin="[[margin]]"
         chart-data="[[chartData]]"
         dimensions="[[dimensions]]"
         series-key="[[seriesKey]]"
         domain-changed="[[_internalDimensionsChanged]]"
-        muted-series="{{mutedSeries}}">
+        muted-series="{{mutedSeries}}"
+        radial="[[radial]]"
+        center-offset="[[centerOffset]]"
+        brush-to-remove="[[brushToRemove]]">
       </px-vis-axis-brush>
       <px-vis-axis-drag
         width="[[width]]"
-        axis="[[x]]"
+        x="[[x]]"
+        y="[[y]]"
         margin="[[margin]]"
         current-domain="[[currentDomainX]]"
         complete-series-config="{{completeSeriesConfig}}"
@@ -86,8 +98,8 @@ https://github.com/mbostock/d3/wiki/SVG-Axes
         axis-groups="[[axisGroups]]"
         drag-behavior="{{dragBehavior}}"
         redraw-series="[[redrawSeries]]"
-        dynamic-axis-redraw="[[dynamicAxisRedraw]]"
         redraw-elems="[[redrawElems]]"
+        radial="[[radial]]"
         series-key="[[seriesKey]]"
         muted-series="{{mutedSeries}}">
       </px-vis-axis-drag>
@@ -113,6 +125,7 @@ https://github.com/mbostock/d3/wiki/SVG-Axes
       PxVisBehavior.commonAxis,
       PxVisBehaviorD3.domainUpdate,
       PxVisBehaviorD3.selectedDomain,
+      PxVisBehaviorD3.radialAxisConfig,
       commonColors
     ],
 
@@ -204,21 +217,115 @@ https://github.com/mbostock/d3/wiki/SVG-Axes
       _internalDimensionsChanged: {
         type: Boolean,
         value: false
+      },
+      radial: {
+        type: Boolean,
+        value: false
+      },
+      singleDomain: {
+        type: Boolean,
+        value: false
+      },
+      labelOneAxis:{
+        type: Boolean,
+        value: false
+      },
+      length: {
+        type: Number,
+        value: null
+      },
+      _heightOrLen: {
+        type: Number,
+        computed: '_calcH(height,length)'
+      },
+      brushToRemove: {
+        type: Boolean,
+        value: false
+      },
+      _lastDomainChanged: {
+        type: Boolean,
+        value: null
+      },
+      _pokeTitleLocation: {
+        type: Boolean,
+        value: false
+      },
+      recalcTicks: {
+        type: Boolean,
+        value: false
       }
     },
 
     observers: [
-      '_computedInternalDimensions(domainChanged)',
-      '_moveAxisGroup(margin.*,axisSvg)'
+      '_computedInternalDimensions(domainChanged.*,dimensions.*)',
+      '_moveAxisGroup(margin.*,axisSvg,offset.*)',
+      '_toggleTitleLocation(length)'
     ],
 
     listeners:{
       'px-axis-done': '_setAxisStyles',
-      'px-vis-axis-displayed-title-changed': '_displayedTitleChanged'
+      'px-vis-axis-displayed-title-changed': '_displayedTitleChanged',
+      'px-vis-recalc-title-location' : '_toggleTitleLocation'
     },
+
+    /**
+     * At ready, set the margin and titleLocation objects
+     *
+     */
+    _computeTitleLocation: function(item, titleLocation) {
+      if(this.radial) {
+        var r = (this.x(item) * 180 / Math.PI),
+            attrs = {
+            'x': null,
+            'y': null,
+            'r': (r + 180) * -1,  //we rotate each group so we have to un-rotate each title
+            'anchor': null
+          };
+
+        if(r > 10 && r <= 100) {
+          attrs.anchor = 'start';
+          attrs.x = 0;
+          attrs.y = this.length + 10;
+        } else if(r > 100 && r < 170) {
+          attrs.anchor = 'start';
+          attrs.x = -12 * Math.sin(Math.PI - this.x(item));
+          attrs.y = this.length + 10 + 12 * Math.cos(Math.PI - this.x(item));
+        } else if(r >= 170 && r <= 190){
+          attrs.anchor = 'middle';
+          attrs.x = -12 * Math.sin(Math.PI - this.x(item));
+          attrs.y = this.length + 10 + 12 ; //text size plus spacer
+        } else if(r > 190 && r < 260){
+          attrs.anchor = 'end';
+          attrs.x = -12 * Math.sin(Math.PI - this.x(item));
+          attrs.y = this.length + 10 + 12 * Math.cos(Math.PI - this.x(item));
+        } else if(r >= 260 && r < 355){
+          attrs.anchor = 'end';
+          attrs.x = 0;
+          attrs.y = this.length + 10;
+        } else {
+          attrs.anchor = 'middle';
+          attrs.x = -12 * Math.sin(Math.PI - this.x(item));
+          attrs.y = this.length + 10;
+        }
+        return attrs;
+      }
+      return titleLocation;
+    },
+
+    _toggleTitleLocation: function() {
+      this.set('_pokeTitleLocation' , !this._pokeTitleLocation);
+    },
+
+    _calcH: function(height,length) {
+      if(length) {
+        return length;
+      }
+      return height
+    },
+
     _moveAxisGroup: function(margin,axisSvg){
       //make sure it is translated properly and we are not running into a race condition
-      this.axisSvg.attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+      this.axisSvg.attr("transform", "translate(" + (this.margin.left + this.offset[0]) + "," + (this.margin.top + this.offset[1]) + ")");
     },
     /**
      * Generates a group elem for each dimension and moves it into the correct x coordinate
@@ -288,6 +395,20 @@ https://github.com/mbostock/d3/wiki/SVG-Axes
           .merge(g)
             .attr("dimension", function(d) { return d })
             .attr("transform", function(d) {
+              if(this.radial){
+              /*
+              +180 to flip orientation of axes to start at top (which matches where lines start)
+                   180                        0
+                  ____                       ____
+                .'    `.                   .'    `.
+               /        \                 /        \
+            90|          | 270  -->  270 |          |90
+               \        /                 \        /
+                `.____.'                   `.____.'
+                   0                          180
+              */
+                return "rotate(" + (this.x(d) * 180 / Math.PI + 180) + ")"
+              }
               return "translate(" + this.x(d) + ",0)";
             }.bind(this));
 
@@ -302,9 +423,17 @@ https://github.com/mbostock/d3/wiki/SVG-Axes
           this.set('axisGroups', this.axisSvg.selectAll(".dimension"));
           this.set('brushElems', this.axisGroups.selectAll('g.brush').nodes());
 
+          //poke the titles
+          this.set('_pokeTitleLocation',!this._pokeTitleLocation);
+
+          //sometime after draw (doesnt entirely matter when since it is for an interaction piece), move the brushes on top of everything so they dont get interrupted by other things drawn on top
+          setTimeout(function(){
+            this.axisGroups.selectAll('g.brush').raise();
+          }.bind(this),200);
         }
       // },10)
     },
+
     /**
      * Returns an indivdual d3 selected element
      *
@@ -317,7 +446,7 @@ https://github.com/mbostock/d3/wiki/SVG-Axes
      *
      */
     _returnY: function(item){
-      return this.y[item]
+      return this.singleDomain ? this.y : this.y[item]
     },
     /**
      * In order to make the ticks align, we iterate through and generate some round numbers for each axis
@@ -326,7 +455,7 @@ https://github.com/mbostock/d3/wiki/SVG-Axes
     _calcTickVals: function(item){
       if(!this.y[item]){ return false }
 
-      if(this.matchTicks){
+      if(this.matchTicks && !this.singleDomain) {
         var d = this.y[item].domain(),
             min = Math.floor(d[0]/10)*10,
             max = Math.ceil(d[1]/10)*10,
@@ -339,6 +468,17 @@ https://github.com/mbostock/d3/wiki/SVG-Axes
         return vals;
       }
       return null;
+    },
+    /**
+     * Do the same thing for gridlines once
+     *
+     */
+    _calcDisableTicks: function(item) {
+      if(this.labelOneAxis) {
+        //check index of dimentions so it still works when we drag an axis
+        return this.dimensions.indexOf(item) === 0 ? false : true;
+      }
+      return false;
     },
     /**
      * Do the same thing for gridlines once
@@ -376,6 +516,8 @@ https://github.com/mbostock/d3/wiki/SVG-Axes
           this.axisGroups.selectAll('.hideCommon').style('display',null);
           this.axisGroups.selectAll('.hideCommon').classed('hideCommon',false);
         }
+
+        this.set('recalcTicks', !this.recalcTicks);
       }
     },
     /*
@@ -404,12 +546,12 @@ https://github.com/mbostock/d3/wiki/SVG-Axes
      * chart refresh but the new scale has yet to be triggered
      *
      */
-    _computedInternalDimensions: function() {
-      if(this.dimensions) {
-
+    _computedInternalDimensions: function(dC, dim) {
+      if(this._lastDomainChanged !== this.domainChanged) {
+        this._lastDomainChanged = this.domainChanged;
         //if match ticks, make sure the domains can be aligned
-        if(this.matchTicks){
-          for(var i = 0; i < this.dimensions.length; i++){
+        if(this.matchTicks && !this.singleDomain) {
+          for(var i = 0; i < this.dimensions.length; i++) {
             var dim = this.dimensions[i],
                 d = this.y[dim].domain(),
                 min = Math.floor(d[0]/10)*10,
@@ -457,10 +599,12 @@ https://github.com/mbostock/d3/wiki/SVG-Axes
      *
      */
     _getTitle: function(item) {
-      if(this.completeSeriesConfig[item] && this.completeSeriesConfig[item].title) {
-        return this.completeSeriesConfig[item].title;
-      } else {
-        return item;
+      if(this.completeSeriesConfig){
+        if(this.completeSeriesConfig[item] && this.completeSeriesConfig[item].title) {
+          return this.completeSeriesConfig[item].title;
+        } else {
+          return item;
+        }
       }
     },
 

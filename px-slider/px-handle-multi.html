@@ -55,6 +55,7 @@ Handle Element expected to be used in px-slider
       tracking: {
         type: Boolean,
         value: false,
+        readOnly: true,
         observer: '_trackingChanged'
       },
 
@@ -110,6 +111,7 @@ Handle Element expected to be used in px-slider
      * @param event
      */
     handleDown: function(event) {
+      //Polymer function to change the ability edit a readonly value
       this._setTracking(true);
     },
     /**
@@ -118,6 +120,7 @@ Handle Element expected to be used in px-slider
      * @param event
      */
     handleUp: function(event) {
+      //Polymer function to change the ability edit a readonly value
       this._setTracking(false);
     },
     /**

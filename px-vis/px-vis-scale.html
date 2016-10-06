@@ -125,8 +125,7 @@ https://github.com/d3/d3/wiki/API-Reference#d3scale-scales
      */
     _setXScale: function(width,margin) {
       var w = width - margin.left - margin.right;
-      this.x = this._setScale(this.xAxisType,[0, w]);
-      this.notifyPath('x.range', this.x.range);
+      this.set('x', this._setScale(this.xAxisType,[0, w]));
       this.fire('px-vis-x-updated', { 'dataVar': 'x', 'data': this.x, 'method':'set' });
     },
     /**
@@ -136,8 +135,7 @@ https://github.com/d3/d3/wiki/API-Reference#d3scale-scales
      */
     _setYScale: function(height,margin) {
       var h = height - margin.top - margin.bottom;
-      this.y = this._setScale(this.yAxisType,[h, 0]);
-      this.notifyPath('y', this.y);
+      this.set('y', this._setScale(this.yAxisType,[h, 0]));
       this.fire('px-vis-y-updated', { 'dataVar': 'y', 'data': this.y, 'method':'set' });
     },
     /**
@@ -185,16 +183,22 @@ https://github.com/d3/d3/wiki/API-Reference#d3scale-scales
         yTemp = this._getDataExtents(data[j], keys);
 
         if(doX) {
-          if(ordX && result.x.indexOf(data[j][x]) === -1) {
-            result.x.push(data[j][x]);
+
+          if(ordX) {
+            if(result.x.indexOf(data[j][x]) === -1) {
+
+              result.x.push(data[j][x]);
+            }
           } else {
             this._setMin(result.x,xTemp);
             this._setMax(result.x,xTemp);
           }
         }
         if(doY) {
-          if(ordY && result.y.indexOf(data[j][y]) === -1) {
-            result.y.push(data[j][y]);
+          if(ordY) {
+            if(result.y.indexOf(data[j][y]) === -1) {
+              result.y.push(data[j][y]);
+            }
           } else {
             this._setMin(result.y,yTemp[0]);
             this._setMax(result.y,yTemp[1]);
@@ -209,12 +213,12 @@ https://github.com/d3/d3/wiki/API-Reference#d3scale-scales
     },
 
     _setMin: function(r,d) {
-     if(r[0] > d) {
+     if(isNaN(r[0]) || r[0] > d) {
         r[0] = d;
       }
     },
     _setMax: function(r,d) {
-      if(r[1] < d) {
+      if(isNaN(r[1]) || r[1] < d) {
         r[1] = d;
       }
     },
@@ -275,7 +279,7 @@ https://github.com/d3/d3/wiki/API-Reference#d3scale-scales
         xTime = false;
         doX = false;
       }
-      if(!this._chartDataHasChanged && exts.y.length> 0 && exts.y[0] !== Infinity && exts.y[1] !== -Infinity){
+      if(!this._chartDataHasChanged && exts.y.length > 0 && exts.y[0] !== Infinity && exts.y[1] !== -Infinity){
         yTime = false;
         doY = false;
       }

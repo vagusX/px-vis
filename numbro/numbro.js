@@ -1,6 +1,6 @@
 /*!
  * numbro.js
- * version : 1.7.1
+ * version : 1.9.3
  * author : Företagsplatsen AB
  * license : MIT
  * http://www.foretagsplatsen.se
@@ -14,7 +14,16 @@
     ************************************/
 
     var numbro,
-        VERSION = '1.7.1',
+        VERSION = '1.9.3',
+        binarySuffixes = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'],
+        decimalSuffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+        bytes = {
+            general: { scale: 1024, suffixes: decimalSuffixes, marker: 'bd' },
+            binary:  { scale: 1024, suffixes: binarySuffixes, marker: 'b' },
+            decimal: { scale: 1000, suffixes: decimalSuffixes, marker: 'd' }
+        },
+        // general must be before the others because it reuses their characters!
+        byteFormatOrder = [ bytes.general, bytes.binary, bytes.decimal ],
     // internal storage for culture config files
         cultures = {},
     // Todo: Remove in 2.0.0
@@ -175,7 +184,7 @@
 
         // figure out what kind of format we are dealing with
         if (escapedFormat.indexOf('$') > -1) { // currency!!!!!
-            output = formatCurrency(n, format, roundingFunction);
+            output = formatCurrency(n, cultures[currentCulture].currency.symbol, format, roundingFunction);
         } else if (escapedFormat.indexOf('%') > -1) { // percentage
             output = formatPercentage(n, format, roundingFunction);
         } else if (escapedFormat.indexOf(':') > -1) { // time
@@ -195,8 +204,6 @@
             millionRegExp,
             billionRegExp,
             trillionRegExp,
-            binarySuffixes = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'],
-            decimalSuffixes = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
             bytesMultiplier = false,
             power;
 
@@ -221,33 +228,40 @@
                     '(?:\\)|(\\' + cultures[currentCulture].currency.symbol + ')?(?:\\))?)?$');
 
                 // see if bytes are there so that we can multiply to the correct number
-                for (power = 0; power <= binarySuffixes.length && !bytesMultiplier; power++) {
+                for (power = 1; power < binarySuffixes.length && !bytesMultiplier; ++power) {
                     if (string.indexOf(binarySuffixes[power]) > -1) {
-                        bytesMultiplier = Math.pow(1024, power + 1);
+                        bytesMultiplier = Math.pow(1024, power);
                     } else if (string.indexOf(decimalSuffixes[power]) > -1) {
-                        bytesMultiplier = Math.pow(1000, power + 1);
+                        bytesMultiplier = Math.pow(1000, power);
                     }
                 }
 
-                // do some math to create our number
-                n._value = ((bytesMultiplier) ? bytesMultiplier : 1) *
-                    ((stringOriginal.match(thousandRegExp)) ? Math.pow(10, 3) : 1) *
-                    ((stringOriginal.match(millionRegExp)) ? Math.pow(10, 6) : 1) *
-                    ((stringOriginal.match(billionRegExp)) ? Math.pow(10, 9) : 1) *
-                    ((stringOriginal.match(trillionRegExp)) ? Math.pow(10, 12) : 1) *
-                    ((string.indexOf('%') > -1) ? 0.01 : 1) *
-                    (((string.split('-').length +
-                        Math.min(string.split('(').length - 1, string.split(')').length - 1)) % 2) ? 1 : -1) *
-                    Number(string.replace(/[^0-9\.]+/g, ''));
+                var str = string.replace(/[^0-9\.]+/g, '');
+                if (str === '') {
+                    // An empty string is not a number.
+                    n._value = NaN;
 
-                // round if we are talking about bytes
-                n._value = (bytesMultiplier) ? Math.ceil(n._value) : n._value;
+                } else {
+                    // do some math to create our number
+                    n._value = ((bytesMultiplier) ? bytesMultiplier : 1) *
+                        ((stringOriginal.match(thousandRegExp)) ? Math.pow(10, 3) : 1) *
+                        ((stringOriginal.match(millionRegExp)) ? Math.pow(10, 6) : 1) *
+                        ((stringOriginal.match(billionRegExp)) ? Math.pow(10, 9) : 1) *
+                        ((stringOriginal.match(trillionRegExp)) ? Math.pow(10, 12) : 1) *
+                        ((string.indexOf('%') > -1) ? 0.01 : 1) *
+                        (((string.split('-').length +
+                            Math.min(string.split('(').length - 1, string.split(')').length - 1)) % 2) ? 1 : -1) *
+                        Number(str);
+
+                    // round if we are talking about bytes
+                    n._value = (bytesMultiplier) ? Math.ceil(n._value) : n._value;
+                }
             }
         }
         return n._value;
     }
 
-    function formatCurrency(n, originalFormat, roundingFunction) {
+    function formatCurrency(n, currencySymbol, originalFormat, roundingFunction) {
         var format = originalFormat,
             symbolIndex = format.indexOf('$'),
             openParenIndex = format.indexOf('('),
@@ -261,7 +275,7 @@
         if(format.indexOf('$') === -1){
             // Use defaults instead of the format provided
             if (cultures[currentCulture].currency.position === 'infix') {
-                decimalSeparator = cultures[currentCulture].currency.symbol;
+                decimalSeparator = currencySymbol;
                 if (cultures[currentCulture].currency.spaceSeparated) {
                     decimalSeparator = ' ' + decimalSeparator + ' ';
                 }
@@ -290,10 +304,10 @@
                 case 'postfix':
                     if (output.indexOf(')') > -1) {
                         output = output.split('');
-                        output.splice(-1, 0, space + cultures[currentCulture].currency.symbol);
+                        output.splice(-1, 0, space + currencySymbol);
                         output = output.join('');
                     } else {
-                        output = output + space + cultures[currentCulture].currency.symbol;
+                        output = output + space + currencySymbol;
                     }
                     break;
                 case 'infix':
@@ -303,10 +317,10 @@
                         output = output.split('');
                         spliceIndex = Math.max(openParenIndex, minusSignIndex) + 1;
 
-                        output.splice(spliceIndex, 0, cultures[currentCulture].currency.symbol + space);
+                        output.splice(spliceIndex, 0, currencySymbol + space);
                         output = output.join('');
                     } else {
-                        output = cultures[currentCulture].currency.symbol + space + output;
+                        output = currencySymbol + space + output;
                     }
                     break;
                 default:
@@ -322,23 +336,27 @@
                         // the symbol appears before the "(", "+" or "-"
                         spliceIndex = 0;
                     }
-                    output.splice(spliceIndex, 0, cultures[currentCulture].currency.symbol + space);
+                    output.splice(spliceIndex, 0, currencySymbol + space);
                     output = output.join('');
                 } else {
-                    output = cultures[currentCulture].currency.symbol + space + output;
+                    output = currencySymbol + space + output;
                 }
             } else {
                 if (output.indexOf(')') > -1) {
                     output = output.split('');
-                    output.splice(-1, 0, space + cultures[currentCulture].currency.symbol);
+                    output.splice(-1, 0, space + currencySymbol);
                     output = output.join('');
                 } else {
-                    output = output + space + cultures[currentCulture].currency.symbol;
+                    output = output + space + currencySymbol;
                 }
             }
         }
 
         return output;
+    }
+
+    function formatForeignCurrency(n, foreignCurrencySymbol, originalFormat, roundingFunction) {
+        return formatCurrency(n, foreignCurrencySymbol, originalFormat, roundingFunction);
     }
 
     function formatPercentage(n, format, roundingFunction) {
@@ -396,25 +414,50 @@
         return Number(seconds);
     }
 
+    function formatByteUnits (value, suffixes, scale) {
+        var suffix = suffixes[0],
+            power,
+            min,
+            max,
+            abs = Math.abs(value);
+
+        if (abs >= scale) {
+            for (power = 1; power < suffixes.length; ++power) {
+                min = Math.pow(scale, power);
+                max = Math.pow(scale, power + 1);
+
+                if (abs >= min && abs < max) {
+                    suffix = suffixes[power];
+                    value = value / min;
+                    break;
+                }
+            }
+
+            // values greater than or equal to [scale] YB never set the suffix
+            if (suffix === suffixes[0]) {
+                value = value / Math.pow(scale, suffixes.length - 1);
+                suffix = suffixes[suffixes.length - 1];
+            }
+        }
+
+        return { value: value, suffix: suffix };
+    }
+
     function formatNumber (value, format, roundingFunction, sep) {
         var negP = false,
             signed = false,
             optDec = false,
             abbr = '',
-            i,
             abbrK = false, // force abbreviation to thousands
             abbrM = false, // force abbreviation to millions
             abbrB = false, // force abbreviation to billions
             abbrT = false, // force abbreviation to trillions
             abbrForce = false, // force abbreviation
             bytes = '',
+            byteFormat,
+            units,
             ord = '',
             abs = Math.abs(value),
-            binarySuffixes = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'],
-            decimalSuffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
-            min,
-            max,
-            power,
             totalLength,
             length,
             minimumPrecision,
@@ -432,7 +475,8 @@
             size,
             indexMinus,
             paren = '',
-            minlen;
+            minlen,
+            i;
 
         // check if number is zero and a custom zero format has been set
         if (value === 0 && zeroFormat !== null) {
@@ -526,9 +570,7 @@
                     size = length === 0 ? 0 : 3 * ~~(length / 3) - length;
                     size = size < 0 ? size + 3 : size;
 
-                    for (i = 0; i < size; i++) {
-                        format += '0';
-                    }
+                    format += zeroes(size);
                 }
             }
 
@@ -553,51 +595,26 @@
             }
         }
 
-        // see if we are formatting binary bytes
-        if (format.indexOf('b') > -1) {
-            // check for space before
-            if (format.indexOf(' b') > -1) {
-                bytes = ' ';
-                format = format.replace(' b', '');
-            } else {
-                format = format.replace('b', '');
-            }
+        // see if we are formatting
+        //   binary-decimal bytes (1024 MB), binary bytes (1024 MiB), or decimal bytes (1000 MB)
+        for (i = 0; i < byteFormatOrder.length; ++i) {
+            byteFormat = byteFormatOrder[i];
 
-            for (power = 0; power <= binarySuffixes.length; power++) {
-                min = Math.pow(1024, power);
-                max = Math.pow(1024, power + 1);
-
-                if (value >= min && value < max) {
-                    bytes = bytes + binarySuffixes[power];
-                    if (min > 0) {
-                        value = value / min;
-                    }
-                    break;
+            if (format.indexOf(byteFormat.marker) > -1) {
+                // check for space before
+                if (format.indexOf(' ' + byteFormat.marker) >-1) {
+                    bytes = ' ';
                 }
-            }
-        }
 
-        // see if we are formatting decimal bytes
-        if (format.indexOf('d') > -1) {
-            // check for space before
-            if (format.indexOf(' d') > -1) {
-                bytes = ' ';
-                format = format.replace(' d', '');
-            } else {
-                format = format.replace('d', '');
-            }
+                // remove the marker (with the space if it had one)
+                format = format.replace(bytes + byteFormat.marker, '');
 
-            for (power = 0; power <= decimalSuffixes.length; power++) {
-                min = Math.pow(1000, power);
-                max = Math.pow(1000, power + 1);
+                units = formatByteUnits(value, byteFormat.suffixes, byteFormat.scale);
 
-                if (value >= min && value < max) {
-                    bytes = bytes + decimalSuffixes[power];
-                    if (min > 0) {
-                        value = value / min;
-                    }
-                    break;
-                }
+                value = units.value;
+                bytes = bytes + units.suffix;
+
+                break;
             }
         }
 
@@ -662,7 +679,7 @@
         }
 
         if (w.length < minlen) {
-            w = new Array(minlen - w.length + 1).join('0') + w;
+            w = zeroes(minlen - w.length) + w;
         }
 
         if (thousands > -1) {
@@ -744,7 +761,7 @@
     /**
      * This function allow the user to set a new culture with a fallback if
      * the culture does not exist. If no fallback culture is provided,
-     * it fallbacks to "en-US".
+     * it falls back to "en-US".
      */
     numbro.setCulture = function(newCulture, fallbackCulture) {
         var key = newCulture,
@@ -906,6 +923,9 @@
         //trim whitespaces from either sides
         val = val.trim();
 
+        //replace the initial '+' or '-' sign if present
+        val = val.replace(/^[+-]?/, '');
+
         //if val is just digits return true
         if ( !! val.match(/^\d+$/)) {
             return true;
@@ -935,7 +955,7 @@
         }
 
         // validating currency symbol
-        temp = val.match(/^[^\d]+/);
+        temp = val.match(/^[^\d\.\,]+/);
         if (temp !== null) {
             val = val.substr(1);
             if (temp[0] !== _currSymbol) {
@@ -963,7 +983,12 @@
                 if (_valArray.length < 2) {
                     return ( !! _valArray[0].match(/^\d+.*\d$/) && !_valArray[0].match(_thousandRegEx));
                 } else {
-                    if (_valArray[0].length === 1) {
+                    if (_valArray[0] === '') {
+                        // for values without leading zero eg. .984
+                        return (!_valArray[0].match(_thousandRegEx) &&
+                            !!_valArray[1].match(/^\d+$/));
+
+                    } else if (_valArray[0].length === 1) {
                         return ( !! _valArray[0].match(/^\d+$/) &&
                             !_valArray[0].match(_thousandRegEx) &&
                             !! _valArray[1].match(/^\d+$/));
@@ -1022,7 +1047,13 @@
     function inNodejsRuntime() {
         return (typeof process !== 'undefined') &&
             (process.browser === undefined) &&
-            (process.title === 'node' || process.title === 'grunt' || process.title === 'gulp') &&
+            process.title &&
+            (
+                process.title.indexOf('node') === 0 ||
+                process.title.indexOf('meteor-tool') > 0 ||
+                process.title === 'grunt' ||
+                process.title === 'gulp'
+            ) &&
             (typeof require !== 'undefined');
     }
 
@@ -1128,16 +1159,44 @@
 
         formatCurrency: function(inputString, roundingFunction) {
             return formatCurrency(this,
+                cultures[currentCulture].currency.symbol,
+                inputString ? inputString : defaultCurrencyFormat,
+                (roundingFunction !== undefined) ? roundingFunction : Math.round
+            );
+        },
+
+        formatForeignCurrency: function(currencySymbol, inputString, roundingFunction) {
+            return formatForeignCurrency(this,
+                currencySymbol,
                 inputString ? inputString : defaultCurrencyFormat,
                 (roundingFunction !== undefined) ? roundingFunction : Math.round
             );
         },
 
         unformat: function(inputString) {
-            if (Object.prototype.toString.call(inputString) === '[object Number]') {
+            if (typeof inputString === 'number') {
                 return inputString;
+            } else if (typeof inputString === 'string') {
+                var result = unformatNumbro(this, inputString);
+
+                // Any unparseable string (represented as NaN in the result) is
+                // converted into undefined.
+                return isNaN(result) ? undefined : result;
+            } else {
+                return undefined;
             }
-            return unformatNumbro(this, inputString ? inputString : defaultFormat);
+        },
+
+        binaryByteUnits: function() {
+            return formatByteUnits(this._value, bytes.binary.suffixes, bytes.binary.scale).suffix;
+        },
+
+        byteUnits: function() {
+            return formatByteUnits(this._value, bytes.general.suffixes, bytes.general.scale).suffix;
+        },
+
+        decimalByteUnits: function() {
+            return formatByteUnits(this._value, bytes.decimal.suffixes, bytes.decimal.scale).suffix;
         },
 
         value: function() {

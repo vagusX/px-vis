@@ -1,0 +1,52 @@
+<!doctype html>
+
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>px-slider Demo</title>
+    <!-- Requires Webcomponents.js polyfill is provided by the page for browsers that don't support html imports -->
+    <script src="../webcomponentsjs/webcomponents-lite.min.js"></script>
+
+    <!-- Import custom element. Note: see comment about relative paths to dependencies in the *.html file referenced below -->
+    <link rel="import" href="../px-theme/px-theme.html" />
+    <link rel="import" href="px-slider.html" />
+    <link rel="import" href="demo-nested.html" />
+    <style>
+      html {
+        font-size: .9375rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h3>Demo</h3>
+    <br />
+    <h4>Single Value</h4>
+
+    <div id="mainDiv" style="width: 600px;">
+      <px-slider id="slider" value="50" min="0" max="100">
+      </px-slider>
+
+      <px-slider id="sliderMulti" start-value="20" end-value="80" min="-20" max="100">
+      </px-slider>
+      <!-- <h4>Single Value, Greater Precision.  (Step set to 0.001)</h4>
+     <px-slider value="5.556" min="0" max="100" step="0.001">
+     </px-slider>
+       <h4>Single Value, Greater Precision and Custom Step (Step set to 0.04)</h4>
+      <px-slider value="5.44" min="0" max="20" step="0.04">
+      </px-slider>
+      <h4>Range</h4>
+      <div style="width: 600px;">
+        <px-slider start-value="20" end-value="40" min="0" max="60">
+        </px-slider>
+      </div>
+      <h4>Step = 50</h4>
+      <div style="width: 600px;">
+        <px-slider value="150" min="0" max="500" step="50"></px-slider>
+      </div> -->
+    </div>
+  </body>
+
+</html>

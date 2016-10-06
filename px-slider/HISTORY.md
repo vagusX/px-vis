@@ -1,3 +1,7 @@
+v0.6.2
+=================
+* added support for negative values
+
 v0.6.1
 =================
 * made it so disabled actually does something

@@ -1,6 +1,6 @@
 {
   "name": "px-vis",
-  "version": "0.4.8",
+  "version": "0.5.8",
   "main": [
     "px-vis.html"
   ],
@@ -16,10 +16,9 @@
   "dependencies": {
     "polymer": "^1.6.1",
     "pxd3": "d3#~4.1.0",
-    "numbro": "~1.7.1",
+    "numbro": "~1.9.0",
     "numbro-element": "~1.0.4",
     "px-colors-design": "~0.2.16",
-    "px-rangepicker": "~1.2.1",
     "px-tooltip": "~0.9.0",
     "px-popover": "~1.5.0",
     "px-theme": "~1.1.2",
@@ -52,22 +51,7 @@
     "px-polymer-font-awesome": "^0.1.9"
   },
   "resolutions": {
-    "numbro": "1.7.1",
-    "px-viewport-design": "~0.4.1",
-    "px-typography-design": "^1.1.1",
-    "px-theme": "^1.1.2",
-    "chai": "^3.2.0",
-    "px-overlay": "~0.3.0",
-    "px-datetime-range-panel": "~0.3.0",
-    "px-datetime-common": "~0.6.1",
-    "px-tooltip": "~0.9.0",
-    "px-datetime-field": "~0.5.0",
-    "async": "^1.5.0",
-    "px-dropdown": "~0.12.1",
-    "px-vis": "^0.4.8",
-    "px-rangepicker": "~1.2.1",
-    "px-calendar-picker": "~0.4.0",
-    "px-popover": "~1.5.0",
-    "px-datetime-range-field": "~0.4.1"
+    "px-vis": "^0.5.8",
+    "numbro": "^1.6.0"
   }
 }

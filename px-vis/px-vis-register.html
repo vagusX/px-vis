@@ -75,7 +75,7 @@ Formatting for the timestamps,the data values, and the series names can be contr
         id="registerWrap"
         class="inline--flex flex--col"
         style$="height:{{height}}px; width:[[width]]px">
-        <template is="dom-if" if="{{_isOfType(xAxisType,'time')}}">
+        <template is="dom-if" if="{{_displayDateTime(forceDateTimeDisplay, xAxisType)}}">
           <div id="dateTime">
             <span id="firstDateTime">{{_firstDateTime}}</span> <span>{{_separator}}</span> <span id="secondDateTime">{{_secondDateTime}}</span>  &nbsp;
           </div>
@@ -100,14 +100,16 @@ Formatting for the timestamps,the data values, and the series names can be contr
                     <div class="seriesData" name$="R{{item.name}}">
                       <!-- if x axis is number format and show it -->
                       <template is="dom-if" if="{{_isOfType(xAxisType, 'linear')}}">
-                        <numbro-element
-                          value="[[_returnVal(item, 'x', '&nbsp;/&nbsp')]]"
-                          format="[[numberFormat]]"
-                          culture="[[numberFormatCulture]]"
-                          currency$="[[numberFormatIsCurrency]]"
-                          default-currency-format="[[numberFormatCurrency]]"
-                          zero-format="[[numberFormatZero]]">
-                        </numbro-element>
+                        <template is="dom-if" if="{{_returnVal(item, 'x')}}">
+                          <numbro-element
+                            value="[[_returnVal(item, 'x', '&nbsp;/&nbsp')]]"
+                            format="[[numberFormat]]"
+                            culture="[[numberFormatCulture]]"
+                            currency$="[[numberFormatIsCurrency]]"
+                            default-currency-format="[[numberFormatCurrency]]"
+                            zero-format="[[numberFormatZero]]">
+                          </numbro-element>
+                        </template>
                         <template is="dom-if" if="{{_returnVal(item, 'x')}}">{{_getXUnit(item, completeSeriesConfig.*)}}</template>
                         <template is="dom-if" if="[[_returnVal(item, 'x')]]">
                           &nbsp;/&nbsp
@@ -125,14 +127,16 @@ Formatting for the timestamps,the data values, and the series names can be contr
 
                       <!-- if y axis is number format and show it -->
                       <template is="dom-if" if="{{_isOfType(yAxisType, 'linear')}}">
-                        <numbro-element
-                          value="[[_returnVal(item, 'y')]]"
-                          format="[[numberFormat]]"
-                          culture="[[numberFormatCulture]]"
-                          currency$="[[numberFormatIsCurrency]]"
-                          default-currency-format="[[numberFormatCurrency]]"
-                          zero-format="[[numberFormatZero]]">
-                        </numbro-element>
+                        <template is="dom-if" if="{{_returnVal(item, 'x')}}">
+                          <numbro-element
+                            value="[[_returnVal(item, 'y')]]"
+                            format="[[numberFormat]]"
+                            culture="[[numberFormatCulture]]"
+                            currency$="[[numberFormatIsCurrency]]"
+                            default-currency-format="[[numberFormatCurrency]]"
+                            zero-format="[[numberFormatZero]]">
+                          </numbro-element>
+                        </template>
                       </template>
                       <!-- if y axis is ordinal just display it -->
                       <template is="dom-if" if="{{_isOfType(yAxisType, 'ordinal')}}">
@@ -184,7 +188,7 @@ Formatting for the timestamps,the data values, and the series names can be contr
       PxVisBehavior.sizing,
       PxVisBehavior.formatting,
       PxVisBehaviorTime.datetime,
-      PxVisBehavior.mutedSeries,
+      PxVisBehavior.muteUnmuteSeries,
       PxVisBehavior.tooltipData,
       PxVisBehavior.dataset,
       PxVisBehavior.axisTypes,
@@ -250,6 +254,13 @@ Formatting for the timestamps,the data values, and the series names can be contr
       usePercentage: {
         type: Boolean,
         value: false
+      },
+      /**
+       * Forces the use of the timestamp at the top
+       */
+      forceDateTimeDisplay: {
+        type: Boolean,
+        value: false
       }
     },
 
@@ -257,6 +268,7 @@ Formatting for the timestamps,the data values, and the series names can be contr
       '_formatDateTime(tooltipData.*)',
       '_toggleSeries(mutedSeries.*)'
      ],
+
      _getWrapperClass: function(type) {
        var classList = 'flex ';
 
@@ -343,15 +355,7 @@ Formatting for the timestamps,the data values, and the series names can be contr
       var ne = Polymer.dom(e),
           series = ne.rootTarget.getAttribute('name').substr(1);
 
-      // if it doesnt exist, let's add it and set to true
-      if( typeof(this.mutedSeries[series]) === 'undefined' ) {
-        this.set('mutedSeries.' + series, true);
-      } else {
-        //if does exist, flip the bit
-        this.set('mutedSeries.' + series, !this.mutedSeries[series]);
-      }
-
-      this.fire('px-vis-muted-series-updated', { 'data': this.mutedSeries[series], 'dataVar': ('mutedSeries.'+series) ,'method': 'set' });
+      this.muteUnmuteSeries(series);
 
       e.stopPropagation();
     },
@@ -418,7 +422,7 @@ Formatting for the timestamps,the data values, and the series names can be contr
     _returnVal: function(item, axis, separator) {
       var key = axis === 'x' ?
         this.completeSeriesConfig[item.name]['x'] : this.completeSeriesConfig[item.name]['y'];
-      if(item.value && item.value[key]) {
+      if(item.value && (item.value[key] || item.value[key] === 0)) {
         return item.value[key] + (separator ? separator : '');
       }
       return null;
@@ -430,7 +434,7 @@ Formatting for the timestamps,the data values, and the series names can be contr
           axisKey = axis === 'x' ? this.completeSeriesConfig[key]['x'] : this.completeSeriesConfig[key]['y'],
           axisKey = usePercentage ? 'percentage' : axisKey;
 
-      if(item && item[axisKey]) {
+      if(item && (item[axisKey] || item[axisKey] === 0)) {
         return item[axisKey] + (separator ? separator : '');
       }
       return null;
@@ -452,6 +456,9 @@ Formatting for the timestamps,the data values, and the series names can be contr
     },
     _getPieBackColor: function(item, index) {
       return item.backgroundColor ? item.backgroundColor : this._getPieColorForIndex(index);
+    },
+    _displayDateTime: function(forceDateTimeDisplay, xAxisType) {
+      return forceDateTimeDisplay || this._isOfType(xAxisType,'time');
     }
   });
 </script>
