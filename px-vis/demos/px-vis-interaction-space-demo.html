@@ -7,7 +7,7 @@
 <dom-module id="px-vis-interaction-space-demo">
   <link rel="import" type="css" href="../css/px-vis-demo.css"/>
   <template>
-    <p class="epsilon demo__title">px-vis-interaction-space</p>
+    <p id="px-vis-interaction-space-anchor" class="epsilon demo__title">px-vis-interaction-space</p>
     <div class="demo u-p+">
       <div class="outline">
 
@@ -57,7 +57,8 @@
     <div>
       <px-demo-snippet
         element-properties="[[elempropInteractionSpace]]"
-        element-name="px-vis-interaction-space">
+        element-name="px-vis-interaction-space"
+        code-link="http://codepen.io/menkhakl/pen/pEpKvr">
       </px-demo-snippet>
     </div>
 
@@ -151,11 +152,11 @@
           value:{
             "xAxisType":"time",
             "svg":"[[svg]]",
-            "width":"[[basic.width]]",
-            "height":"[[basic.height]]",
-            "margin":"[[basic.margin]]",
-            "completeSeriesConfigeries-config":"[[basic.seriesConfig]]",
-            "chartData":"[[basic.chartData]]",
+            "width":"[[width]]",
+            "height":"[[height]]",
+            "margin":"[[margin]]",
+            "completeSeriesConfigeries-config":"[[seriesConfig]]",
+            "chartData":"[[chartData]]",
             "tooltipData":"{{tooltipData}}",
             "extentsData":"{{extentsData}}",
             "x":"[[x]]",

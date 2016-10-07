@@ -9,7 +9,7 @@
 <dom-module id="px-vis-zoom-demo">
   <link rel="import" type="css" href="../css/px-vis-demo.css"/>
   <template>
-    <p class="epsilon demo__title">px-vis-zoom</p>
+    <p id="px-vis-zoom-anchor" class="epsilon demo__title">px-vis-zoom</p>
     <div class="demo u-p+">
       <div class="outline">
 
@@ -40,6 +40,7 @@
           y="{{y}}"
           current-domain-x="{{currentDomainX}}"
           current-domain-y="{{currentDomainY}}"
+          domain-changed="{{domainChanged}}"
           selected-domain="[[selectedDomain]]"
           chart-data="[[chartData]]">
         </px-vis-scale>
@@ -65,8 +66,7 @@
           chart-data="[[chartData]]"
           x="[[x]]"
           y="[[y]]"
-          current-domain-x="[[currentDomainX]]"
-          current-domain-y="[[currentDomainY]]">
+          domain-changed="[[domainChanged]]">
         </px-vis-line>
 
       </div>
@@ -77,7 +77,8 @@
     <div>
       <px-demo-snippet
         element-properties="[[elempropZoom]]"
-        element-name="px-vis-zoom">
+        element-name="px-vis-zoom"
+        code-link="http://codepen.io/menkhakl/pen/gwoKyJ">
       </px-demo-snippet>
     </div>
 
@@ -103,6 +104,10 @@
             "bottom": 10,
             "left": 10
           }
+        },
+        domainChanged:{
+          type: Boolean,
+          value: false
         },
         chartData:{
           type : Array,

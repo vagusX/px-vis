@@ -7,55 +7,58 @@
 <dom-module id="px-vis-threshold-demo">
   <link rel="import" type="css" href="../css/px-vis-demo.css"/>
   <template>
-    <p class="epsilon demo__title">px-vis-threshold</p>
+    <p id="px-vis-threshold-anchor" class="epsilon demo__title">px-vis-threshold</p>
     <div class="demo u-p+">
       <div class="outline">
 
       <!-- need for threshold -->
-        <px-vis-svg
-          width="[[width]]"
-          height="[[height]]"
-          margin="[[margin]]"
-          svg="{{svg}}">
-        </px-vis-svg>
-        <px-vis-scale
-          x-axis-type="time"
-          y-axis-type="linear"
-          complete-series-config="[[seriesConfig]]"
-          chart-extents="[[chartExtents]]"
-          width="[[width]]"
-          height="[[height]]"
-          margin="[[margin]]"
-          chart-data={{chartData}}
-          x="{{x}}"
-          y="{{y}}"
-          domain-changed='{{domainChanged}}'
-          current-domain-x="{{currentDomainX}}"
-          current-domain-y="{{currentDomainY}}"
-          selected-domain="[[selectedDomain]]">
-        </px-vis-scale>
-        <px-vis-threshold
-          svg="[[svg]]"
-          complete-series-config="[[seriesConfig]]"
-          chart-data="[[thresholdData]]"
-          x="[[x]]"
-          y="[[y]]"
-          current-domain-x="[[currentDomainX]]"
-          current-domain-y="[[currentDomainY]]">
-        </px-vis-threshold>
+      <px-vis-svg
+        width="[[width]]"
+        height="[[height]]"
+        margin="[[margin]]"
+        svg="{{svg}}">
+      </px-vis-svg>
+      <px-vis-scale
+        x-axis-type="time"
+        y-axis-type="linear"
+        complete-series-config="[[seriesConfig]]"
+        chart-extents="[[chartExtents]]"
+        width="[[width]]"
+        height="[[height]]"
+        margin="[[margin]]"
+        chart-data={{chartData}}
+        x="{{x}}"
+        y="{{y}}"
+        domain-changed='{{domainChanged}}'
+        current-domain-x="{{currentDomainX}}"
+        current-domain-y="{{currentDomainY}}"
+        selected-domain="[[selectedDomain]]">
+      </px-vis-scale>
+      <px-vis-threshold
+        svg="[[svg]]"
+        complete-series-config="[[seriesConfig]]"
+        chart-data="[[thresholdData]]"
+        x="[[x]]"
+        y="[[y]]"
+        current-domain-x="[[currentDomainX]]"
+        current-domain-y="[[currentDomainY]]">
+      </px-vis-threshold>
 
 
       </div>
       <div class="demo__discription">
+
         <p class="u-mt0">Chart threshold provide horizonal lines across the chart.</p>
         <p>A default color is used if no 'color' is specified (or if the color does not match a series name). When a valid 'color' is given the threshold color will match that of the series.</p>
         <p>The demo chart shows both, one threshold with a valid 'color' and one with no 'color'.</p>
+
       </div>
     </div>
     <div>
       <px-demo-snippet
         element-properties="[[elempropThreshold]]"
-        element-name="px-vis-threshold">
+        element-name="px-vis-threshold"
+        code-link="http://codepen.io/menkhakl/pen/amEGav">
       </px-demo-snippet>
     </div>
 

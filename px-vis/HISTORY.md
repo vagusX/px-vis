@@ -1,3 +1,9 @@
+v0.5.12
+==================
+* Fixed vis demo
+* all demos and demo snippets are up to date and working
+* added codepen links
+
 v0.5.11
 ==================
 * draw max value in radial gridlines
