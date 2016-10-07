@@ -1,6 +1,6 @@
 {
   "name": "px-vis",
-  "version": "0.5.9",
+  "version": "0.5.10",
   "main": [
     "px-vis.html"
   ],
@@ -43,7 +43,7 @@
     "px-typography-design": "~1.1.1",
     "px-tabs": "~0.5.2",
     "px-api-viewer": "^0.1.0",
-    "px-demo-snippet": "^0.5.2",
+    "px-demo-snippet": "^0.6.4",
     "px-list-inline-design": "^0.2.11",
     "px-toggle-design": "^0.2.12",
     "px-headings-design": "^0.2.14",
@@ -51,11 +51,11 @@
     "px-polymer-font-awesome": "^0.1.9"
   },
   "homepage": "https://github.com/PredixDev/px-vis",
-  "_release": "0.5.9",
+  "_release": "0.5.10",
   "_resolution": {
     "type": "version",
-    "tag": "v0.5.9",
-    "commit": "7829f6690fa2c6a7ad7a99301028f562f8d91d60"
+    "tag": "v0.5.10",
+    "commit": "7ec19ff85fe8e3c0f59a4e6985176a0bf54444ac"
   },
   "_source": "https://github.com/PredixDev/px-vis.git",
   "_target": "^0.5.8",
