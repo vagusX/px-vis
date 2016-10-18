@@ -1,43 +1,43 @@
 {
   "name": "px-tables-design",
-  "version": "0.3.13",
+  "version": "0.3.15",
   "authors": [
     "General Electric",
     "Harry Roberts <harry@csswizardry.com>"
   ],
-  "description": "Basic table styles for Predix Experience",
+  "description": "Basic table styles for Predix UI",
   "main": "_base.tables.scss",
   "keywords": [
     "px",
     "sass",
     "tables"
   ],
-  "license": "Apache 2",
   "homepage": "https://github.com/PredixDev/px-tables-design.git",
   "private": false,
   "ignore": [
     "**/.*",
+    "npm-debug.log",
+    "Gruntfile.js",
     "node_modules",
     "bower_components",
-    "test",
-    "tests",
-    "OSS_Notice.pdf"
+    "OSS_Notice.pdf",
+    ".github",
+    "scripts",
+    "sassdoc.json"
   ],
   "dependencies": {
-    "px-colors-design": "https://github.com/PredixDev/px-colors-design.git#~0.2.0",
-    "px-defaults-design": "https://github.com/PredixDev/px-defaults-design.git#~0.2.0"
+    "px-colors-design": "~0.2.0",
+    "px-defaults-design": "~0.2.0"
   },
   "devDependencies": {
-    "px-buttons-design": "https://github.com/PredixDev/px-buttons-design.git#~0.4.0",
-    "px-code-design": "https://github.com/PredixDev/px-code-design.git#~0.2.0",
-    "px-iconography-design": "https://github.com/PredixDev/px-iconography-design.git#~0.2.0",
-    "px-starter-kit-design": "https://github.com/PredixDev/px-starter-kit-design.git#~0.4.0"
+    "px-sass-doc": "~0.1.7",
+    "px-starter-kit-design": "^0.6.0"
   },
-  "_release": "0.3.13",
+  "_release": "0.3.15",
   "_resolution": {
     "type": "version",
-    "tag": "v0.3.13",
-    "commit": "433b2ee70f1131dbd92559590a81b9db2af6cb27"
+    "tag": "v0.3.15",
+    "commit": "afa8968a7619ea0a2c4294aa2733309b35448d10"
   },
   "_source": "https://github.com/predixDev/px-tables-design.git",
   "_target": "~0.3.13",

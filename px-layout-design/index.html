@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>px-layout-design Demo</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+
+  <!-- Boilerplate: Import Libraries -->
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../px-theme/px-theme-styles.html" />
+  <style include="px-theme-styles" is="custom-style"></style>
+  <link rel="import" href="../px-sass-doc/px-sass-doc.html" />
+  <link rel="import" href="../px-polymer-font-awesome/polymer-font-awesome.html" />
+
+  <!-- 0: Import Module Styles -->
+  <link rel="stylesheet" type="text/css" href="css/px-layout-design-demo.css" />
+</head>
+<body>
+<template id="just-for-demo" is="dom-bind">
+
+<!-- 1: Describe Module -->
+<px-sass-doc
+  module-name="px-layout-design"
+  description="The Predix UI Layout module defines the 'grid,' or more accurately the layout engine, for Predix UI."
+  layer="objects"
+  sassdoc-path="sassdoc.json"
+  dependencies='[
+    "https://github.com/PredixDev/px-defaults-design"
+  ]'
+  selected-options="{{selectedOptions}}">
+
+<!-- 2: Set Options -->
+<px-sass-doc-option
+  option-name="Padding"
+  choose-with="dropdown"
+  choices='[
+    "flush",
+    "tiny",
+    "small",
+    "regular (default)",
+    "large",
+    "huge"
+  ]'
+  default-choice="regular (default)">
+</px-sass-doc-option>
+
+<px-sass-doc-option
+  option-name="Alignment"
+  choose-with="dropdown"
+  choices='[
+    "left (default)",
+    "center",
+    "right"
+  ]'
+  default-choice="left (default)">
+</px-sass-doc-option>
+
+<px-sass-doc-option
+  option-name="Reverse"
+  choose-with="boolean">
+</px-sass-doc-option>
+
+<px-sass-doc-option
+  option-name="Vertical"
+  choose-with="dropdown"
+  choices='[
+    "top (default)",
+    "middle",
+    "bottom",
+    "full"
+  ]'
+  default-choice="top (default)">
+</px-sass-doc-option>
+
+<px-sass-doc-option
+  option-name="Vertical (by Item)"
+  choose-with="dropdown"
+  choices='[
+    "top (default)",
+    "center",
+    "bottom"
+  ]'
+  default-choice="top (default)">
+</px-sass-doc-option>
+
+<!-- 3: Make HTML Demo -->
+<section data-slot="demoHTML">
+<div class$="{{layoutClasses}}">
+  <div class$="{{layoutItemClasses}}">Lorem ipsum dolor sit amet.</div>
+  <div class$="{{layoutItemClasses}}">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</div>
+  <div class$="{{layoutItemClasses}}">Lorem ipsum dolor sit amet.</div>
+</div>
+</section>
+
+<!-- 4: Set Import Slot -->
+<section data-slot="import">
+{{importCode}}
+</section>
+
+<!-- 5: Set Usage HTML -->
+<section data-slot="intro">
+
+</section>
+
+<section data-slot="usage">
+```
+<div class="layout">
+  <div class="layout__item"></div>
+  <div class="layout__item"></div>
+  <div class="layout__item"></div>
+</div>
+```
+</section>
+
+</px-sass-doc>
+</template>
+
+<!-- 6: Handle selectedOptions, update demo -->
+<script>
+  var template = document.querySelector('template[is=dom-bind]');
+
+  document.addEventListener('px-sass-doc-options-updated', function(evt) {
+    template.importCode = template._importCode();
+    template.layoutClasses = template._layoutClasses();
+    template.layoutItemClasses = template._layoutItemClasses();
+  });
+
+  template._layoutClasses = function() {
+    var opts = template.selectedOptions || {}, strings = [];
+    if (opts.Padding === "flush")           strings.push("layout--flush");
+    if (opts.Padding === "tiny")            strings.push("layout--tiny");
+    if (opts.Padding === "small")           strings.push("layout--small");
+    if (opts.Padding === "large")           strings.push("layout--large");
+    if (opts.Padding === "huge")            strings.push("layout--huge");
+    if (opts.Reverse === true)              strings.push("layout--rev");
+    if (opts.Vertical === "middle")         strings.push("layout--middle");
+    if (opts.Vertical === "bottom")         strings.push("layout--bottom");
+    if (opts.Vertical === "full")           strings.push("layout--full");
+    if (opts.Alignment === "right")         strings.push("layout--right");
+    if (opts.Alignment === "center")        strings.push("layout--center");
+    return ("layout " + strings.join(" ")).trim();
+  };
+
+  template._layoutItemClasses = function() {
+    var opts = template.selectedOptions || {}, strings = [];
+    if(opts["Vertical (by Item)"] === "center")  strings.push("layout__item--center");
+    if(opts["Vertical (by Item)"] === "bottom")  strings.push("layout__item--bottom");
+    if(opts["Vertical (by Item)"] === "full")    strings.push("layout__item--full");
+    return ("layout__item u-1/4 " + strings.join(" ")).trim();
+  };
+
+  template._importCode = function() {
+    var opts = template.selectedOptions || {}, strings = [];
+    if (opts.Padding === "flush")          strings.push("$inuit-enable-layout--flush : true;");
+    if (opts.Padding === "tiny")           strings.push("$inuit-enable-layout--tiny : true;");
+    if (opts.Padding === "small")          strings.push("$inuit-enable-layout--small : true;");
+    if (opts.Padding === "large")          strings.push("$inuit-enable-layout--large : true;");
+    if (opts.Padding === "huge")           strings.push("$inuit-enable-layout--huge : true;");
+    if (opts.Reverse === true)             strings.push("$inuit-enable-layout--rev : true;");
+    if (opts.Vertical === "middle")        strings.push("$inuit-enable-layout--middle : true;");
+    if (opts.Vertical === "bottom")        strings.push("$inuit-enable-layout--bottom : true;");
+    if (opts.Vertical === "full")          strings.push("$inuit-enable-layout--full : true;");
+    if (opts.Alignment === "right")        strings.push("$inuit-enable-layout--right : true;");
+    if (opts.Alignment === "center")       strings.push("$inuit-enable-layout--center : true;");
+    return (strings.join("\n") + "\n@import 'px-layout-design/_objects.layout.scss';").trim();
+  };
+</script>
+
+</body>
+</html>

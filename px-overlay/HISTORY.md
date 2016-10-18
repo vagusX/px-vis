@@ -1,3 +1,11 @@
+v0.3.1
+==================
+* Latest gulp file & demo snippet.
+
+v0.3.0
+==================
+* Grunt to gulp migration & style modules.
+
 v0.2.8
 ==================
 * fixed demo bugs

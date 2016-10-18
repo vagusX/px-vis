@@ -1,6 +1,6 @@
 {
   "name": "px-list-bare-design",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "authors": [
     "General Electric",
     "Harry Roberts <harry@csswizardry.com>"
@@ -13,31 +13,31 @@
     "bare",
     "lists"
   ],
-  "license": "Apache 2",
   "homepage": "https://github.com/PredixDev/px-list-bare-design.git",
   "private": false,
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
-    "test",
-    "tests",
-    "OSS_Notice.pdf"
+    "sass",
+    "scripts",
+    ".github",
+    "Gruntfile.js",
+    "OSS_Notice.pdf",
+    "sassdoc.json"
   ],
   "dependencies": {
-    "px-defaults-design": "https://github.com/PredixDev/px-defaults-design.git#~0.2.0"
+    "px-defaults-design": "~0.2.0"
   },
   "devDependencies": {
-    "px-buttons-design": "https://github.com/PredixDev/px-buttons-design.git#~0.4.0",
-    "px-code-design": "https://github.com/PredixDev/px-code-design.git#~0.2.0",
-    "px-iconography-design": "https://github.com/PredixDev/px-iconography-design.git#~0.2.0",
-    "px-starter-kit-design": "https://github.com/PredixDev/px-starter-kit-design.git#~0.4.0"
+    "px-sass-doc": "~0.1.7",
+    "px-starter-kit-design": "~0.6.0"
   },
-  "_release": "0.2.13",
+  "_release": "0.2.14",
   "_resolution": {
     "type": "version",
-    "tag": "v0.2.13",
-    "commit": "43496651e8a0dacf7e42fddf74cd86d65738512a"
+    "tag": "v0.2.14",
+    "commit": "52a6cb7780a2d82c2f4d74c374010ddb16d46e13"
   },
   "_source": "https://github.com/predixDev/px-list-bare-design.git",
   "_target": "^0.2.13",

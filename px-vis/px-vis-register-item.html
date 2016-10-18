@@ -1,0 +1,201 @@
+<link rel="import" href="../polymer/polymer.html"/>
+<link rel="import" href="../px-colors-design/colors.html"/>
+<link rel="import" href="px-vis-behavior-common.html"/>
+<link rel="import" href="px-vis-behavior-register.html"/>
+
+<!--
+Element providing a series line items on the register for regular charts
+
+##### Usage
+
+    <px-vis-register-item
+        item="[[item]]"
+        complete-series-config="[[completeSeriesConfig]]"
+        type="[[type]]"
+        x-axis-type="[[xAxisType]]"
+        y-axis-type="[[yAxisType]]">
+    </px-vis-register-item>
+
+@element px-vis-register-item
+@blurb Element providing a series line items on the register for regular charts
+@homepage index.html
+@demo demo.html
+-->
+
+<link rel="import" href="css/px-vis-register-styles.html">
+
+<dom-module id="px-vis-register-item">
+
+  <template>
+    <style include="px-vis-register-styles"></style>
+    <style include="px-theme-styles"></style>
+
+    <span
+      class$="[[_itemMutedToStart]]"
+      name$="R{{item.name}}"
+      id="regItem"
+      on-click="_seriesClicked">
+      <span
+        class="seriesMarker"
+        style$="background-color:[[_itemColor]]"
+        name$="R{{item.name}}">&nbsp;</span>
+      <span class$="[[_wrapperClass]]">
+        <div
+          class="seriesName"
+          name$="R{{item.name}}">
+          {{_truncatedName}}&nbsp;
+          <template is="dom-if" if="[[_didTruncate]]">
+            <px-tooltip delay="500">[[_configName]]</px-tooltip>
+          </template>
+        </div>
+        <!-- Display serie data differently depending on x and y axis types -->
+        <div class="seriesData" name$="R{{item.name}}">
+          <!-- if x axis is number format and show it -->
+          <template is="dom-if" if="{{_isOfType(xAxisType, 'linear')}}">
+            <template is="dom-if" if="{{_returnVal(item, 'x')}}">
+              <numbro-element
+                value="[[_itemX]]"
+                format="[[numberFormat]]"
+                culture="[[numberFormatCulture]]"
+                currency$="[[numberFormatIsCurrency]]"
+                default-currency-format="[[numberFormatCurrency]]"
+                zero-format="[[numberFormatZero]]">
+              </numbro-element>
+              <template is="dom-if" if="[[_itemX]]">
+                {{_xUnit}}
+              </template>
+              <template is="dom-if" if="[[_itemX]]">
+                &nbsp;/&nbsp
+              </template>
+            </template>
+          </template>
+          <!-- if x axis is ordinal just display it -->
+          <template is="dom-if" if="{{_isOfType(xAxisType, 'ordinal')}}">
+            x ordinal
+            <span>[[_itemX]]</span>
+            <template is="dom-if" if="[[_itemX]]">
+              {{_xUnit}}
+            </template>
+            <template is="dom-if" if="[[_itemX]]">
+              &nbsp;/&nbsp
+            </template>
+          </template>
+          <!-- if x axis is time don't display it -->
+          <!-- if y axis is number format and show it -->
+            <template is="dom-if" if="{{_isOfType(yAxisType, 'linear')}}">
+              <template is="dom-if" if="{{_returnVal(item, 'y')}}">
+                <numbro-element
+                  value="[[_itemY]]"
+                  format="[[numberFormat]]"
+                  culture="[[numberFormatCulture]]"
+                  currency$="[[numberFormatIsCurrency]]"
+                  default-currency-format="[[numberFormatCurrency]]"
+                  zero-format="[[numberFormatZero]]">
+                </numbro-element>
+              </template>
+            </template>
+            <!-- if y axis is ordinal just display it -->
+            <template is="dom-if" if="{{_isOfType(yAxisType, 'ordinal')}}">
+              <span>[[_itemY]]</span>
+            </template>
+            <template is="dom-if" if="[[_itemY]]">
+              {{_yUnit}}
+            </template>
+          </div>
+        </span>
+      </span>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: 'px-vis-register-item',
+
+    behaviors: [
+      PxVisBehavior.formatting,
+      PxVisBehavior.completeSeriesConfig,
+      PxVisBehavior.truncating,
+      PxVisBehavior.mutedSeries,
+      PxVisBehavior.axisTypes,
+      PxVisBehaviorRegister.register,
+      PxVisBehaviorRegister.itemShared,
+      PxVisBehaviorRegister.generalItem,
+      commonColors
+    ],
+    properties: {
+      /**
+       * the units for the x value
+       */
+      _xUnit: {
+        type: String,
+        computed: '_computeXUnit(item, completeSeriesConfig.*)'
+      },
+      /**
+       * the units for the y value
+       */
+      _yUnit: {
+        type: String,
+        computed: '_computeYUnit(item, completeSeriesConfig.*)'
+      },
+      /**
+       * calcs the value for x
+       */
+      _itemX: {
+        type: String,
+        computed: '_computeItemX(item, completeSeriesConfig.*)'
+      },
+      /**
+       * calcs the value of y
+       */
+      _itemY: {
+        type: String,
+        computed: '_computeItemY(item, completeSeriesConfig.*)'
+      }
+    },
+
+    observers: [
+      '_toggleSeries(item,mutedSeries.*)'
+    ],
+
+    /**
+     * returns the unit for the x value based on the seriesConfig
+     */
+    _computeXUnit : function(item, completeSeriesConfig) {
+      return this.completeSeriesConfig[item.name] && this.completeSeriesConfig[item.name]['xAxisUnit'] ? this.completeSeriesConfig[item.name]['xAxisUnit'] : '';
+    },
+    /**
+     * returns the unit for the y value based on the seriesConfig
+     */
+    _computeYUnit : function(item, completeSeriesConfig) {
+      return this.completeSeriesConfig[item.name] && this.completeSeriesConfig[item.name]['yAxisUnit'] ? this.completeSeriesConfig[item.name]['yAxisUnit'] : '';
+    },
+
+    /**
+     * returns the value for y
+     */
+    _computeItemY: function() {
+      return this._returnVal(this.item, 'y', '&nbsp;/&nbsp');
+    },
+    /**
+     * returns the value for x
+     */
+    _computeItemX: function() {
+      return this._returnVal(this.item, 'x', '&nbsp;/&nbsp');
+    },
+
+    /**
+     * returns the value in the tooltip data
+     */
+    _returnVal: function(item, axis, separator) {
+      if(this.completeSeriesConfig[item.name]) {
+        var key = (axis === 'x') ? this.completeSeriesConfig[item.name]['x'] : this.completeSeriesConfig[item.name]['y'];
+
+        if(item.value && (item.value[key] || item.value[key] === 0)) {
+          return item.value[key] + (separator ? separator : '');
+        }
+      }
+      return null;
+    },
+
+  });
+</script>

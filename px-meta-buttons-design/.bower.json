@@ -1,36 +1,39 @@
 {
   "name": "px-meta-buttons-design",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "authors": [
     "General Electric"
   ],
-  "description": "Shortcut collection of button modules for Predix Experience",
+  "description": "Shortcut collection of button modules for Predix UI",
   "main": "_meta.buttons.scss",
   "keywords": [
     "px",
     "sass",
     "buttons"
   ],
-  "license": "Apache 2",
   "homepage": "https://github.com/PredixDev/px-meta-buttons-design.git",
   "private": false,
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
-    "test",
-    "tests",
+    "sass",
+    ".github",
     "OSS_Notice.pdf"
   ],
   "dependencies": {
-    "px-button-group-design": "https://github.com/PredixDev/px-button-group-design.git#~0.3.0",
-    "px-buttons-design": "https://github.com/PredixDev/px-buttons-design.git#~0.4.0"
+    "px-button-group-design": "~0.3.0",
+    "px-buttons-design": "~0.4.0"
   },
-  "_release": "0.5.5",
+  "devDependencies": {
+    "px-sass-doc": "~0.1.7",
+    "px-starter-kit-design": "~0.6.0"
+  },
+  "_release": "0.5.6",
   "_resolution": {
     "type": "version",
-    "tag": "v0.5.5",
-    "commit": "2a5f943bc77b823d43fc3e2cf6c77aaff5c86ffe"
+    "tag": "v0.5.6",
+    "commit": "09ebafdfe73d6905001665afb1bcced60bb571a5"
   },
   "_source": "https://github.com/predixDev/px-meta-buttons-design.git",
   "_target": "~0.5.5",

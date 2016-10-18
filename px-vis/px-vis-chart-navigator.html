@@ -15,15 +15,22 @@
 Provides an interactive chart navigator with a brush to adjust the chart domain
 
 ##### Usage
-
     <px-vis-chart-navigator
-        x-scale="time"
-        y-scale="linear"
+        id="navigator"
+        x-axis-type="time"
+        y-axis-type="linear"
         width="[[width]]"
         height="100"
         margin="[[marginNav]]"
+        default-series-config="[[defaultSeriesConfig]]"
+        series-config="[[seriesConfig]]"
+        include-all-series="[[includeAllSeries]]"
         chart-data="[[chartData]]"
         nav-series-limit="[[navSeriesLimit]]"
+        chart-domain-x="[[currentDomainX]]"
+        chart-domain-y="[[currentDomainY]]"
+        range="[[range]]"
+        disable-empty-render
         selected-domain="{{selectedDomain}}">
     </px-vis-chart-navigator>
 
@@ -47,17 +54,24 @@ Provides an interactive chart navigator with a brush to adjust the chart domain
           width="[[width]]"
           height="[[height]]"
           margin="[[margin]]"
+          x="{{x}}"
+          y="{{y}}"
           chart-extents="[[chartExtents]]"
           complete-series-config="[[completeSeriesConfig]]"
-          chart-data="[[chartData]]">
+          chart-data="[[chartData]]"
+          domain-changed="{{domainChanged}}"
+          current-domain-x="{{currentDomainX}}"
+          current-domain-y="{{currentDomainY}}">
         </px-vis-scale>
         <px-vis-svg
           width="[[width]]"
           height="[[height]]"
-          margin="[[margin]]">
+          margin="[[margin]]"
+          svg="{{svg}}"
+          px-svg-elem="{{pxSvgElem}}">
         </px-vis-svg>
 
-        <template is="dom-repeat" items="[[_returnKeys(completeSeriesConfig)]]">
+        <template is="dom-repeat" items="[[_seriesKeys]]">
           <template is="dom-if" if="[[_limitSeries(index,navSeriesLimit)]]">
             <template is="dom-if" if="[[_chartTypeLine(item,completeSeriesConfig)]]">
               <px-vis-line
@@ -67,6 +81,8 @@ Provides an interactive chart navigator with a brush to adjust the chart domain
                 complete-series-config="[[completeSeriesConfig]]"
                 x="[[x]]"
                 y="[[y]]"
+                current-domain-x="[[currentDomainX]]"
+                current-domain-y="[[currentDomainY]]"
                 domain-changed="[[domainChanged]]"
                 muted-series="[[mutedSeries]]">
               </px-vis-line>
@@ -80,6 +96,7 @@ Provides an interactive chart navigator with a brush to adjust the chart domain
                 marker-size="2"
                 x="[[x]]"
                 y="[[y]]"
+                domain-changed="[[domainChanged]]"
                 current-domain-x="[[currentDomainX]]"
                 current-domain-y="[[currentDomainY]]"
                 muted-series="[[mutedSeries]]">
@@ -93,8 +110,10 @@ Provides an interactive chart navigator with a brush to adjust the chart domain
           axis="[[x]]"
           axis-id="x"
           height="[[height]]"
+          width="[[width]]"
           margin="[[margin]]"
           orientation="bottom"
+          complete-series-config="[[completeSeriesConfig]]"
           domain-changed="[[domainChanged]]"
           current-domain="[[currentDomainX]]">
         </px-vis-axis>
@@ -106,7 +125,7 @@ Provides an interactive chart navigator with a brush to adjust the chart domain
           margin="[[margin]]"
           current-domain="[[currentDomainX]]"
           chart-domain=[[chartDomainX]]
-          selected-domain="[[selectedDomain]]"
+          selected-domain="{{selectedDomain}}"
           gradient-overlay="[[gradientOverlay]]">
         </px-vis-brush>
       </div>
@@ -131,7 +150,6 @@ Provides an interactive chart navigator with a brush to adjust the chart domain
           PxVisBehavior.commonMethods,
           PxVisBehavior.axisTypes,
           PxVisBehaviorChart.chartCommon,
-          PxVisBehaviorChart.precipitationPattern,
           Polymer.IronResizableBehavior,
           PxVisBehaviorChart.saveImage,
           PxVisBehaviorChart.chartAutoResize,
@@ -154,17 +172,7 @@ Provides an interactive chart navigator with a brush to adjust the chart domain
             value: Infinity,
             notify: true
           },
-          xAxisLocation:{
-            type:String,
-            value:'bottom'
-          },
-          yAxisLocation:{
-            type:String,
-            value:'left'
-          },
-          margin:{
-            type:Object
-          },
+
           /**
            * The parent chart's extents
            *
@@ -208,22 +216,27 @@ Provides an interactive chart navigator with a brush to adjust the chart domain
           },
           /**
            * Boolean specifying if the navigator should be allowed to render empty or not
-           *
            */
           disableEmptyRender: {
             type: Boolean,
             value: false
           },
         },
+
         listeners: {
           'iron-resize': '_onIronResize'
         },
+
         attached: function() {
           this._onIronResize();
         },
-        _limitSeries: function(i){
+        /**
+         * Dom if function to decide if a repeated item is above our limit
+         */
+        _limitSeries: function(i) {
           return i < this.navSeriesLimit;
         },
+
         /**
          * Forces the chart to resize and redraw
          */
@@ -244,6 +257,10 @@ Provides an interactive chart navigator with a brush to adjust the chart domain
             }
           },100);
         },
+
+        /**
+         * When a range from rangepicker changes
+         */
         _rangeChanged: function() {
           var newXRange = [Px.moment(this.range.from),Px.moment(this.range.to)];
 
@@ -290,6 +307,10 @@ Provides an interactive chart navigator with a brush to adjust the chart domain
             this.set('selectedDomain', newDomain);
           }
         },
+
+        /**
+         * Creates some dummy data for iniitial use
+         */
         _updateDummyData: function(newXRange) {
           var config = this.seriesConfig[Object.keys(this.seriesConfig)[0]],
             newData1 = {},

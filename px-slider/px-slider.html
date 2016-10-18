@@ -33,8 +33,8 @@ Allow the user to select a value or range of values within a specified min and m
       <input id="inputStart" type="text" class="text-input" value="{{value}}" on-change="_handleStartChange" tabindex="0" disabled="{{disabled}}"/>
       <div id="sliderContainer" class="slider flex__item" on-click="_jumpToValue">
         <div id="sliderSelected" class="slider__selected"></div>
-        <px-handle-multi id="startHandle" class="visuallyhidden" on-track="_handleTrackStart" handle-rotate disabled="{{disabled}}"></px-handle-multi>
-        <px-handle-multi id="endHandle" class="visuallyhidden" on-track="_handleTrackEnd" disabled="{{disabled}}"></px-handle-multi>
+        <px-handle-multi id="startHandle" class="start visuallyhidden" on-track="_handleTrackStart" handle-rotate disabled="{{disabled}}"></px-handle-multi>
+        <px-handle-multi id="endHandle" class="end visuallyhidden" on-track="_handleTrackEnd" disabled="{{disabled}}"></px-handle-multi>
         <px-handle id="singleHandle" class="visuallyhidden" on-track="_handleTrackEnd" disabled="{{disabled}}"></px-handle>
       </div>
       <input id="inputEnd" type="text" class="text-input visuallyhidden" value="{{endValue}}" on-change="_handleEndChange" tabindex="0" disabled="{{disabled}}"/>
@@ -136,12 +136,20 @@ Allow the user to select a value or range of values within a specified min and m
         throw "Missing a maximum value (max).";
       }
 
+      if(this.min > this.max){
+        console.warn("Min and Max look reversed. Switching them")
+        var min = this.min;
+        this.min = this.max;
+        this.max = min;
+      }
+
       // Do we have a start value and end value?
       if ( (this.startValue || this.startValue === 0) &&
            (this.endValue || this.endValue === 0) ) {
 
         // If so, this is a range.
         this._range = true;
+
         this.value = this.startValue;
 
         // Show the start handle and the end input and end handle
@@ -180,7 +188,8 @@ Allow the user to select a value or range of values within a specified min and m
       } else {
 
         if (!this.value && this.value !== 0) {
-          throw "Oops, I need a starting value. Did you set the 'value' attribute?";
+          // throw "Oops, I need a starting value. Did you set the 'value' attribute?";
+          this.value = this.min;
         }
 
         // Show the single handle
@@ -493,7 +502,6 @@ Allow the user to select a value or range of values within a specified min and m
       var progressValue,
           progressPosition;
 
-      console.log("range is: " + this._range)
       // Am I a range or a single value?
       if(this._range){
 

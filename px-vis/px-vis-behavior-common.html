@@ -34,7 +34,7 @@ PxVisBehavior.sizing = {
     },
 
     /**
-    * Defines the base margin for the chart. Calcs are run to add to the margin to accomodate axes and other elements which exist within the SVG frame, but outside the chart frame.
+    * Defines the base margin for the chart. Calcs are run to add to the margin to accommodate axes and other elements which exist within the SVG frame, but outside the chart frame.
     *
     */
     margin:{
@@ -284,7 +284,14 @@ PxVisBehavior.dataset = {
         type: Array,
         notify: true
       }
-    }
+    },
+    /**
+     * returns true if the data is valid: non NaN, null or undefined
+     */
+    _isValidData: function(d) {
+      //false and "" will return false, which is fine as they're not valid data
+      return d || d === 0;
+    },
 };
 
 /*
@@ -435,25 +442,45 @@ PxVisBehavior.tooltipData = {
      * Data reported back by the interaction space component. Displays the series name, values, and timestamp in the register. tooltipData is in the form:
      *
      *```
-     *   {
-     *     'time': d3TimeStamp,
-     *     'series': [
-     *       {'name':'seriesName0','value': seriesVal0 },
-     *       {'name':'seriesName1','value': seriesVal1 }
-     *     ]
-     *   }
+     *    {
+     *        "time": "2015-03-25T20:34:47.085Z",
+     *        "series":[{
+     *            "name":"seriesId1",
+     *            "coord":[xCoord1, yCoord1],  //in pixel space
+     *            "value":{
+     *                "x":xVal1,             //in data space
+     *                "seriesId1":yVal1    //in data space
+     *            }
+     *        },{
+     *            "name":"seriesId2",
+     *            "coord":[xCoord2, yCoord2],  //in pixel space
+     *            "value":{
+     *                "x":xVal2,             //in data space
+     *                "seriesId2":yVal2    //in data space
+     *            },
+     *        }],
+     *        "mouse":[ mouseX, mouseY ],   //in pixel space
+     *        "xArr":[xCoord1 , xCoord2],   //in pixel space
+     *        "yArr":[yCoord1 , yCoord2],   //in pixel space
+     *    }
      *```
      *
      * When not hovering on a chart, the tooltipData should still have the series names in order for them to still appear in the register. IE:
      *
      *```
-     *   {
-     *     'time': null,
-     *     'series': [
-     *       {'name':'seriesName0','value': null },
-     *       {'name':'seriesName1','value': null }
-     *     ]
-     *   }
+     *    {
+     *        "time": null,
+     *        "series":[{
+     *            "name":"seriesId1",
+     *            "value": null
+     *        },{
+     *            "name":"seriesName1",
+     *            "value": null
+     *        }],
+     *        "mouse": null,
+     *        "xArr": null,
+     *        "yArr": null
+     *    }
      *```
      *
      * @property tooltipData
@@ -576,6 +603,12 @@ PxVisBehavior.commonMethods = {
    */
   _getPieColorForIndex: function(index) {
     return commonColors.properties.dataVisColors.value[commonColors.properties.seriesColorOrder.value[index]];
+  },
+  /**
+   * escapes '.' in css selectors so that we can appropriately select stuff with dots in thei ids
+   */
+  _escapeCssSelector: function(selector) {
+    return selector.replace('.', '\\.');
   }
 };
 
@@ -708,11 +741,11 @@ PxVisBehavior.events = {
   properties: {
     /**
      * Configuration object to define what event should map to what icon and color.
-     * The object has a key being the event name, the value being a the configuration object for that event. The configuration object has four properties:
+     * The object has a key being the event name, the value being a configuration object for that event. The configuration object has four properties:
      * - `color`: A valid color name found in the px-colors-design
      * - `icon`: the reference to the icon; for Font Awesome, it can be a class or a unicode value; for an image, it is a path
      * - `type`: 'fa', 'unicode', or 'image'. 'fa' and 'unicode' are font-awesome icons, 'fa' referring to the class ('fa-camera') and 'unicode' referring to the unicode value for the icon formatted as '\uf004'
-     * - `offset`: an 2 element array with the number of pixels to offset the icon. offset[0] is along the x-axis; offset[1] is along the y-axis; necessary for some icons to adjust their values to acheive a better alignment over the event line.
+     * - `offset`: a 2 element array with the number of pixels to offset the icon. offset[0] is along the x-axis; offset[1] is along the y-axis; necessary for some icons to adjust their values to achieve a better alignment over the event line.
      *
      * ```
      * Format: {
@@ -1010,7 +1043,7 @@ PxVisBehavior.seriesId = {
     PxVisBehavior.dynamicConfigProperties
 
     Description:
-    Polymer behavior that allows the dynamic creation of properties that will be 
+    Polymer behavior that allows the dynamic creation of properties that will be
     searched for in the completeSeriesConfig
 
     Dependencies:
@@ -1020,6 +1053,10 @@ PxVisBehavior.seriesId = {
 */
 PxVisBehavior.dynamicConfigProperties = [{
   properties: {
+    /**
+      * A list of the dynamic properties
+      *
+      */
     _dynamicProperties: {
       type: Array,
       value: function() {
@@ -1027,13 +1064,22 @@ PxVisBehavior.dynamicConfigProperties = [{
       }
     }
   },
+
   observers: ['_processConfig(completeSeriesConfig.*, seriesId)'],
 
+  /**
+    * Decides if it should use a default or user specified value
+    *
+    */
   _computeValue: function(configValue, def) {
     return (typeof configValue !== 'undefined' && configValue !== null) ?
                               configValue : def;
   },
 
+  /**
+    * sets each property listed in dynamicProperies
+    *
+    */
   _processConfig: function(completeSeriesConfig, seriesId) {
 
     var conf = this.completeSeriesConfig[this.seriesId],
@@ -1044,6 +1090,10 @@ PxVisBehavior.dynamicConfigProperties = [{
     }
   },
 
+  /**
+    * Cycles through properties and adds them to dynamic properties
+    *
+    */
   _watchConfigProperty: function(name, defValue) {
     this.push('_dynamicProperties', name);
     this['_default' + name] = defValue;
@@ -1055,7 +1105,34 @@ PxVisBehavior.dynamicConfigProperties = [{
       this[name] = this._computeValue(conf[name], defValue);
     }
   }
-  
+
 },PxVisBehavior.completeSeriesConfig, PxVisBehavior.seriesId];
+
+
+
+/*
+    Name:
+    PxVisBehavior.radial
+
+    Description:
+    Polymer behavior that provides the radial definition
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehavior.radial
+*/
+PxVisBehavior.radial = {
+  properties: {
+    /**
+     * Boolean specifying if the chart is a polar chart or a cartesian chart
+     *
+     */
+    radial: {
+      type: Boolean,
+      value: false
+    }
+  }
+};
 
 </script>

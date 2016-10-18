@@ -1,3 +1,74 @@
+v0.6.13
+==================
+* added delaying chart draw until attached
+
+v0.6.12
+==================
+* added additional check to radial scale
+
+v0.6.11
+==================
+* changes for demo
+
+v0.6.10
+==================
+* make sure scatter removes on detached
+
+v0.6.9
+==================
+* ensure forceDateTimeDisplay works with new registers
+
+v0.6.8
+==================
+* fix typo that would break the navigator series drawing
+
+v0.6.7
+==================
+* make sure addition/removal of series to seriesConfig are correctly processed
+
+v0.6.6
+==================
+* Added datetime imports to tooltip and passed down to register
+
+v0.6.5
+==================
+* Made tooltip detach px-tooltip
+
+v0.6.4
+==================
+* Updated docs across all components
+
+v0.6.3
+==================
+* ensure brushing works when resizing
+
+v0.6.2
+==================
+* added rect clip path for canvas
+* update docs
+
+v0.6.1
+==================
+* ensure brush initializes
+* ensure multi axis passes the font size down
+
+v0.6.0
+==================
+* exposed number formatting in register and tooltip
+* changed opacity on hover in scatter-radial
+* fixed axis series bar opacity on drawing
+* fixed muting a series with a '.' in the id when clicking register
+* fixed d3 console errors
+* refactored navigator initialization
+* exclude 'null' data point from line and scatter
+* added clip path to canvas
+* fixed bugs with the new register
+* fixed area clip path to work with iron resize
+
+v0.5.13
+==================
+* Merged reigster refactor
+
 v0.5.12
 ==================
 * Fixed vis demo

@@ -165,8 +165,9 @@ PxVisBehaviorD3.svg = {
                   resultCanvas: canvas};
     canvg(canvas, svgData, options);
   },
+
   /**
-   *
+   * Tries to draw the SVG to canvas and if that doesnt work, falls back on a failure callback
    */
   _nativeDrawSvgOnCanvas: function(canvas, svgData, x, y, sucessCallback, failureCallback) {
     //detect canvas tainting failures
@@ -191,7 +192,9 @@ PxVisBehaviorD3.svg = {
 
       img.src = url;
   },
-
+  /**
+   * fix for IE to get outer HTML
+   */
   _getSVGOuterHtml: function(svg) {
     var serializeXML = function(node, output) {
       var nodeType = node.nodeType;
@@ -884,10 +887,15 @@ PxVisBehaviorD3.radialLineGenerator = [{
       type: Object
     },
 
+    /**
+    * sets a minimum value for the line amplitude. Points less than the lineRadiusLimit will be set to the limit
+    *
+    */
     lineRadiusLimit: {
       type: Number
     }
   },
+
   /**
    * Defines a multi-scale d3 line generator and its attrs
    *
@@ -925,7 +933,7 @@ PxVisBehaviorD3.radialLineGenerator = [{
         }
         return radius
       }).defined(function(d) {
-        return !isNaN(_this.x(d[0])) && !isNaN(_this.y(Number(d[1])));
+        return _this._isValidData(_this.x(d[0])) && _this._isValidData(_this.y(Number(d[1])));
       });
 
       //be sneaky: iterate through the data like normal
@@ -962,7 +970,7 @@ PxVisBehaviorD3.radialLineGenerator = [{
       .radius(function(d) {
         return _this.y(d[yId]);
       }).defined( function(d) {
-        return !isNaN(d[xId]) && !isNaN(d[yId]);
+        return _this._isValidData(d[xId]) && _this._isValidData(d[yId]);
       });
 
       line = function(d) {
@@ -980,7 +988,7 @@ PxVisBehaviorD3.radialLineGenerator = [{
     }
     this.set('line', line);
   }
-}, PxVisBehavior.completeSeriesConfig];
+}, PxVisBehavior.completeSeriesConfig, PxVisBehavior.dataset];
 
 /*
     Name:
@@ -1067,12 +1075,14 @@ PxVisBehaviorD3.lineShared = [{
     // if coloring by category
     if(categories.length > 0){
       for(var i = 0; i < categories.length; i++){
-        c = completeSeriesConfig[categories[i]]['color'].split('(')[1].split(',');
-        colors[categories[i]] = {
-          "r": Number(c[0]),
-          "g": Number(c[1]),
-          "b": Number(c[2].split(')')[0])
-        };
+        if(completeSeriesConfig[categories[i]]) {
+          c = completeSeriesConfig[categories[i]]['color'].split('(')[1].split(',');
+          colors[categories[i]] = {
+            "r": Number(c[0]),
+            "g": Number(c[1]),
+            "b": Number(c[2].split(')')[0])
+          };
+        }
       }
     }
 
@@ -1126,7 +1136,7 @@ PxVisBehaviorD3.lineShared = [{
               return ~~_this.y(d[yKey]);
           })
           .defined(function(d) {
-            return !isNaN(d[yKey]);
+            return _this._isValidData(d[yKey]);
           });
 
     if(this.interpolationFunction){

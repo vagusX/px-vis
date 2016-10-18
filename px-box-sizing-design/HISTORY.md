@@ -1,3 +1,12 @@
+v0.2.10
+=============================
+* Add demo page
+
+v0.2.9
+=============================
+* Cleaned up minor spacing, indentation, and other styles in Sass code
+* Updated documentation
+
 v0.2.8
 =============================
 * Fixed `:host` cssmin parsing bug in Firefox and Safari

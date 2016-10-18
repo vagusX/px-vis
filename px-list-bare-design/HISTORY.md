@@ -1,3 +1,7 @@
+v0.2.14
+==============================
+* added new demo page and auto-ghp
+
 v0.2.13
 ==============================
 * added oss_notice to bower ignore

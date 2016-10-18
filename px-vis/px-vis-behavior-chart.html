@@ -84,6 +84,13 @@ PxVisBehaviorChart.chartCommon = [{
         type: Boolean,
         notify: true,
         value: false
+      },
+      /**
+       *  Representes the keys avaiable in completeSeriesConfig. It's being set
+       *  before completeSeriesConfig is set
+       */
+      _seriesKeys: {
+        type: Array
       }
     },
 
@@ -91,6 +98,9 @@ PxVisBehaviorChart.chartCommon = [{
       '_setCompleteSeriesConfig(defaultSeriesConfig.*,chartData.*,seriesConfig.*)'
     ],
 
+    /**
+    * Calcs the extents of the charts
+    */
     _calcChartExts: function(mins,maxes,axis){
       if(this[axis + 'AxisType'] === 'ordinal'){
         // how should someone set the ordinal list? Differet key in seriesConfig?
@@ -130,7 +140,12 @@ PxVisBehaviorChart.chartCommon = [{
             yMins = [],
             yMaxes = [],
             missingYs,
-            x;
+            x,
+            isUpdate = this.completeSeriesConfig ? true : false,
+            addedSeriesKeys = [],
+            removedSeriesKeys = [],
+            updatedSeriesKeys = [];
+
         if(k.length === 0 && !this.includeAllSeries){
           console.warn("No series were added to the chart. Either add them in the seriesConfig or turn on includeAllSeries");
           return;
@@ -214,13 +229,62 @@ PxVisBehaviorChart.chartCommon = [{
           }
         }
 
+        //if this is an update bof series config find out additions/deletions
+        var deletion = false,
+            addition = false;
+        if(isUpdate) {
+          var currKeys = Object.keys(this.completeSeriesConfig),
+              newKeys = Object.keys(fullConfig);
+
+          //process updates and additions
+          for(var i=0; i<newKeys.length; i++) {
+            if(currKeys.includes(newKeys[i])) {
+              updatedSeriesKeys.push(newKeys[i]);
+            } else {
+              addedSeriesKeys.push(newKeys[i]);
+              addition = true;
+            }
+          }
+
+          //process deletions
+          for(var i=0; i<currKeys.length; i++) {
+            if(!newKeys.includes(currKeys[i])) {
+              removedSeriesKeys.push(currKeys[i]);
+              deletion = true;
+            }
+          }
+        }
+
+        if(deletion) {
+          //we need to flush before setting completeSeriesConfig for deletion
+          //but need setting completeSeriesConfig before flushing for additions.
+          //Process the deletions first and we will process the addtions after setting
+          //completeseriesconfig (if needed)
+          this.set('_seriesKeys', updatedSeriesKeys);
+
+          //make sure we flush for all the components dom-repeating over _seriesKeys:
+          //if a serie needs to be removed this should be processed before we pass
+          //the new completeSeriesConfig or observers will run on the not-yet deleted serie
+          Polymer.dom.flush();
+        } else {
+          //update or addition
+          this.set('_seriesKeys', Object.keys(fullConfig));
+        }
+
         this.fire('px-vis-chart-extents', { 'dataVar': 'chartExtents', 'data': this.chartExtents, 'method':'set' });
-        this.notifyPath('chartExtents',this.chartExtents);
+        this.notifyPath('chartExtents', this.chartExtents);
 
         this.fire('px-vis-complete-series-config', { 'dataVar': 'completeSeriesConfig', 'data': fullConfig, 'method':'set' });
-        this.set('completeSeriesConfig',fullConfig);
+        this.set('completeSeriesConfig', fullConfig);
+
+        if(deletion && addition) {
+          //we have processed updates and deleton, now need to process the additions
+          //now that we have the new completeSeriesConfig process the additions
+          this.set('_seriesKeys', Object.keys(fullConfig));
+        }
       }
     },
+
     /**
      * Helper function to return the correct color for a particular index.
      **/
@@ -229,6 +293,7 @@ PxVisBehaviorChart.chartCommon = [{
           index = this._calcIndex(i,l);
       return this.dataVisColors[this.seriesColorOrder[ index ]];
     },
+
     /**
      * Helper function to calculate the index. When we run out of indcies, it loops back over valid indicies.
      **/
@@ -239,36 +304,39 @@ PxVisBehaviorChart.chartCommon = [{
     /**
      * Helper function for the register. Returns true if the side register should exist
      *
-     * @method _sideRegister
      */
     _sideRegister:function(location){
       return location === 'side' || location === 'both';
     },
+
     /**
      * Helper function for the register. Returns true if the top register should exist
      *
-     * @method _topRegister
      */
     _topRegister:function(location){
       return location === 'top' || location === 'both';
     },
+
     /**
      * Helper function for the line series. Returns true if the series is a line
      *
-     * @method _chartTypeLine
      */
     _chartTypeLine: function(key,obj){
         return obj[key]['type'] === 'line';
     },
+
     /**
      * Helper function for the line series. Returns true if the series is a line
      *
-     * @method _chartTypeLine
      */
     _chartTypeScatter: function(key,obj){
       return obj[key]['type'] === 'scatter';
     },
 
+    /**
+     * returns the keys of an object
+     *
+     */
     _returnKeys: function(obj){
       return Object.keys(obj);
     }
@@ -484,6 +552,17 @@ PxVisBehaviorChart.subConfiguration = {
     },
 };
 
+/**
+    Name:
+    PxVisBehaviorChart.timeFiltering
+
+    Description:
+    Polymer behavior that allows to filter chartData based on time, providing a _filteredData object
+
+    Dependencies:
+
+    @polymerBehavior PxVisBehaviorChart.timeFiltering
+*/
 PxVisBehaviorChart.timeFiltering = [{
   properties: {
     /**
@@ -511,6 +590,10 @@ PxVisBehaviorChart.timeFiltering = [{
       computed: '_filterData(chartData, timeDomain, timeData)'
     }
   },
+
+  /**
+   * returns a filtered dataset based on the time domain
+   */
   _filterData: function(chartData, timeDomain, timeData) {
 
     if(timeDomain.x && timeDomain.x.length === 2) {
@@ -526,5 +609,40 @@ PxVisBehaviorChart.timeFiltering = [{
   }
 }, PxVisBehavior.dataset];
 
+/*
+    Name:
+    PxVisBehaviorChart.waitForAttach
+
+    Description:
+    Polymer behavior that provides the the ability for the chart to delay running until attached.
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorChart.waitForAttach
+*/
+PxVisBehaviorChart.waitForAttach = {
+    properties: {
+      /**
+      * Boolean holding loading until the chart is actually attached
+      */
+      _loadedOnPage: {
+        type: Boolean
+      }
+    },
+
+    /**
+     * checks if the chart is attached, otherwise waits and recalls
+     */
+    _isLoadedOnPage: function() {
+      var rect = this.getBoundingClientRect();
+      if(rect.height > 0 && rect.width > 0){
+        this.set('_loadedOnPage', true);
+      } else {
+        this.async(this._isLoadedOnPage, 50);
+      }
+    }
+
+};
 
 </script>

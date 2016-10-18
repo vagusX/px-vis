@@ -387,9 +387,14 @@ Tooltip element that provides additional information to users once hovered over 
         //get rid of out movedTooltip class
         Polymer.dom(this).classList.toggle('movedTooltip');
         //and we move the tooltip back to whence it came.
-        this._tooltipParent.appendChild(this);
         this.$.tooltipWrapper.classList.add('hidden');
         this._isShowing = false;
+        if(this._tooltipParent) {
+          this._tooltipParent.appendChild(this);
+        } else {
+          //something went wrong, we don't have a parent anymore. remove ourselves
+          this.remove();
+        }
       }
     },
     /**

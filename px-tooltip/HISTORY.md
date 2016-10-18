@@ -1,3 +1,7 @@
+v0.9.3
+=================
+* handle case were the tooltipParent is null
+
 v0.9.2
 =================
 * bumped demo snippet

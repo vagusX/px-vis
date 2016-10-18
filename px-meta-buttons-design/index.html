@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>px-meta-buttons-design Demo</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+
+  <!-- Boilerplate: Import Libraries -->
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../px-theme/px-theme-styles.html" />
+  <style include="px-theme-styles" is="custom-style"></style>
+  <link rel="import" href="../px-sass-doc/px-sass-doc.html" />
+
+  <!-- 0: Import Module Styles -->
+  <link rel="stylesheet" type="text/css" href="css/px-meta-buttons-design-demo.css" />
+</head>
+<body>
+<template id="just-for-demo" is="dom-bind">
+
+<!-- 1: Describe Module -->
+<px-sass-doc
+  module-name="px-meta-buttons-design"
+  description="The Meta Buttons module is a shortcut collection of all Predix UI button related modules - that is, it automatically imports the two dependent libraries (buttons and button-group)."
+  layer="meta"
+  sassdoc-path="sassdoc.json"
+  dependencies='[
+    "https://github.com/PredixDev/px-buttons-design",
+    "https://github.com/PredixDev/px-button-group-design"
+  ]'
+  selected-options="{{selectedOptions}}"
+  hide-demo-container="true">
+
+<!-- 2: Set Options -->
+<!-- N/A -->
+
+<!-- 3: Make HTML Demo -->
+<!-- N/A -->
+
+<!-- 4: Set Import Slot -->
+<!-- N/A -->
+
+<!-- 5: Set Usage HTML -->
+<section data-slot="usage">
+<strong>Note:</strong> refer to the dependent libraries below for the enable flags, style variables, and actual usage for buttons and button-group components.
+</section>
+
+</px-sass-doc>
+</template>
+
+</body>
+</html>

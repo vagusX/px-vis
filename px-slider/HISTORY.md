@@ -1,3 +1,9 @@
+v0.6.3
+=================
+* Made positioning work with shadow DOM
+* made value default to min if not init; removed throw error
+* added check to flip max and min if max < min
+
 v0.6.2
 =================
 * added support for negative values

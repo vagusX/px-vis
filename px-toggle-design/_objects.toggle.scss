@@ -4,46 +4,87 @@
 /// @group px-toggle-design
 ////
 
-@import "px-defaults-design/_settings.defaults.scss";
-@import "px-colors-design/_settings.colors.scss";
-@import "px-helpers-design/_generic.helpers.scss";
+@import 'px-defaults-design/_settings.defaults.scss';
+@import 'px-colors-design/_settings.colors.scss';
+@import 'px-helpers-design/_generic.helpers.scss';
 
-/// @type String [default] - Prepend value for all generated classes
+/// Sets a prepended namespace for all generated classes.
+///
+/// @group px-toggle-design:variables:style
+/// @type String [default]
 $inuit-toggle-namespace         : $inuit-namespace !default;
 
-/// @type Color [default] - Foreground color
+/// Sets the toggle foreground color.
+///
+/// @group px-toggle-design:variables:style
+/// @type Color [default]
 $inuit-toggle-color             : $gray9 !default;
 
-/// @type Color [default] - Background color
-$inuit-toggle-background        : $gray4 !default;
-
-/// @type Color [default] - Border color
-$inuit-toggle-border            : $gray5 !default;
-
-/// @type Color [default] - Switch color
+/// Sets the toggle switch color.
+///
+/// @group px-toggle-design:variables:style
+/// @type Color [default]
 $inuit-toggle-switch            : $white !default;
 
-/// @type Color [default] - Switch color border
+/// Sets the toggle switch border color.
+///
+/// @group px-toggle-design:variables:style
+/// @type Color [default]
 $inuit-toggle-switch-border     : $gray2 !default;
 
-/// @type Color | String [default] - Switch color shadow
+/// Sets the toggle switch shadow color.
+///
+/// @group px-toggle-design:variables:style
+/// @type Color | String [default]
 $inuit-toggle-switch-shadow     : 0px 1px 0px rgba($black, .15) !default;
 
-/// @type Color [default] - Background color on
+/// Sets the toggle background color. This color is in use when the toggle is off/deactivated.
+///
+/// @group px-toggle-design:variables:style
+/// @type Color [default]
+$inuit-toggle-background        : $gray4 !default;
+
+/// Sets the toggle border color. This color is in use when the toggle is off/deactivated.
+///
+/// @group px-toggle-design:variables:style
+/// @type Color [default]
+$inuit-toggle-border            : $gray5 !default;
+
+/// Sets the toggle background color. This color is in use when the toggle is on/activated.
+///
+/// @group px-toggle-design:variables:style
+/// @type Color [default]]
 $inuit-toggle-background--on    : $select-blue-default !default;
 
-/// @type Color [default] - Border color on
+/// Sets the toggle border color. This color is in use when the toggle is on/activated.
+///
+/// @group px-toggle-design:variables:style
+/// @type Color [default]]
 $inuit-toggle-border--on        : $select-blue-hover !default;
 
-/// @type Boolean [default] - Produce CSS for small toggles?
+
+/// Generates the CSS for small toggles if enabled.
+///
+/// @group px-toggle-design:variables:flag
+/// @type Boolean [default]
 $inuit-enable-toggle--small     : false !default;
 
-/// @type Boolean [default] - Produce CSS for large toggles?
+/// Generates the CSS for large toggles if enabled.
+///
+/// @group px-toggle-design:variables:flag
+/// @type Boolean [default]
 $inuit-enable-toggle--large     : false !default;
 
-/// @type Boolean [default] - Produce CSS for huge toggles?
+/// Generates the CSS for huge toggles if enabled.
+///
+/// @group px-toggle-design:variables:flag
+/// @type Boolean [default]
 $inuit-enable-toggle--huge      : false !default;
-  
+
+/**
+ * Default toggle
+ */
+
 .#{$inuit-toggle-namespace}toggle__input,
 %#{$inuit-toggle-namespace}toggle__input {
   @include accessibility;
@@ -107,7 +148,7 @@ $inuit-enable-toggle--huge      : false !default;
 @if ($inuit-enable-toggle--small == true) {
 
   /**
-   * Small buttons.
+   * Small toggle
    */
 
   .#{$inuit-toggle-namespace}toggle__input--small,
@@ -121,7 +162,7 @@ $inuit-enable-toggle--huge      : false !default;
       }
     }
   }
-  
+
   .#{$inuit-toggle-namespace}toggle__label--small,
   %#{$inuit-toggle-namespace}toggle__label--small {
     width: $inuit-base-spacing-unit--large * 2;
@@ -146,7 +187,7 @@ $inuit-enable-toggle--huge      : false !default;
 @if ($inuit-enable-toggle--large == true) {
 
   /**
-   * Small buttons.
+   * Large toggle
    */
 
   .#{$inuit-toggle-namespace}toggle__input--large,
@@ -160,7 +201,7 @@ $inuit-enable-toggle--huge      : false !default;
       }
     }
   }
-  
+
   .#{$inuit-toggle-namespace}toggle__label--large,
   %#{$inuit-toggle-namespace}toggle__label--large {
     width: $inuit-base-spacing-unit--large * 4;
@@ -185,7 +226,7 @@ $inuit-enable-toggle--huge      : false !default;
 @if ($inuit-enable-toggle--huge == true) {
 
   /**
-   * Small buttons.
+   * Huge toggle
    */
 
   .#{$inuit-toggle-namespace}toggle__input--huge,
@@ -199,7 +240,7 @@ $inuit-enable-toggle--huge      : false !default;
       }
     }
   }
-  
+
   .#{$inuit-toggle-namespace}toggle__label--huge,
   %#{$inuit-toggle-namespace}toggle__label--huge {
     width: $inuit-base-spacing-unit--huge * 4;

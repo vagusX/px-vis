@@ -1,6 +1,6 @@
 {
   "name": "px-rangepicker",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "main": [
     "px-rangepicker.html"
   ],
@@ -38,18 +38,18 @@
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#~1.2.3",
     "px-tabs": "~0.5.2",
     "px-api-viewer": "^0.1.0",
-    "px-demo-snippet": "^0.5.1",
+    "px-demo-snippet": "^0.6.4",
     "px-list-inline-design": "^0.2.11",
     "px-code-design": "~0.2.11",
     "px-dropdown": "^0.12.1",
     "px-polymer-font-awesome": "^0.1.9"
   },
   "homepage": "https://github.com/PredixDev/px-rangepicker",
-  "_release": "1.2.1",
+  "_release": "1.2.2",
   "_resolution": {
     "type": "version",
-    "tag": "v1.2.1",
-    "commit": "afc3dfde828cd35e85c19d47e3b03e80476ef199"
+    "tag": "v1.2.2",
+    "commit": "242c04db4a1afe874a3004f5c02b60f3f80e5ffa"
   },
   "_source": "https://github.com/PredixDev/px-rangepicker.git",
   "_target": "~1.2.1",

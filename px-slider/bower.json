@@ -1,6 +1,6 @@
 {
   "name": "px-slider",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "main": [
     "px-slider.html"
   ],
@@ -30,7 +30,7 @@
     "px-polymer-font-awesome":"^0.1.8",
     "px-tabs": "~0.5.1",
     "px-api-viewer": "~0.1.0",
-    "px-demo-snippet": "^0.5.1",
+    "px-demo-snippet": "^0.6.3",
     "px-toggle-design": "^0.2.12",
     "px-actionable-text-icons-design": "^0.0.3",
     "px-code-design": "^0.2.11",

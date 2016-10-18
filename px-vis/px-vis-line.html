@@ -18,7 +18,9 @@ Element which draws lines series onto the chart
         y="[[y]]"
         current-domain-x="[[currentDomainX]]"
         current-domain-y="[[currentDomainY]]"
-        muted-series="[[mutedSeries]]">
+        muted-series="[[mutedSeries]]"
+        muted-opacity="0"
+        interpolation-function="[[d3InterpolationFunction]]">
     </px-vis-line>
 
 @element px-vis-line
@@ -134,11 +136,14 @@ Element which draws lines series onto the chart
       'drawElement(svg,domainChanged,chartData.*,completeSeriesConfig.*, counterClockwise)',
       'isIdInMuted(mutedSeries.*, completeSeriesConfig)',
       '_addClipPath(clipPath)'
-     ],
-     ready: function() {
-       this._watchConfigProperty('mutedOpacity', 0.3);
-     },
-
+    ],
+    ready: function() {
+      this._watchConfigProperty('mutedOpacity', 0.3);
+    },
+    detached: function() {
+      this.linePath.remove();
+      this.lineGroup.remove();
+    },
     /**
      * Draws or updates the line element.
      * Called from an observer watching for data and the necessary d3 objects
@@ -168,7 +173,7 @@ Element which draws lines series onto the chart
         }
 
         // set our data
-         var lineBuilder = this.lineGroup.selectAll('path.series-line')
+          var lineBuilder = this.lineGroup.selectAll('path.series-line')
           .data(data);
 
         // When datapoints disappear from our data, remove them
@@ -189,10 +194,18 @@ Element which draws lines series onto the chart
           }.bind(this))
           .attr('stroke-width',this.strokeWidth)
           .attr('stroke',function(d,i){
-            if(this.categoryKey){
+            //normally, do this
+            if(!this.categoryKey){
+              return this.completeSeriesConfig[this.seriesId]['color'];
+            }
+
+            //check that category has been defined
+            if(this.completeSeriesConfig[d[this.categoryKey]]){
               return this.completeSeriesConfig[d[this.categoryKey]]['color']
             }
-            return this.completeSeriesConfig[this.seriesId]['color'];
+
+            //do nothing if not
+            return
           }.bind(this))
           .attr('stroke-opacity',this._svgLineOpacity.bind(this));
 
@@ -210,7 +223,7 @@ Element which draws lines series onto the chart
      *
      * @method _addClipPath
      */
-    _addClipPath: function(){
+    _addClipPath: function() {
       this.addClipPath(this.lineGroup);
     },
 
@@ -238,12 +251,20 @@ Element which draws lines series onto the chart
      */
     _colorLine:function(){
       this.linePath.attr('stroke',function(d,i){
-          if(this.categoryKey){
-            return this.completeSeriesConfig[d[this.categoryKey]]['color']
-          }
+        //normally, do this
+        if(!this.categoryKey){
           return this.completeSeriesConfig[this.seriesId]['color'];
-        }.bind(this))
-        .attr('stroke-opacity',this._svgLineOpacity.bind(this));
+        }
+
+        //check that category has been defined
+        if(this.completeSeriesConfig[d[this.categoryKey]]){
+          return this.completeSeriesConfig[d[this.categoryKey]]['color']
+        }
+
+        //do nothing if not
+        return
+      }.bind(this))
+      .attr('stroke-opacity',this._svgLineOpacity.bind(this));
     },
     /**
      * Returns the opacity for the SVG line

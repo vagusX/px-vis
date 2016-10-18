@@ -1,3 +1,7 @@
+v0.4.7
+==============================
+* added mega demo
+
 v0.4.6
 ==============================
 * added oss_notice to bower ignore and updated readme

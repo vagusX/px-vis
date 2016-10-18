@@ -18,6 +18,7 @@ Element which draws scatter series onto the chart
         y="[[y]]"
         current-domain-x="[[currentDomainX]]"
         current-domain-y="[[currentDomainY]]"
+        domain-changed="[[domainChanged]]"
         muted-series="[[mutedSeries]]">
     </px-vis-scatter>
 
@@ -76,6 +77,10 @@ Element which draws scatter series onto the chart
         type:Number,
         value:0
       },
+      /**
+       * Maps dev input markers to d3 symbols
+       *
+       */
       _markerMapping: {
         type: Object,
         readOnly: true,
@@ -194,7 +199,9 @@ Element which draws scatter series onto the chart
       this._watchConfigProperty('markerStrokeOpacity', 1);
       this._watchConfigProperty('mutedOpacity', 0.3);
     },
-
+    detached: function() {
+     this.scatterGroup.remove();
+    },
     /**
      * Draws or updates the scatter element.
      * Called from an observer watching for data and the necessary d3 objects
@@ -230,14 +237,14 @@ Element which draws scatter series onto the chart
       this.scatterBuilder.enter()
         .append('path')
         .attr('class', 'symbol')
-        .on('mouseover', this._showTooltip.bind(this))
-        .on('mouseleave', this._hideTooltip.bind(this))
+        .on('mouseover', this._mouseEnterSymbol.bind(this))
+        .on('mouseleave', this._mouseLeaveSymbol.bind(this))
       .merge(this.scatterBuilder)
         .attr('d', Px.d3.symbol().type(this._markerMapping[this.markerSymbol]).size(this.markerSize))
         .attr('transform', this._applyTransform.bind(this))
         .each(function(d,i) {
           // if this series is missing a datapoint, remove that point
-          if(isNaN(d[_this.completeSeriesConfig[_this.seriesId]['y']])){
+          if(!_this._isValidData(d[_this.completeSeriesConfig[_this.seriesId]['y']])) {
             this.remove();
           }
         });
@@ -249,6 +256,22 @@ Element which draws scatter series onto the chart
       this._addClipPath();
     },
 
+    /**
+     * Mouseevent when mouse enters
+     *
+     */
+    _mouseEnterSymbol: function(d, i, paths) {
+
+      this._showTooltip(d, i, paths);
+      if(!this.mutedSeries[this.seriesId]) {
+
+      //if radial make sur eon hover we have 100% opacity
+      Px.d3.event.currentTarget.setAttribute('fill-opacity', 1);
+      }
+    },
+    /**
+     * generates tooltipData
+     */
     _showTooltip: function(d, i, paths) {
 
       // setup a holder for our data to pass out
@@ -275,6 +298,22 @@ Element which draws scatter series onto the chart
       this.fire('px-vis-tooltip-updated', { 'dataVar': 'tooltipData', 'data': dataObj, 'method':'set' });
       this.fire('px-vis-scatter-request-tooltip', {'show': true, 'mouseCoords': center});
     },
+    /**
+     * Mousevent on leave
+     */
+    _mouseLeaveSymbol: function(d) {
+      this._hideTooltip(d);
+
+      if(!this.mutedSeries[this.seriesId]) {
+
+        //if radial make sur eon hover we have 100% opacity
+        Px.d3.event.currentTarget.setAttribute('fill-opacity', this.markerFillOpacity);
+      }
+    },
+
+    /**
+     * Resets tooltipData
+     */
     _hideTooltip: function(d) {
       var dataObj = {
         'time': null,
@@ -287,14 +326,16 @@ Element which draws scatter series onto the chart
       this.fire('px-vis-tooltip-updated', { 'dataVar': 'tooltipData', 'data': dataObj, 'method':'set' });
       this.fire('px-vis-scatter-request-tooltip', {'show': false});
     },
+
     /**
      * Helper to call addClipPath with the elem
      *
      * @method _addClipPath
      */
-    _addClipPath: function(){
+    _addClipPath: function() {
       this.addClipPath(this.scatterGroup);
     },
+
     /**
      * Checks mutedSeries to see if this ID is in there
      * Called from an observer watching mutedSeries
@@ -303,21 +344,22 @@ Element which draws scatter series onto the chart
      */
     isIdInMuted: function() {
       if(this.mutedSeries.hasOwnProperty(this.seriesId)){
-       
+
         this._colorScatter();
       }
     },
+
     /**
      * Applies the necessary translate and scale to the scatterDots
      *
      */
     _applyTransform: function(d) {
 
-      if(isNaN(d[this.completeSeriesConfig[this.seriesId]['y']])){
+      if(!this._isValidData(d[this.completeSeriesConfig[this.seriesId]['y']])) {
         return '';
       }
 
-      if(this.radial) { 
+      if(this.radial) {
 
         var coors = this.line([d]).slice(1).slice(0, -1);
         return 'translate(' + coors + ')' + ' scale(' + this.markerScale + ')';
@@ -340,12 +382,13 @@ Element which draws scatter series onto the chart
         return 'translate(' + xTrans + ',' + yTrans + ')' + ' scale(' + this.markerScale + ')';
       }
     },
+
     /**
      * Adds full color to the scatters.
      *
      * @method _colorScatter
      */
-    _colorScatter:function(){
+    _colorScatter:function() {
       var index = this.seriesNumber,
           muted = this.mutedSeries[this.seriesId];
       this.scatterDots

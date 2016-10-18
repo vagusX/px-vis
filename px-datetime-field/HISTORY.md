@@ -1,3 +1,11 @@
+v0.5.1
+==================
+* latest gulpfile & latest demo snippet dependency
+
+v0.5.0
+==================
+* Grunt to gulp migration and style modules
+
 v0.4.13
 ==================
 * Fixed demo event counter (issue #3)

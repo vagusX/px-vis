@@ -6,9 +6,12 @@
 
 @import 'px-defaults-design/_settings.defaults.scss';
 
-/// @type String [default] - Prepend value for all generated classes
+/// Prepend value for all generated classes
+/// @group px-list-bare-design:variables:style
+/// @type String [default]
 $inuit-list-bare-namespace  : $inuit-namespace !default;
-  
+
+/// Default list-bare
 .#{$inuit-list-bare-namespace}list-bare,
 %#{$inuit-list-bare-namespace}list-bare {
     margin:  0;

@@ -1,3 +1,16 @@
+v0.0.20
+==================
+* deleted mysterious quotes
+
+v0.0.19
+==================
+* restore accidental deleted file
+
+v0.0.18
+==================
+* New small datasets
+
+=======
 v0.0.17
 ==================
 * Remove string quotes for polar data

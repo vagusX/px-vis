@@ -1,36 +1,41 @@
 {
   "name": "px-functions-design",
-  "version": "0.2.6",
+  "version": "0.3.4",
   "authors": [
     "General Electric"
   ],
-  "description": "Sass functions for Predix Experience",
+  "description": "The functions module contains contains functions that are required for using all Predix UI CSS modules. Use it to convert between units (i.e. pixels to REM and back again) and compute numbers.",
   "main": "_tools.functions.scss",
   "keywords": [
     "px",
     "sass",
     "functions"
   ],
-  "license": "Apache 2",
   "homepage": "https://github.com/PredixDev/px-functions-design.git",
-  "private": true,
+  "private": false,
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "OSS_Notice.pdf"
   ],
   "dependencies": {
-    "inuit-functions": "~0.2.0"
+    "inuit-functions": "~0.2.0",
+    "px-defaults-design": "~0.2.12"
   },
-  "_release": "0.2.6",
+  "devDependencies": {
+    "px-starter-kit-design": "~0.6.0",
+    "px-sass-doc": "^0.2.4"
+  },
+  "_release": "0.3.4",
   "_resolution": {
     "type": "version",
-    "tag": "v0.2.6",
-    "commit": "5dfd9795596564e5c3bb52c7ea49b1f320a4ddd0"
+    "tag": "v0.3.4",
+    "commit": "02e4d5da5d6c4969436c82afa4e9aa0eef2d6e31"
   },
-  "_source": "https://github.com/PredixDev/px-functions-design.git",
-  "_target": "~0.2.0",
-  "_originalSource": "https://github.com/PredixDev/px-functions-design.git"
+  "_source": "https://github.com/predixDev/px-functions-design.git",
+  "_target": "~0.3.3",
+  "_originalSource": "px-functions-design"
 }

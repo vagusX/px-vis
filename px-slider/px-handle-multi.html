@@ -138,15 +138,8 @@ Handle Element expected to be used in px-slider
      * @param bool
      */
     _rotateHandle: function(bool){
-      // toggleClass uses classlist which does not work with SVG on IE
-      // this.toggleClass('start', bool, this.$.multiHandleSVG);
-      // So do it the old fashioned way...
 
-      this._setClassOnSVG(this.$.multiHandleSVG,bool,'start');
-
-      this.toggleClass('start', bool);
-      this.toggleClass('end', !bool);
-      if(bool){
+      if(bool) {
         this.$.handleDropShadow.setAttribute('transform',"translate(0 -2)");
       }
     },
@@ -160,6 +153,10 @@ Handle Element expected to be used in px-slider
      */
     _setClassOnSVG: function(elem,bool,classname){
       var existingClass = elem.getAttribute('class');
+
+      if(!existingClass) {
+        existingClass = '';
+      }
 
       if(bool){
         var allClasses = existingClass + ' ' + classname;

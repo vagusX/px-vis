@@ -1,17 +1,16 @@
 {
   "name": "px-toggle-design",
-  "version": "0.2.12",
+  "version": "0.2.15",
   "authors": [
     "General Electric"
   ],
-  "description": "Toggle control styles for Predix Experience",
+  "description": "Toggle is a simple on/off switch. It's created with CSS applied to a checkbox and label. Use it to create simple UI elements that enable and disable things.",
   "main": "_objects.toggle.scss",
   "keywords": [
     "px",
     "sass",
     "toggle"
   ],
-  "license": "Apache 2",
   "homepage": "https://github.com/PredixDev/px-toggle-design.git",
   "private": false,
   "ignore": [
@@ -23,21 +22,19 @@
     "OSS_Notice.pdf"
   ],
   "dependencies": {
-    "px-colors-design": "https://github.com/PredixDev/px-colors-design.git#~0.2.0",
-    "px-defaults-design": "https://github.com/PredixDev/px-defaults-design.git#~0.2.0",
-    "px-helpers-design": "https://github.com/PredixDev/px-helpers-design.git#~0.3.0"
+    "px-colors-design": "^0.2.16",
+    "px-defaults-design": "^0.2.9",
+    "px-helpers-design": "^0.3.5"
   },
   "devDependencies": {
-    "px-buttons-design": "https://github.com/PredixDev/px-buttons-design.git#~0.4.0",
-    "px-code-design": "https://github.com/PredixDev/px-code-design.git#~0.2.0",
-    "px-iconography-design": "https://github.com/PredixDev/px-iconography-design.git#~0.2.0",
-    "px-starter-kit-design": "https://github.com/PredixDev/px-starter-kit-design.git#~0.4.0"
+    "px-starter-kit-design": "~0.6.0",
+    "px-sass-doc": "^0.1.7"
   },
-  "_release": "0.2.12",
+  "_release": "0.2.15",
   "_resolution": {
     "type": "version",
-    "tag": "v0.2.12",
-    "commit": "84602fd33193dc539cb0c6b81174ee16df806173"
+    "tag": "v0.2.15",
+    "commit": "6eb6c108e82fcc366edfa36c136d35c28781bc68"
   },
   "_source": "https://github.com/predixDev/px-toggle-design.git",
   "_target": "^0.2.12",
