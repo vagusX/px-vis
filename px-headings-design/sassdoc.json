@@ -1,31 +1,5 @@
 [
     {
-        "description": "Heading size 6\n\nSets the size for the h5 class `.zeta`. Should be a number in pixels or rems.\n",
-        "commentRange": {
-            "start": 46,
-            "end": 49
-        },
-        "context": {
-            "type": "variable",
-            "name": "inuit-heading-size-6",
-            "value": "12px",
-            "scope": "default",
-            "line": {
-                "start": 50,
-                "end": 50
-            }
-        },
-        "type": "Number [default]",
-        "group": [
-            "px-headings-design"
-        ],
-        "access": "public",
-        "file": {
-            "path": "_base.headings.scss",
-            "name": "_base.headings.scss"
-        }
-    },
-    {
         "description": "Heading size 1\n",
         "commentRange": {
             "start": 52,
@@ -313,6 +287,32 @@
             "line": {
                 "start": 44,
                 "end": 44
+            }
+        },
+        "group": [
+            "px-headings-design:variables:style"
+        ],
+        "type": "Number [default]",
+        "access": "public",
+        "file": {
+            "path": "_base.headings.scss",
+            "name": "_base.headings.scss"
+        }
+    },
+    {
+        "description": "Sets the size for the h6 class `.zeta`. Should be a number in pixels or rems.\n\n",
+        "commentRange": {
+            "start": 46,
+            "end": 49
+        },
+        "context": {
+            "type": "variable",
+            "name": "inuit-heading-size-6",
+            "value": "12px",
+            "scope": "default",
+            "line": {
+                "start": 50,
+                "end": 50
             }
         },
         "group": [

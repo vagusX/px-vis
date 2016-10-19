@@ -34,7 +34,7 @@
     "tag": "v0.2.9",
     "commit": "32bf20569d112b2667e5819c8bf2d1c5fd0ede0d"
   },
-  "_source": "https://github.com/PredixDev/px-mixins-design.git",
+  "_source": "https://github.com/predixDev/px-mixins-design.git",
   "_target": "~0.2.0",
-  "_originalSource": "https://github.com/PredixDev/px-mixins-design.git"
+  "_originalSource": "px-mixins-design"
 }

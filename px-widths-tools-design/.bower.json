@@ -35,7 +35,7 @@
     "tag": "v0.2.11",
     "commit": "e5d98985402eed400979272e5ec02185189c2a4d"
   },
-  "_source": "https://github.com/PredixDev/px-widths-tools-design.git",
+  "_source": "https://github.com/predixDev/px-widths-tools-design.git",
   "_target": "~0.2.0",
-  "_originalSource": "https://github.com/PredixDev/px-widths-tools-design.git"
+  "_originalSource": "px-widths-tools-design"
 }

@@ -37,7 +37,7 @@
     "tag": "v0.4.30",
     "commit": "c73145b7bb534a0087aadca193a066e3250e7301"
   },
-  "_source": "https://github.com/PredixDev/px-buttons-design.git",
+  "_source": "https://github.com/predixDev/px-buttons-design.git",
   "_target": "~0.4.0",
-  "_originalSource": "https://github.com/PredixDev/px-buttons-design.git"
+  "_originalSource": "px-buttons-design"
 }

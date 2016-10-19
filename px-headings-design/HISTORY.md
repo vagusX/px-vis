@@ -1,3 +1,7 @@
+v0.2.18
+==============================
+* updated sassdoc.json and did minnor edits on index
+
 v0.2.17
 ==============================
 * updated px-sass-doc and did minor edits on index
