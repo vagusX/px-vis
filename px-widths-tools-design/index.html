@@ -17,7 +17,7 @@
 </head>
 <body>
 <template id="just-for-demo" is="dom-bind">
- 
+
 <!-- 1: Describe Module -->
 <px-sass-doc
   module-name="px-widths-tools-design"
@@ -32,10 +32,10 @@
 
 <!-- 5: Set Usage HTML -->
 <section data-slot="usage">
-Pass in the fraction you'd like the widths to have - with a space instead of / - and an optional suffix for responsive widths.
+Pass in the fraction you'd like the widths to have - with a <strong>space</strong> instead of <strong>/</strong> - and an optional suffix for responsive widths.
 
-E.g. to create thirds (3) and quarters (4) for a small breakpoint (3/4):
 ```
+<!-- E.g. to create thirds and quarters for a small breakpoint: -->
 @include inuit-widths(3 4, -sm);
 
 ```

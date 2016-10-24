@@ -1,6 +1,6 @@
 {
   "name": "px-widths-design",
-  "version": "0.3.10",
+  "version": "0.3.12",
   "authors": [
     "General Electric",
     "Harry Roberts <harry@csswizardry.com>"
@@ -29,11 +29,11 @@
     "px-sass-doc": "~0.2.0",
     "px-starter-kit-design": "~0.6.0"
   },
-  "_release": "0.3.10",
+  "_release": "0.3.12",
   "_resolution": {
     "type": "version",
-    "tag": "v0.3.10",
-    "commit": "0350c512111b5bd8e5d937e94ce14a94aaea60a9"
+    "tag": "v0.3.12",
+    "commit": "d8cea53488f9166ff135bc161dff036883ff9018"
   },
   "_source": "https://github.com/PredixDev/px-widths-design.git",
   "_target": "~0.3.0",
