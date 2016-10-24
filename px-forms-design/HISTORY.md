@@ -1,8 +1,21 @@
-v0.3.18
+v0.3.22
+==============================
+* updated 'use it in your project' section in demo
+
+v0.3.21
+==============================
+* Updated dependencies
+* Updated boilerplate files
+
+v0.3.20
+==============================
+* fixed drop downs in demo
+
+v0.3.19
 ==============================
 * added auto gh-pages
 
-v0.3.17
+v0.3.18
 ==============================
 * added new demo functionality
 

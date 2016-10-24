@@ -1,6 +1,6 @@
 {
   "name": "px-defaults-design",
-  "version": "0.2.12",
+  "version": "0.3.0",
   "authors": [
     "General Electric",
     "Harry Roberts"
@@ -22,7 +22,7 @@
     "tests"
   ],
   "dependencies": {
-    "px-functions-design": "~0.3.3"
+    "px-functions-design": "~1.0.0"
   },
   "devDependencies": {
     "px-starter-kit-design": "~0.6.0",

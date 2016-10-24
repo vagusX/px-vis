@@ -1,3 +1,12 @@
+v0.3.12
+==============================
+* updated look of demo and added classes to 'use in your project'
+
+v0.3.11
+==============================
+* Updated dependencies
+* Updated boilerplate files
+
 v0.3.10
 ==============================
 * fixed display issue in demo

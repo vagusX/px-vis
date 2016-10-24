@@ -1,3 +1,8 @@
+v0.2.10
+==============================
+* Updated dependencies
+* Updated boilerplate files
+
 v0.2.9
 ==============================
 * fix demo sass file name

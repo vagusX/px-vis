@@ -27,27 +27,27 @@
   dependencies='[
     "https://github.com/PredixDev/px-defaults-design"
   ]'
-  selected-options="{{selectedOptions}}"
-  hide-demo-container="true">
+  selected-options="{{selectedOptions}}">
 
 <!-- 2: Set Options -->
 <!-- N/A -->
 
 <!-- 3: Make HTML Demo -->
-<!-- N/A -->
+<section data-slot="demoHTML">
 
-<!-- 4: Set Import Slot -->
-<!-- N/A -->
-
-<!-- 5: Set Usage HTML -->
-<section data-slot="intro">
-<strong>Example:</strong>
 <ul class="list-bare">
   <li>List Item</li>
   <li>List Item</li>
   <li>List Item</li>
 </ul>
+
 </section>
+
+<!-- 4: Set Import Slot -->
+<section data-slot="import">
+@import "px-list-bare-design/_objects.list-bare.scss";
+</section>
+
 
 <section data-slot="usage">
 ```
@@ -61,6 +61,15 @@
 
 </px-sass-doc>
 </template>
+
+<!-- 6: Handle selectedOptions, update demo -->
+<script>
+  var template = document.querySelector('template[is=dom-bind]');
+
+  Polymer.Base.async(function() {
+    template.fire('px-sass-doc-demo-updated',{});
+  }, 20);
+</script>
 
 </body>
 </html>

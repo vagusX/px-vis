@@ -1,3 +1,8 @@
+v0.2.19
+==============================
+* Updated dependencies
+* Updated boilerplate files
+
 v0.2.18
 ==============================
 * updated sassdoc.json and did minnor edits on index

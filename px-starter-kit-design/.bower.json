@@ -1,6 +1,6 @@
 {
   "name": "px-starter-kit-design",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "authors": [
     "General Electric",
     "Harry Roberts <harry@csswizardry.com>"
@@ -34,11 +34,11 @@
     "px-viewport-design": "https://github.com/PredixDev/px-viewport-design.git#~0.4.1",
     "px-widths-responsive-design": "https://github.com/PredixDev/px-widths-responsive-design.git#~0.3.0"
   },
-  "_release": "0.6.0",
+  "_release": "0.6.1",
   "_resolution": {
     "type": "version",
-    "tag": "v0.6.0",
-    "commit": "801dbcf2607cc015c2ca5f0f556f72371c4d9038"
+    "tag": "v0.6.1",
+    "commit": "82ce14104fa66a9315171723e1f355ce71316cb0"
   },
   "_source": "https://github.com/predixDev/px-starter-kit-design.git",
   "_target": "~0.6.0",

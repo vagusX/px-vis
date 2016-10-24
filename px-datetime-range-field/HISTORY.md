@@ -1,6 +1,18 @@
+v0.4.5
+==================
+* Update dependencies
+
+v0.4.4
+==================
+* Latest demo snippet component & latest gulpfile
+
+v0.4.3
+==================
+* Correcting a minor dep version issue
+
 v0.4.2
 ==================
-* added correct event listener to demo event counter 
+* Added correct event listener to demo event counter
 
 v0.4.1
 ==================

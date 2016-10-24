@@ -1,6 +1,11 @@
+v0.2.16
+==============================
+* Updated dependencies
+* Updated boilerplate files
+
 v0.2.15
 ==============================
-* fixed grammer mistake
+* fixed grammar mistake
 
 v0.2.14
 ==============================

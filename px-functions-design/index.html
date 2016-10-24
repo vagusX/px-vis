@@ -25,11 +25,20 @@
   layer="tools"
   sassdoc-path="sassdoc.json"
   dependencies='[
-    "https://github.com/PredixDev/px-defaults-design",
     "https://github.com/inuitcss/tools.functions"
   ]'
   hide-demo-container
   selected-options="{{selectedOptions}}">
+
+<section data-slot="intro">
+# IMPORT NOTE: It's recommended to install px-defaults-design instead
+
+Rather than install this module directly, it's recommended you install px-defaults-design which includes this module as a dependency. You'll have access to the functions in this module if you install px-defaults-design.
+
+To find installation and import instructions for the px-defaults-design module, see its [Github README](https://github.com/PredixDev/px-defaults-design) or read its [Predix UI catalog documentation page](https://predixdev.github.io/predix-ui/?show=px-defaults-design&type=css).
+
+For more information about this requirement, see this [discussion thread on Github](https://github.com/PredixDev/px-functions-design/pull/2).
+</section>
 
 <!-- 2: Provide Usage Info -->
 <section data-slot="usage">

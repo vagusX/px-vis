@@ -1,3 +1,11 @@
+v0.3.1
+==============================
+* added new demo and auto-ghp
+
+v0.3.0
+==============================
+* adding grunt build process for style module
+
 v0.2.10
 ==============================
 * updated oss notice and readme, pointing to gh-pages

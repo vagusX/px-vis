@@ -1,10 +1,10 @@
 {
   "name": "px-functions-design",
-  "version": "0.3.4",
+  "version": "1.0.0",
   "authors": [
     "General Electric"
   ],
-  "description": "The functions module contains contains functions that are required for using all Predix UI CSS modules. Use it to convert between units (i.e. pixels to REM and back again) and compute numbers.",
+  "description": "The functions module contains contains functions that are required for using all Predix UI CSS modules.",
   "main": "_tools.functions.scss",
   "keywords": [
     "px",
@@ -22,20 +22,19 @@
     "OSS_Notice.pdf"
   ],
   "dependencies": {
-    "inuit-functions": "~0.2.0",
-    "px-defaults-design": "~0.2.12"
+    "inuit-functions": "~0.2.0"
   },
   "devDependencies": {
     "px-starter-kit-design": "~0.6.0",
     "px-sass-doc": "^0.2.4"
   },
-  "_release": "0.3.4",
+  "_release": "1.0.0",
   "_resolution": {
     "type": "version",
-    "tag": "v0.3.4",
-    "commit": "02e4d5da5d6c4969436c82afa4e9aa0eef2d6e31"
+    "tag": "v1.0.0",
+    "commit": "617d0cb3510d22f26d11b665657bea348640402d"
   },
   "_source": "https://github.com/predixDev/px-functions-design.git",
-  "_target": "~0.3.3",
+  "_target": "~1.0.0",
   "_originalSource": "px-functions-design"
 }

@@ -1,6 +1,6 @@
 {
   "name": "px-colors-design",
-  "version": "0.2.20",
+  "version": "0.2.23",
   "authors": [
     "General Electric"
   ],
@@ -25,11 +25,11 @@
     "px-sass-doc": "~0.2.2",
     "px-starter-kit-design": "~0.6.0"
   },
-  "_release": "0.2.20",
+  "_release": "0.2.23",
   "_resolution": {
     "type": "version",
-    "tag": "v0.2.20",
-    "commit": "a3381bdaab1635bfb029210317f43751103406f0"
+    "tag": "v0.2.23",
+    "commit": "09c21f3174070603f8a34b9758b4a83f2b1d6617"
   },
   "_source": "https://github.com/predixDev/px-colors-design.git",
   "_target": "~0.2.0",

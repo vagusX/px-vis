@@ -1,6 +1,6 @@
 {
   "name": "px-list-inline-design",
-  "version": "0.2.12",
+  "version": "0.2.13",
   "authors": [
     "General Electric",
     "Harry Roberts <harry@csswizardry.com>"
@@ -25,17 +25,17 @@
     "OSS_Notice.pdf"
   ],
   "dependencies": {
-    "px-defaults-design": "~0.2.0"
+    "px-defaults-design": "~0.3.0"
   },
   "devDependencies": {
-    "px-sass-doc": "~0.1.7",
+    "px-sass-doc": "~0.2.4",
     "px-starter-kit-design": "~0.6.0"
   },
-  "_release": "0.2.12",
+  "_release": "0.2.13",
   "_resolution": {
     "type": "version",
-    "tag": "v0.2.12",
-    "commit": "f33882a5f4c47abd7f405ef0a8fb90c82f00fc24"
+    "tag": "v0.2.13",
+    "commit": "71c8fcc1128bd84a221c2d27c6179999bc818f38"
   },
   "_source": "https://github.com/predixDev/px-list-inline-design.git",
   "_target": "^0.2.11",

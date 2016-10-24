@@ -32,7 +32,7 @@
 
 <!-- 2: Set Options -->
 <px-sass-doc-option
-  option-name="Padding"
+  option-name="Gutters"
   choose-with="dropdown"
   choices='[
     "flush",
@@ -87,9 +87,9 @@
 <!-- 3: Make HTML Demo -->
 <section data-slot="demoHTML">
 <div class$="{{layoutClasses}}">
-  <div class$="{{layoutItemClasses}}">Lorem ipsum dolor sit amet.</div>
-  <div class$="{{layoutItemClasses}}">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</div>
-  <div class$="{{layoutItemClasses}}">Lorem ipsum dolor sit amet.</div>
+  <div class$="{{layoutItemClasses}}">Layout Item 1</div>
+  <div class$="{{layoutItemClasses}}">Layout Item 2. <br/> More text to show functionality.</div>
+  <div class$="{{layoutItemClasses}}">Layout Item 3</div>
 </div>
 </section>
 
@@ -105,11 +105,89 @@
 
 <section data-slot="usage">
 ```
+<!-- Layout -->
+<!-- Begin a layout group -->
+<div class="layout">...</div>
+
+
+<!-- Layout Item -->
+<!-- 1. Space columns apart. -->
+<!-- 2. Full-width unless told to behave otherwise. -->
+<!-- 3. Required to combine fluid widths and fixed gutters. -->
 <div class="layout">
   <div class="layout__item"></div>
-  <div class="layout__item"></div>
-  <div class="layout__item"></div>
 </div>
+
+
+<!-- Layout Tiny -->
+<!-- 5px gutters -->
+<div class="layout layout--tiny"></div>
+
+
+<!-- Layout Small -->
+<!-- 10px gutters -->
+<div class="layout layout--small"></div>
+
+
+<!-- Layout Large -->
+<!-- 20px gutters -->
+<div class="layout layout--large"></div>
+
+
+<!-- Layout Huge -->
+<!-- 30px gutters -->
+<div class="layout layout--huge"></div>
+
+
+<!-- Layout Flush -->
+<!-- no gutters -->
+<div class="layout layout--huge"></div>
+
+
+<!-- Layout Reverse -->
+<!-- Reversed rendered order of layout items -->
+<div class="layout layout--rev"></div>
+
+
+<!-- Layout Middle -->
+<!-- Align layout items to the vertical centers of each other. -->
+<div class="layout layout--middle"></div>
+
+
+<!-- Layout Bottom -->
+<!-- Align layout items to the vertical bottoms of each other. -->
+<div class="layout layout--bottom"></div>
+
+
+<!-- Layout Full -->
+<!-- Align layout items to all be the same height. -->
+<div class="layout layout--full"></div>
+
+
+<!-- Layout Right -->
+<!-- Make the layout items fill up from the right hand side. -->
+<div class="layout layout--right"></div>
+
+
+<!-- Layout Center -->
+<!-- Make the layout items fill up from the center outward. -->
+<div class="layout layout--center"></div>
+
+
+<!-- Item Full -->
+<!-- Make an individual layout item fill up the height of its layout. -->
+<div class="layout layout__item--full"></div>
+
+
+<!-- Item Center -->
+<!-- Make an individual layout item fill up from the center vertically. -->
+<div class="layout layout__item--center"></div>
+
+
+<!-- Item Bottom -->
+<!-- Make an individual layout item fill up from the bottom up. -->
+<div class="layout layout__item--bottom"></div>
+
 ```
 </section>
 
@@ -128,11 +206,11 @@
 
   template._layoutClasses = function() {
     var opts = template.selectedOptions || {}, strings = [];
-    if (opts.Padding === "flush")           strings.push("layout--flush");
-    if (opts.Padding === "tiny")            strings.push("layout--tiny");
-    if (opts.Padding === "small")           strings.push("layout--small");
-    if (opts.Padding === "large")           strings.push("layout--large");
-    if (opts.Padding === "huge")            strings.push("layout--huge");
+    if (opts.Gutters === "flush")           strings.push("layout--flush");
+    if (opts.Gutters === "tiny")            strings.push("layout--tiny");
+    if (opts.Gutters === "small")           strings.push("layout--small");
+    if (opts.Gutters === "large")           strings.push("layout--large");
+    if (opts.Gutters === "huge")            strings.push("layout--huge");
     if (opts.Reverse === true)              strings.push("layout--rev");
     if (opts.Vertical === "middle")         strings.push("layout--middle");
     if (opts.Vertical === "bottom")         strings.push("layout--bottom");
@@ -152,11 +230,11 @@
 
   template._importCode = function() {
     var opts = template.selectedOptions || {}, strings = [];
-    if (opts.Padding === "flush")          strings.push("$inuit-enable-layout--flush : true;");
-    if (opts.Padding === "tiny")           strings.push("$inuit-enable-layout--tiny : true;");
-    if (opts.Padding === "small")          strings.push("$inuit-enable-layout--small : true;");
-    if (opts.Padding === "large")          strings.push("$inuit-enable-layout--large : true;");
-    if (opts.Padding === "huge")           strings.push("$inuit-enable-layout--huge : true;");
+    if (opts.Gutters === "flush")          strings.push("$inuit-enable-layout--flush : true;");
+    if (opts.Gutters === "tiny")           strings.push("$inuit-enable-layout--tiny : true;");
+    if (opts.Gutters === "small")          strings.push("$inuit-enable-layout--small : true;");
+    if (opts.Gutters === "large")          strings.push("$inuit-enable-layout--large : true;");
+    if (opts.Gutters === "huge")           strings.push("$inuit-enable-layout--huge : true;");
     if (opts.Reverse === true)             strings.push("$inuit-enable-layout--rev : true;");
     if (opts.Vertical === "middle")        strings.push("$inuit-enable-layout--middle : true;");
     if (opts.Vertical === "bottom")        strings.push("$inuit-enable-layout--bottom : true;");

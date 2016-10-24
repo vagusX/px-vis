@@ -4,6 +4,14 @@ The functions module contains contains functions that are required for using all
 
 **px-functions-design is a Predix UI CSS module.** You can find a demonstration and full documentation on the [Predix UI catalog](https://predixdev.github.io/predix-ui/?show=px-functions-design&type=css]).
 
+## IMPORT NOTE: It's recommended to install px-defaults-design instead
+
+Rather than install this module directly, it's recommended you install px-defaults-design which includes this module as a dependency. You'll have access to the functions in this module if you install px-defaults-design.
+
+To find installation and import instructions for the px-defaults-design module, see its [Github README](https://github.com/PredixDev/px-defaults-design) or read its [Predix UI catalog documentation page](https://predixdev.github.io/predix-ui/?show=px-defaults-design&type=css).
+
+For more information about this requirement, see this [discussion thread on Github](https://github.com/PredixDev/px-functions-design/pull/2).
+
 ## Install the module
 
 To use the module, you need to install it in your project using Bower. Run this task on the command line from inside your project folder:
@@ -81,5 +89,4 @@ In addition to `triple`, you can use `quarter`, `halve`, `double`, `quadruple`, 
 
 This module depends on the following modules (automatically included with Bower install):
 
-* [px-defaults-design](https://github.com/PredixDev/px-defaults-design)
 * [inuit-functions](https://github.com/inuitcss/tools.functions)

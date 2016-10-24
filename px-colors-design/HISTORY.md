@@ -1,3 +1,15 @@
+v0.2.23
+==============================
+* fix ghp script to use git add with -A option
+
+v0.2.22
+==============================
+* merge PR #3 which adds a Polymer style module for colors
+
+v0.2.21
+==============================
+* updated 'use it in your project' section in demo
+
 v0.2.20
 ==============================
 * Install new version of `px-sass-doc` component

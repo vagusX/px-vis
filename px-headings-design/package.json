@@ -1,6 +1,6 @@
 {
   "name": "px-headings-design",
-  "version": "0.2.18",
+  "version": "0.2.19",
   "description": "Headings gives you base-level heading sizes in the form of easy-to-apply classes.",
   "private": false,
   "scripts": {
@@ -11,6 +11,9 @@
     "url": "https://github.com/PredixDev/px-headings-design.git"
   },
   "author": "General Electric",
+  "dependencies": {
+    "node-sass-import-once": "^1.2.0"
+  },
   "dependencies": {
     "node-sass-import-once": "^1.2.0"
   },
@@ -29,7 +32,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.3.2",
     "gulp-sequence": "^0.4.5",
-    "gulp-style-modules": "^0.1.0",
+    "node-sass-import-once": "^1.2.0",
     "sassdoc": "^2.1.20",
     "stream-combiner2": "^1.1.1",
     "yargs": "^5.0.0"
