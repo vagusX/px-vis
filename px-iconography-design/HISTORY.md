@@ -1,3 +1,7 @@
+v0.3.2
+==============================
+* added second option in dropdown and updated px-sass-doc
+
 v0.3.1
 ==============================
 * added new demo and auto-ghp

@@ -1,3 +1,7 @@
+v1.0.1
+==============================
+* updated to lastest px-sass-doc
+
 v1.0.0
 ==============================
 * Removed direct import of px-defaults-design module.

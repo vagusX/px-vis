@@ -1,3 +1,7 @@
+v0.2.11
+==============================
+* Added more detail to 'use it in your project'
+
 v0.2.10
 ==============================
 * Updated dependencies

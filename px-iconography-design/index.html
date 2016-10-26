@@ -35,9 +35,10 @@
   option-name="Icons"
   choose-with="dropdown"
   choices='[
-    "briefcase"
+    "Hand-peace-o",
+    "Hand-o-right"
   ]'
-  default-choice="briefcase">
+  default-choice="Hand-peace-o">
 </px-sass-doc-option>
 
 <!-- 3: Make HTML Demo -->
@@ -71,7 +72,10 @@
   });
 
   template._iconClass = function() {
-    return "fa fa-briefcase";
+    var opts = template.selectedOptions || {}, strings = [];
+    if (opts.Icons === "Hand-peace-o")      strings.push("fa-hand-peace-o");
+    if (opts.Icons === "Hand-o-right")      strings.push("fa-hand-o-right");
+    return ("fa " + strings.join(" ")).trim();
   };
 
   template._importCode = function() {

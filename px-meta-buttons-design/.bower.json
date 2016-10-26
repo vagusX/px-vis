@@ -1,6 +1,6 @@
 {
   "name": "px-meta-buttons-design",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "authors": [
     "General Electric"
   ],
@@ -26,14 +26,14 @@
     "px-buttons-design": "~0.4.0"
   },
   "devDependencies": {
-    "px-sass-doc": "~0.1.7",
+    "px-sass-doc": "~0.2.0",
     "px-starter-kit-design": "~0.6.0"
   },
-  "_release": "0.5.6",
+  "_release": "0.5.7",
   "_resolution": {
     "type": "version",
-    "tag": "v0.5.6",
-    "commit": "09ebafdfe73d6905001665afb1bcced60bb571a5"
+    "tag": "v0.5.7",
+    "commit": "23ab05f07b76f3935a4e322b76b88cbd25a1f433"
   },
   "_source": "https://github.com/predixDev/px-meta-buttons-design.git",
   "_target": "~0.5.5",

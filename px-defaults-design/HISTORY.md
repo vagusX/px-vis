@@ -1,3 +1,7 @@
+v0.3.1
+==============================
+* Updated 'use it in your project' section of demo 
+
 v0.3.0
 ==============================
 * Update to latest px-functions-design dependencies, fixing import loop

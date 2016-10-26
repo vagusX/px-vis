@@ -29,7 +29,27 @@
 
 <!-- 5: Set Usage HTML -->
 <section data-slot="usage">
-See the Customize Styles Section above for a full description of the options available.
+```
+<!-- Array of different breakpoints -->
+$breakpoints
+    palm          screen and max-width: 47.9rem
+    lap           screen and min-width: 48rem and max-width: 63.9rem
+    lap-and-up    screen and min-width: 48rem
+    portable      screen and max-width: 63.9rem
+    desk          screen and min-width: 63.9rem
+    desk-wide     screen and min-width: $desk-wide-width
+    retina        -webkit-min-device-pixel-ratio: 2, min-resolution: 192dpi, min-resolution: 2dppx
+
+
+<!-- Viewport -->
+<!-- .viewport is the primary class applied to div containing app nav and content (body > div.viewport) -->
+.viewport
+
+
+<!-- Viewpoit Full Height -->
+.viewport--full-height
+
+```
 </section>
 
 </px-sass-doc>

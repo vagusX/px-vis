@@ -1,6 +1,6 @@
 {
   "name": "px-demo-snippet",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "main": [
     "px-demo-snippet.html"
   ],
@@ -31,11 +31,11 @@
     "px-spinner": "^0.4.0"
   },
   "homepage": "https://github.com/predixdev/px-demo-snippet",
-  "_release": "0.6.4",
+  "_release": "0.6.5",
   "_resolution": {
     "type": "version",
-    "tag": "v0.6.4",
-    "commit": "a16dd9a01cf1db845060d80d3527f52a929b4ae8"
+    "tag": "v0.6.5",
+    "commit": "dd18613c43a09e623c3c246db09a90d3b8f61233"
   },
   "_source": "https://github.com/predixdev/px-demo-snippet.git",
   "_target": "^0.6.4",

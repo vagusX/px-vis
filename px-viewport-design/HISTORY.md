@@ -1,3 +1,7 @@
+v0.4.8
+==============================
+* added more detail to 'Use it in your project'
+
 v0.4.7
 ==============================
 * added mega demo

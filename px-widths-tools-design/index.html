@@ -35,6 +35,12 @@
 Pass in the fraction you'd like the widths to have - with a <strong>space</strong> instead of <strong>/</strong> - and an optional suffix for responsive widths.
 
 ```
+<!-- @param {Number} $inuit-widths-columns            - Number of columns -->
+<!-- @param {String} $inuit-widths-breakpoint [null]  - Name of breakpoint -->
+
+@include inuit-widths($inuit-widths-columns, $inuit-widths-breakpoint: null);
+
+
 <!-- E.g. to create thirds and quarters for a small breakpoint: -->
 @include inuit-widths(3 4, -sm);
 

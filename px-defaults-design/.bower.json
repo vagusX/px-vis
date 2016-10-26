@@ -1,6 +1,6 @@
 {
   "name": "px-defaults-design",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "authors": [
     "General Electric",
     "Harry Roberts"
@@ -28,11 +28,11 @@
     "px-starter-kit-design": "~0.6.0",
     "px-sass-doc": "^0.2.4"
   },
-  "_release": "0.3.0",
+  "_release": "0.3.1",
   "_resolution": {
     "type": "version",
-    "tag": "v0.3.0",
-    "commit": "997202e395efa422f79a6c759cae7c91875eb873"
+    "tag": "v0.3.1",
+    "commit": "5d2019bb00fe6030adcbf75d998c9dfc8f9f16af"
   },
   "_source": "https://github.com/predixDev/px-defaults-design.git",
   "_target": "^0.3.0",

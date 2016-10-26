@@ -1,6 +1,6 @@
 {
   "name": "px-mixins-design",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "Sass mixins for Predix UI",
   "private": false,
   "scripts": {

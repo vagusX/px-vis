@@ -33,7 +33,7 @@
   "_resolution": {
     "type": "version",
     "tag": "v0.2.13",
-    "commit": "a780cfbabc738aac0f3c66e2b65b70eda2980062"
+    "commit": "481bdeed8bab807ac26cdb3327ce72a7c16981f6"
   },
   "_source": "https://github.com/predixDev/px-widths-tools-design.git",
   "_target": "~0.2.0",

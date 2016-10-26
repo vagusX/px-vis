@@ -1,6 +1,6 @@
 {
   "name": "px-iconography-design",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "authors": [
     "General Electric"
   ],
@@ -30,11 +30,11 @@
     "px-sass-doc": "~0.2.0",
     "px-starter-kit-design": "~0.6.0"
   },
-  "_release": "0.3.1",
+  "_release": "0.3.2",
   "_resolution": {
     "type": "version",
-    "tag": "v0.3.1",
-    "commit": "94f49de7383982fd9e5b19bb5166800ac51b6e1c"
+    "tag": "v0.3.2",
+    "commit": "dd282083d11a134624611b892477d8f8742f7bcc"
   },
   "_source": "https://github.com/predixDev/px-iconography-design.git",
   "_target": "^0.3.1",

@@ -21,7 +21,7 @@
 <!-- 1: Describe Module -->
 <px-sass-doc
   module-name="px-functions-design"
-  description="The functions module contains contains functions that are required for using all Predix UI CSS modules. Use it to convert between units (i.e. pixels to REM and back again) and compute numbers."
+  description="The functions module contains functions that are required for using all Predix UI CSS modules. Use it to convert between units (i.e. pixels to REM and back again) and compute numbers."
   layer="tools"
   sassdoc-path="sassdoc.json"
   dependencies='[
@@ -33,7 +33,7 @@
 <section data-slot="intro">
 # IMPORT NOTE: It's recommended to install px-defaults-design instead
 
-Rather than install this module directly, it's recommended you install px-defaults-design which includes this module as a dependency. You'll have access to the functions in this module if you install px-defaults-design.
+Rather than install this module directly, it's recommended you <strong>install px-defaults-design</strong> which includes this module as a dependency. You'll have access to the functions in this module if you install px-defaults-design.
 
 To find installation and import instructions for the px-defaults-design module, see its [Github README](https://github.com/PredixDev/px-defaults-design) or read its [Predix UI catalog documentation page](https://predixdev.github.io/predix-ui/?show=px-defaults-design&type=css).
 
@@ -72,7 +72,8 @@ The `remTopx` function does the opposite: it takes a value in REM and returns th
 
 Again, the size returned will depend on the base rem size set in your project.
 
-## Additional functions
+
+### Additional functions
 
 The functions module also provides a set of related utilities that take a number and compute a multiple or fraction of it. For example, you can use the following function to get the result of 3 * 4 and convert it to REM.
 
