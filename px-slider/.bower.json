@@ -1,6 +1,6 @@
 {
   "name": "px-slider",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "main": [
     "px-slider.html"
   ],
@@ -32,17 +32,17 @@
     "px-api-viewer": "~0.1.0",
     "px-demo-snippet": "^0.6.3",
     "px-toggle-design": "^0.2.12",
-    "px-actionable-text-icons-design": "^0.0.3",
+    "px-actionable-text-icons-design": "^0.1.0",
     "px-code-design": "^0.2.11",
     "px-headings-design": "^0.2.14",
     "px-list-inline-design": "^0.2.11"
   },
   "homepage": "https://github.com/PredixDev/px-slider",
-  "_release": "0.6.3",
+  "_release": "0.6.4",
   "_resolution": {
     "type": "version",
-    "tag": "v0.6.3",
-    "commit": "4bd707b4bbef82fdeb603b74bf6433a4a0272f9e"
+    "tag": "v0.6.4",
+    "commit": "dbe507594a6efcf8606c4b3a9a47083cf1309c8e"
   },
   "_source": "https://github.com/PredixDev/px-slider.git",
   "_target": "~0.6.0",

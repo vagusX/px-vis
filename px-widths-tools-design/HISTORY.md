@@ -1,3 +1,7 @@
+v0.2.14
+==============================
+* updated to px-sass-doc#0.2.8
+
 v0.2.13
 ==============================
 * minor text changes to 'use it in your project'

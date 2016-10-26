@@ -1,6 +1,6 @@
-v1.0.1
+v1.0.2
 ==============================
-* updated to lastest px-sass-doc
+* updated to px-sass-doc#0.2.8
 
 v1.0.0
 ==============================

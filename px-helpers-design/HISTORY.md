@@ -1,3 +1,7 @@
+v0.3.11
+==============================
+* updated to px-sass-doc#0.2.8
+
 v0.3.10
 ==============================
 * minor style changes to demo

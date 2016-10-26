@@ -1,6 +1,6 @@
 {
   "name": "px-helpers-design",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "authors": [
     "General Electric"
   ],
@@ -28,11 +28,11 @@
     "px-sass-doc": "~0.2.0",
     "px-starter-kit-design": "~0.6.0"
   },
-  "_release": "0.3.10",
+  "_release": "0.3.11",
   "_resolution": {
     "type": "version",
-    "tag": "v0.3.10",
-    "commit": "19ec79b9aabc2f466ae97dfd6dc468d799e5ec23"
+    "tag": "v0.3.11",
+    "commit": "f2d74ee1c775c48e4882e23a831a0a0ac6ac4833"
   },
   "_source": "https://github.com/PredixDev/px-helpers-design.git",
   "_target": "~0.3.0",

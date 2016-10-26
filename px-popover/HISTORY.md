@@ -1,3 +1,7 @@
+v1.5.1
+=================
+* Update dependencies
+
 v1.4.7
 =================
 * added overflow to demoContainer and removed flex__wrap from mega-demo

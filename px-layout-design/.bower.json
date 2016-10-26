@@ -1,6 +1,6 @@
 {
   "name": "px-layout-design",
-  "version": "0.3.17",
+  "version": "0.3.18",
   "authors": [
     "General Electric"
   ],
@@ -31,11 +31,11 @@
     "px-sass-doc": "~0.2.4",
     "px-starter-kit-design": "~0.6.0"
   },
-  "_release": "0.3.17",
+  "_release": "0.3.18",
   "_resolution": {
     "type": "version",
-    "tag": "v0.3.17",
-    "commit": "47f4e55210ce113f6ec7eba21347412efb1b44ff"
+    "tag": "v0.3.18",
+    "commit": "f1b7a156ade7ebbcb0b9323698f4f691e4bef7f7"
   },
   "_source": "https://github.com/predixDev/px-layout-design.git",
   "_target": "~0.3.13",

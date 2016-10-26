@@ -1,6 +1,6 @@
 {
   "name": "px-popover",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "main": [
     "px-popover.html"
   ],
@@ -32,8 +32,8 @@
     "px-polymer-font-awesome": "^0.1.8",
     "px-tabs": "~0.5.1",
     "px-api-viewer": "~0.1.0",
-    "px-demo-snippet": "^0.5.1",
-    "px-actionable-text-icons-design": "^0.0.3",
+    "px-demo-snippet": "^0.6.3",
+    "px-actionable-text-icons-design": "^0.1.0",
     "px-code-design": "^0.2.11",
     "px-headings-design": "^0.2.14",
     "px-list-inline-design": "^0.2.11",
@@ -42,11 +42,11 @@
     "px-toggle-design": "^0.2.12"
   },
   "homepage": "https://github.com/PredixDev/px-popover",
-  "_release": "1.5.0",
+  "_release": "1.5.1",
   "_resolution": {
     "type": "version",
-    "tag": "v1.5.0",
-    "commit": "c5471f8f630215b089baf396aa3da6d73736a6e7"
+    "tag": "v1.5.1",
+    "commit": "a73d226fe4a8c78768c5375b173b67ef05687dd2"
   },
   "_source": "https://github.com/PredixDev/px-popover.git",
   "_target": "~1.5.0",

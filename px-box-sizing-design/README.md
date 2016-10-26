@@ -6,7 +6,7 @@ The box-sizing module sets the `box-sizing` property of all elements to `border-
 
 ## Install the module
 
-To use the toggle module, you need to install it in your project using Bower. Run this task on the command line from inside your project folder:
+To use the module, you need to install it in your project using Bower. Run this task on the command line from inside your project folder:
 
 ```
 bower install --save px-box-sizing-design
@@ -14,7 +14,7 @@ bower install --save px-box-sizing-design
 
 ## Import it in your Sass
 
-The toggle module won't do anything until you import and configure it in your project Sass file. Follow these steps to import it:
+The module won't do anything until you import and configure it in your project Sass file. Follow these steps to import it:
 
 ### 1. Enable Flags
 

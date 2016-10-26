@@ -1,3 +1,7 @@
+v0.3.18
+==============================
+* updated to px-sass-doc#0.2.8
+
 v0.3.17
 ==============================
 * Minor style canges to demo and added more discription in Use it in your project

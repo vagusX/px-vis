@@ -1,6 +1,6 @@
 {
   "name": "px-list-inline-design",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "description": "Styles for displaying a list as a horizontal row",
   "private": false,
   "scripts": {

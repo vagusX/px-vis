@@ -1,3 +1,7 @@
+v0.6.4
+=================
+* Update dependencies
+
 v0.6.3
 =================
 * Made positioning work with shadow DOM

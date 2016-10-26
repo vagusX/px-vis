@@ -1,6 +1,6 @@
 {
   "name": "px-helpers-design",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "description": "Common helper styles for Predix UI",
   "private": false,
   "scripts": {

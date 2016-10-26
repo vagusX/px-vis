@@ -1,3 +1,7 @@
+v0.9.4
+=================
+* Update dependencies
+
 v0.9.3
 =================
 * handle case were the tooltipParent is null
