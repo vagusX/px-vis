@@ -1,3 +1,13 @@
+v0.6.3
+==============================
+* fixed auto-ghp
+
+v0.6.2
+==============================
+* switched from grunt to gulp
+* added new demo
+* added auto-ghp scripts
+
 v0.6.1
 ==============================
 * updated the template for the sass file.
