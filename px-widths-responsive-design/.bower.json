@@ -33,7 +33,7 @@
     "tag": "v0.3.8",
     "commit": "b6df834c802146f88d88634e14b505e930f4463f"
   },
-  "_source": "https://github.com/PredixDev/px-widths-responsive-design.git",
-  "_target": "~0.3.0",
-  "_originalSource": "https://github.com/PredixDev/px-widths-responsive-design.git"
+  "_source": "https://github.com/predixDev/px-widths-responsive-design.git",
+  "_target": "^0.3.0",
+  "_originalSource": "px-widths-responsive-design"
 }

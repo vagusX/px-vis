@@ -31,7 +31,7 @@
     "tag": "v0.2.24",
     "commit": "7ea99c90d80cd8b78c9a1f61b15b2fa47899c601"
   },
-  "_source": "https://github.com/PredixDev/px-colors-design.git",
-  "_target": "~0.2.0",
-  "_originalSource": "https://github.com/PredixDev/px-colors-design.git"
+  "_source": "https://github.com/predixDev/px-colors-design.git",
+  "_target": "~0.2.16",
+  "_originalSource": "px-colors-design"
 }

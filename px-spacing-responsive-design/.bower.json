@@ -35,7 +35,7 @@
     "tag": "v0.3.8",
     "commit": "b79b0a977e2cf051bfab0d234782e95c593d9115"
   },
-  "_source": "https://github.com/PredixDev/px-spacing-responsive-design.git",
-  "_target": "~0.3.0",
-  "_originalSource": "https://github.com/PredixDev/px-spacing-responsive-design.git"
+  "_source": "https://github.com/predixDev/px-spacing-responsive-design.git",
+  "_target": "^0.3.0",
+  "_originalSource": "px-spacing-responsive-design"
 }

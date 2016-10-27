@@ -34,7 +34,7 @@
     "tag": "v0.4.8",
     "commit": "ee92f4f8e97b8cbe86579bd3cc94fef92159a068"
   },
-  "_source": "https://github.com/PredixDev/px-viewport-design.git",
-  "_target": "~0.4.1",
-  "_originalSource": "https://github.com/PredixDev/px-viewport-design.git"
+  "_source": "https://github.com/predixDev/px-viewport-design.git",
+  "_target": "^0.4.1",
+  "_originalSource": "px-viewport-design"
 }

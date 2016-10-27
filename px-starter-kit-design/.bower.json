@@ -1,6 +1,6 @@
 {
   "name": "px-starter-kit-design",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "authors": [
     "General Electric",
     "Harry Roberts <harry@csswizardry.com>"
@@ -45,11 +45,11 @@
     "px-code-design": "~0.2.11",
     "px-polymer-font-awesome": "^0.1.9"
   },
-  "_release": "0.6.3",
+  "_release": "0.6.4",
   "_resolution": {
     "type": "version",
-    "tag": "v0.6.3",
-    "commit": "530a319d706491e50d4fdc6f06042b347ae5cc82"
+    "tag": "v0.6.4",
+    "commit": "cda6810349fd65af5009b43eb8ceef446309a065"
   },
   "_source": "https://github.com/predixDev/px-starter-kit-design.git",
   "_target": "~0.6.0",
