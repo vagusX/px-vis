@@ -1,3 +1,7 @@
+v0.5.2
+==================
+* Update dependencies
+
 v0.5.1
 ==================
 * latest gulpfile & latest demo snippet dependency

@@ -1,6 +1,6 @@
 {
     "name": "px-datetime-range-panel",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "main": [
         "px-datetime-range-panel.html"
     ],
@@ -32,14 +32,14 @@
       "px-polymer-font-awesome":"^0.1.9",
       "px-tabs": "~0.5.2",
       "px-api-viewer": "~0.1.0",
-      "px-demo-snippet": "^0.5.1",
+      "px-demo-snippet": "^0.6.4",
       "px-headings-design": "^0.2.14",
       "px-actionable-text-icons-design": "^0.0.3",
       "px-toggle-design": "^0.2.12",
       "px-list-inline-design": "^0.2.11",
       "px-toggle-design": "^0.2.12",
       "px-headings-design": "^0.2.14",
-      "px-actionable-text-icons-design": "^0.0.3",
+      "px-actionable-text-icons-design": "^0.1.0",
       "px-code-design": "~0.2.11",
       "px-dropdown": "^0.12.1"
     }

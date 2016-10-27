@@ -1,6 +1,6 @@
 {
   "name": "px-datetime-common",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "main": [
     "px-datetime-common.html"
   ],
@@ -29,14 +29,14 @@
     "px-forms-design": "~0.3.0",
     "px-list-bare-design": "~0.2.0",
     "px-tables-design": "~0.3.0",
-    "px-actionable-text-icons-design": "^0.0.3"
+    "px-actionable-text-icons-design": "^0.1.0"
   },
   "homepage": "https://github.com/PredixDev/px-datetime-common",
-  "_release": "0.6.4",
+  "_release": "0.6.5",
   "_resolution": {
     "type": "version",
-    "tag": "v0.6.4",
-    "commit": "b2bb80b5e07107f4c174f1d4994af0f0abfb99cd"
+    "tag": "v0.6.5",
+    "commit": "e34650943337bfc76bd387c1f80c3c4e0cc7e6d9"
   },
   "_source": "https://github.com/PredixDev/px-datetime-common.git",
   "_target": "~0.6.1",
