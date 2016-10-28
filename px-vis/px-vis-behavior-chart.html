@@ -123,6 +123,44 @@ PxVisBehaviorChart.chartCommon = [{
     _setCompleteSeriesConfig: function(){
       if(this._doesObjHaveValues(this.defaultSeriesConfig) && this._doesObjHaveValues(this.chartData)){
         // FUTURE TODO refactor: use MAPs and SETs instead of Objects when IE has support / is no longer supported by us
+
+        /*
+          Polyfill to add .includes() for IE11.
+          We can remove this when IE11 support is dropped
+        */
+        if (!Array.prototype.includes) {
+          Array.prototype.includes = function(searchElement /*, fromIndex*/) {
+            'use strict';
+            if (this == null) {
+              throw new TypeError('Array.prototype.includes called on null or undefined');
+            }
+
+            var O = Object(this);
+            var len = parseInt(O.length, 10) || 0;
+            if (len === 0) {
+              return false;
+            }
+            var n = parseInt(arguments[1], 10) || 0;
+            var k;
+            if (n >= 0) {
+              k = n;
+            } else {
+              k = len + n;
+              if (k < 0) {k = 0;}
+            }
+            var currentElement;
+            while (k < len) {
+              currentElement = O[k];
+              if (searchElement === currentElement ||
+                 (searchElement !== searchElement && currentElement !== currentElement)) { // NaN !== NaN
+                return true;
+              }
+              k++;
+            }
+            return false;
+          };
+        }
+
         // We could use d3 sets and maps... worth it?
         var fullConfig = (this.seriesConfig) ? JSON.parse(JSON.stringify(this.seriesConfig)) : {},
             k = Object.keys(fullConfig),
@@ -570,7 +608,7 @@ PxVisBehaviorChart.timeFiltering = [{
      * of data displayed. Can be used in combination with a px-vis-chart-navigator
      */
     timeDomain: {
-      type: Array,
+      type: Object,
       value: function() {
         return [];
       }
@@ -600,9 +638,15 @@ PxVisBehaviorChart.timeFiltering = [{
       var min = Number(timeDomain.x[0]),
           max = Number(timeDomain.x[1]);
       return chartData.filter(function(val) {
-                var timeVal = Number(val[timeData]);
-                return timeVal >= min && timeVal <= max;
-              });
+        var timeVal = Number(val[timeData]);
+        // if the data doesn't have Date value, return the data as it is
+        if (typeof(val[timeData]) === 'undefined'){
+          return val;
+          // Otherwise return the data matching the selected time range
+        } else {
+          return (timeVal >= min && timeVal <= max);
+        }
+      });
     } else {
       return chartData;
     }

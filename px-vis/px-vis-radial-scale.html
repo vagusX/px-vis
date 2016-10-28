@@ -16,7 +16,6 @@ Interpreter components act as a converter, translating data points into their co
         margin="[[margin]]"
         amplitude-keys="[[dimensions]]"
         chart-data="[[chartData]]"
-        complete-series-config="[[completeSeriesConfig]]"
         chart-extents="[[chartExtents]]"
         x="{{x}}"
         y="{{y}}"
@@ -55,7 +54,6 @@ https://github.com/d3/d3/wiki/API-Reference#d3scale-scales
       PxVisBehaviorD3.selectedDomain,
       PxVisBehavior.axisTypes,
       commonColors,
-      PxVisBehavior.completeSeriesConfig,
       PxVisBehavior.chartExtents,
       PxVisBehaviorD3.radialAxisConfig,
       PxVisBehaviorD3.domainUpdate
@@ -159,7 +157,7 @@ https://github.com/d3/d3/wiki/API-Reference#d3scale-scales
      *
      */
     _generateChartExtents: function() {
-      if(this.chartData.length > 0 && this.amplitudeKeys && this.amplitudeKeys.length > 0) {
+      if(this.chartData && this.chartData.length > 0 && this.amplitudeKeys && this.amplitudeKeys.length > 0) {
         var ext = {
               "x": this.amplitudeKeys,
               "y": (this.chartExtents && this.chartExtents.y) ? this.chartExtents.y : null
@@ -171,8 +169,10 @@ https://github.com/d3/d3/wiki/API-Reference#d3scale-scales
           // go through all data and find min and max
           for(var i = 0; i < this.amplitudeKeys.length; i++){
             for(var j = 0; j < this.chartData.length; j++){
-              min = Math.min(min, this.chartData[j][this.amplitudeKeys[i]]);
-              max = Math.max(max, this.chartData[j][this.amplitudeKeys[i]]);
+              if(this._isValidData(this.chartData[j][this.amplitudeKeys[i]])) {
+                min = Math.min(min, this.chartData[j][this.amplitudeKeys[i]]);
+                max = Math.max(max, this.chartData[j][this.amplitudeKeys[i]]);
+              }
             }
           }
 
