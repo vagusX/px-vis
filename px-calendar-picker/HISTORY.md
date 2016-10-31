@@ -1,3 +1,27 @@
+v0.5.4
+==================
+* fixed tests and codepen
+
+v0.5.3
+==================
+* updated to px-polymer-font-awesome
+
+v0.5.2
+==================
+* fixing bug of 'px-datetime-submitted' & 'px-datetime-range-submitted' being fired too often by updating events to 'px-calendar-selected' & 'px-calendar-range-selected' events
+
+v0.5.1
+==================
+* push pull resquest for added events
+
+v0.5.0
+==================
+* added events 'px-datetime-range-submitted' and 'px-datetime-submitted' to _selectDate(). Added these events to the demo.
+
+v0.4.0
+==================
+* latest gulp file
+
 v0.3.14
 ==================
 * added overflow to demoContainer and removed flex__wrap from mega-demo

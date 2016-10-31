@@ -51,5 +51,8 @@
     "px-polymer-font-awesome": "^0.1.9",
     "px-list-bare-design": "^0.2.13",
     "px-actionable-text-icons-design": "^0.1.0"
+  },
+  "resolutions": {
+    "px-calendar-picker": "~0.5.0"
   }
 }

@@ -16,7 +16,6 @@
   <link rel="import" href="px-datetime-range-panel.html"/>
   <link rel="icon" href="favicon.ico" type="image/x-icon"/>
   <link rel="import" href="../px-demo-snippet/px-demo-snippet.html">
-  <link rel="import" href="../px-polymer-font-awesome/polymer-font-awesome.html" />
   <!-- Requires Webcomponents.js polyfill is provided by the page for browsers that don't support html imports -->
   <style>
     .demo{
@@ -110,6 +109,9 @@
                 <div class="flex flex--col">
                   <div class="demo u-p+">
                     <div class="container">
+                      <span id="counter{{indexPlusOne(index)}}"><strong>px-datetime-submitted</strong> fired <strong>0</strong> time(s)</span>
+                      <span id="counterRange{{indexPlusOne(index)}}"><strong>px-datetime-range-submitted</strong> fired <strong>0</strong> time(s)</span>
+                      <br/>
                       <px-datetime-range-panel
                         class="range-panel__demo"
                         time-format="{{item.timeFormat}}"
@@ -126,7 +128,8 @@
                   <div>
                     <px-demo-snippet
                       element-properties={{item}}
-                      element-name="px-datetime-range-panel">
+                      element-name="px-datetime-range-panel"
+                      links-includes="[[linksIncludes]]">
                     </px-demo-snippet>
                   </div>
                 </div>
@@ -170,7 +173,9 @@ window.addEventListener('WebComponentsReady', function() {
   var template = document.querySelector('template[is=dom-bind]'),
       year = new Date(),
       timeFormat = ["hh:mm:ss A","HH:mm:ss.SSS"],
-      timeZone = ["UTC","America/Los_Angeles","America/New_York"];
+      timeZone = ["UTC","America/Los_Angeles","America/New_York"],
+      counter = 0,
+      counterRange = 0;
 
 
   var optionsArray = [
@@ -216,6 +221,24 @@ window.addEventListener('WebComponentsReady', function() {
     template.optionsArray = optionsArray;
     template.indexPlusOne = indexPlusOne;
     template.year = year;
+    template.linksIncludes = ['px-datetime-common/px-polygit-imports-datetime.html'];
+
+    document.addEventListener('px-calendar-range-submitted', function(evt) {
+      counterRange++;
+      for(var i=1; i<=optionsArray.length; i++) {
+        var span = document.getElementById('counterRange'+i);
+        if(span){
+          span.innerHTML = '<strong>px-calendar-range-submitted</strong> fired <strong>' + counterRange + '</strong> time(s)';
+        }
+      }
+
+      // for(var i=1; i<=optionsArray.length; i++) {
+      //   var span2 = document.getElementById('rangeString'+i);
+      //   if(span2){
+      //     span2.innerHTML = 'Current range object: From: <strong>' + evt.detail.range.from + '</strong> To: <strong>' + evt.detail.range.to + '</strong>';
+      //   }
+      // }
+    });
 
 });
 </script>

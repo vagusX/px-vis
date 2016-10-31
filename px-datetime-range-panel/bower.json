@@ -1,6 +1,6 @@
 {
     "name": "px-datetime-range-panel",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "main": [
         "px-datetime-range-panel.html"
     ],
@@ -18,11 +18,11 @@
         "OSS_Notice.pdf"
     ],
     "dependencies": {
-        "polymer": "^1.6.1",
-        "px-theme": "~1.1.2",
-        "px-calendar-picker": "~0.4.0",
-        "px-datetime-common": "~0.6.3",
-        "px-datetime-field": "~0.5.0"
+      "polymer": "^1.6.1",
+      "px-theme": "~1.1.2",
+      "px-calendar-picker": "~0.5.0",
+      "px-datetime-common": "~0.6.3",
+      "px-datetime-field": "~0.5.0"
     },
     "devDependencies": {
       "px-starter-kit-design": "#~0.6.0",
@@ -34,7 +34,6 @@
       "px-api-viewer": "~0.1.0",
       "px-demo-snippet": "^0.6.4",
       "px-headings-design": "^0.2.14",
-      "px-actionable-text-icons-design": "^0.0.3",
       "px-toggle-design": "^0.2.12",
       "px-list-inline-design": "^0.2.11",
       "px-toggle-design": "^0.2.12",

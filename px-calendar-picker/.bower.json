@@ -1,6 +1,6 @@
 {
   "name": "px-calendar-picker",
-  "version": "0.4.0",
+  "version": "0.5.4",
   "main": [
     "px-calendar-picker.html"
   ],
@@ -36,23 +36,23 @@
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#~1.2.3",
     "px-tabs": "~0.5.2",
     "px-api-viewer": "^0.1.0",
-    "px-demo-snippet": "^0.5.1",
+    "px-demo-snippet": "^0.6.4",
     "px-list-inline-design": "^0.2.11",
     "px-toggle-design": "^0.2.12",
     "px-headings-design": "^0.2.14",
-    "px-actionable-text-icons-design": "^0.0.3",
+    "px-actionable-text-icons-design": "^0.1.0",
     "px-code-design": "~0.2.11",
     "px-dropdown": "^0.12.1",
     "px-polymer-font-awesome": "^0.1.9"
   },
   "homepage": "https://github.com/PredixDev/px-calendar-picker",
-  "_release": "0.4.0",
+  "_release": "0.5.4",
   "_resolution": {
     "type": "version",
-    "tag": "v0.4.0",
-    "commit": "1cc51e3ad1bb6575b65d33525bcc9658e4ff5289"
+    "tag": "v0.5.4",
+    "commit": "854d525e49c70850b2a3a8e287bebd8fa557e19e"
   },
   "_source": "https://github.com/PredixDev/px-calendar-picker.git",
-  "_target": "~0.4.0",
+  "_target": "~0.5.0",
   "_originalSource": "px-calendar-picker"
 }

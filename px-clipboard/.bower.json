@@ -1,6 +1,6 @@
 {
   "name": "px-clipboard",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "main": [
     "px-clipboard.html"
   ],
@@ -35,16 +35,15 @@
     "px-demo-snippet": "^0.6.4",
     "px-toggle-design": "^0.2.12",
     "px-headings-design": "^0.2.14",
-    "px-actionable-text-icons-design": "^0.1.0",
     "px-code-design": "^0.2.11",
     "px-list-inline-design": "^0.2.11"
   },
   "homepage": "https://github.com/predixdev/px-clipboard",
-  "_release": "0.1.6",
+  "_release": "0.1.8",
   "_resolution": {
     "type": "version",
-    "tag": "v0.1.6",
-    "commit": "a8eed723daa8017ff930fe03d3ded32c1330320c"
+    "tag": "v0.1.8",
+    "commit": "64ac43c7956a9307207afeb38c338f87e1fabf6c"
   },
   "_source": "https://github.com/predixdev/px-clipboard.git",
   "_target": "^0.1.1",
