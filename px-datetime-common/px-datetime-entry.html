@@ -4,7 +4,7 @@
 <link rel="import" href="px-datetime-imports.html" />
 <link rel="import" href="px-datetime-behavior.html" />
 <link rel="import" href="px-datetime-entry-cell.html" />
-<link rel="import" href="../polymer-font-awesome/polymer-font-awesome.html" />
+<link rel="import" href="../px-polymer-font-awesome/polymer-font-awesome.html" />
 <link rel="import" href="../px-dropdown/px-dropdown.html" />
 
 
@@ -78,7 +78,7 @@ Range field component which displays a time or date and font awesome icon.
       <template is="dom-if" if="{{!isValid}}">
         <div class="fa fa-fw validation-container flex flex--middle">
           <iron-icon class$="{{_getValidationIconClass(isValid)}}"
-            icon="polymer-font-awesome:fa-warning">
+            icon="fa:fa-exclamation-circle">
           </iron-icon>
           <template is="dom-if" if="{{!isValid}}">
             <px-tooltip
@@ -209,10 +209,20 @@ Range field component which displays a time or date and font awesome icon.
       this._splitFormat();
       this._sizeSymbols();
     },
+    /**
+     *
+     *
+     *
+     */
     _formatChanged: function() {
       this._splitFormat();
       this._sizeSymbols();
     },
+    /**
+     *
+     *
+     *
+     */
     _sizeSymbols: function() {
       //create a dummy canvas to measure string and make size the input correctly
       var style = window.getComputedStyle(this, null),
@@ -226,7 +236,6 @@ Range field component which displays a time or date and font awesome icon.
       ctx.font = fontSize + " " + fontFamily;
 
       symbols.forEach(function(symbol, index) {
-
         length = ctx.measureText(symbol.innerHTML.trim().replace('&nbsp', ' ')).width;
         symbol.style['width'] = length + 'px';
       });
@@ -275,9 +284,9 @@ Range field component which displays a time or date and font awesome icon.
      */
     _setIcon: function(){
       if (this.dateOrTime.toLowerCase() === 'date') {
-        return 'polymer-font-awesome:fa-calendar'
+        return 'fa:fa-calendar'
       } else {
-        return 'polymer-font-awesome:fa-clock-o'
+        return 'fa:fa-clock-o'
       }
     },
     /**

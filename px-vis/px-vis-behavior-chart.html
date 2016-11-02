@@ -78,7 +78,7 @@ PxVisBehaviorChart.chartCommon = [{
       /**
       * A boolean flag on whether to include all the series in the data.
       * - `false`: only series defined in the seriesConfig file will be drawn
-      * - `true`: All series in the dataset will be drawn. Defaults will be used for the seriesConfig
+      * - `true`: All series in the dataset will be drawn. Defaults will be used for the seriesConfig. If this is used do not specify a seriesConfig
       */
       includeAllSeries: {
         type: Boolean,
@@ -121,46 +121,8 @@ PxVisBehaviorChart.chartCommon = [{
     *
     */
     _setCompleteSeriesConfig: function(){
-      if(this._doesObjHaveValues(this.defaultSeriesConfig) && this._doesObjHaveValues(this.chartData)){
+      if(this._doesObjHaveValues(this.defaultSeriesConfig) && this._doesObjHaveValues(this.chartData)) {
         // FUTURE TODO refactor: use MAPs and SETs instead of Objects when IE has support / is no longer supported by us
-
-        /*
-          Polyfill to add .includes() for IE11.
-          We can remove this when IE11 support is dropped
-        */
-        if (!Array.prototype.includes) {
-          Array.prototype.includes = function(searchElement /*, fromIndex*/) {
-            'use strict';
-            if (this == null) {
-              throw new TypeError('Array.prototype.includes called on null or undefined');
-            }
-
-            var O = Object(this);
-            var len = parseInt(O.length, 10) || 0;
-            if (len === 0) {
-              return false;
-            }
-            var n = parseInt(arguments[1], 10) || 0;
-            var k;
-            if (n >= 0) {
-              k = n;
-            } else {
-              k = len + n;
-              if (k < 0) {k = 0;}
-            }
-            var currentElement;
-            while (k < len) {
-              currentElement = O[k];
-              if (searchElement === currentElement ||
-                 (searchElement !== searchElement && currentElement !== currentElement)) { // NaN !== NaN
-                return true;
-              }
-              k++;
-            }
-            return false;
-          };
-        }
-
         // We could use d3 sets and maps... worth it?
         var fullConfig = (this.seriesConfig) ? JSON.parse(JSON.stringify(this.seriesConfig)) : {},
             k = Object.keys(fullConfig),
@@ -182,7 +144,9 @@ PxVisBehaviorChart.chartCommon = [{
             isUpdate = this.completeSeriesConfig ? true : false,
             addedSeriesKeys = [],
             removedSeriesKeys = [],
-            updatedSeriesKeys = [];
+            updatedSeriesKeys = [],
+            extsObj = {},
+            skipProperties = ['xMin','xMax','yMin','yMax'];
 
         if(k.length === 0 && !this.includeAllSeries){
           console.warn("No series were added to the chart. Either add them in the seriesConfig or turn on includeAllSeries");
@@ -211,8 +175,8 @@ PxVisBehaviorChart.chartCommon = [{
           //copy values from default config if needed
           for(var j=0; j<defaultConfigProps.length; j++) {
             var property = defaultConfigProps[j];
-
-            if(typeof fullConfig[k[i]][property] === 'undefined' && typeof this.defaultSeriesConfig[property] !== 'undefined') {
+            //if we dont already have the property, the default exists, and we want to copy the property
+            if(typeof fullConfig[k[i]][property] === 'undefined' && typeof this.defaultSeriesConfig[property] !== 'undefined' && skipProperties.indexOf(property) === -1) {
               fullConfig[k[i]][property] = this.defaultSeriesConfig[property];
             }
           }
@@ -254,17 +218,17 @@ PxVisBehaviorChart.chartCommon = [{
           fullConfig[ missingYs[i] ] = objYs[ missingYs[i] ];
         }
 
-        if(!this.chartExtents){
-          this.chartExtents = {};
-          this.chartExtents['x'] = this._calcChartExts(xMins,xMaxes,'x');
-          this.chartExtents['y'] = this._calcChartExts(yMins,yMaxes,'y');
-        } else {
-          if(!this.chartExtents.x){
-            this.chartExtents['x'] = this._calcChartExts(xMins,xMaxes,'x');
-          }
-          if(!this.chartExtents.y){
-            this.chartExtents['y'] = this._calcChartExts(yMins,yMaxes,'y');
-          }
+        if(this.range) {
+          var min = Number(Px.moment(this.range.from, Px.moment.ISO_8601).format('x')),
+              max = Number(Px.moment(this.range.to, Px.moment.ISO_8601).format('x'));
+          extsObj["x"] = [min,max];
+        }
+
+        if(!extsObj.x) {
+          extsObj['x'] = this._calcChartExts(xMins,xMaxes,'x');
+        }
+        if(!extsObj.y) {
+          extsObj['y'] = this._calcChartExts(yMins,yMaxes,'y');
         }
 
         //if this is an update bof series config find out additions/deletions
@@ -309,8 +273,8 @@ PxVisBehaviorChart.chartCommon = [{
           this.set('_seriesKeys', Object.keys(fullConfig));
         }
 
-        this.fire('px-vis-chart-extents', { 'dataVar': 'chartExtents', 'data': this.chartExtents, 'method':'set' });
-        this.notifyPath('chartExtents', this.chartExtents);
+        this.fire('px-vis-chart-extents', { 'dataVar': 'chartExtents', 'data': extsObj, 'method':'set' });
+        this.notifyPath('chartExtents', extsObj);
 
         this.fire('px-vis-complete-series-config', { 'dataVar': 'completeSeriesConfig', 'data': fullConfig, 'method':'set' });
         this.set('completeSeriesConfig', fullConfig);
@@ -320,6 +284,9 @@ PxVisBehaviorChart.chartCommon = [{
           //now that we have the new completeSeriesConfig process the additions
           this.set('_seriesKeys', Object.keys(fullConfig));
         }
+      } else if(this.chartData && this.chartData.length === 0) {
+        this.set('_seriesKeys', []);
+        Polymer.dom.flush();
       }
     },
 
@@ -538,17 +505,23 @@ PxVisBehaviorChart.precipitationPattern = {
 
     @polymerBehavior PxVisBehaviorChart.chartAutoResize
 */
-PxVisBehaviorChart.chartAutoResize = {
+PxVisBehaviorChart.chartAutoResize = [{
     properties: {
       /**
       * Prevents the chart from automatically resizing to fit its container
       */
       preventResize: {
         type: Boolean,
-        value: false
+        value: false,
+        observer: '_preventResizeChanged'
+      }
+    },
+    _preventResizeChanged: function() {
+      if(!this.preventResize) {
+        this.notifyResize();
       }
     }
-};
+}, Polymer.IronResizableBehavior];
 
 /**
     Name:
@@ -687,6 +660,65 @@ PxVisBehaviorChart.waitForAttach = {
       }
     }
 
+};
+
+/*
+    Name:
+    PxVisBehaviorChart.registerPositioning
+
+    Description:
+    Behavior allowing a chart to position its registers
+
+    Dependencies:
+    - D3.js
+
+    @polymerBehavior PxVisBehaviorChart.registerPositioning
+*/
+PxVisBehaviorChart.registerPositioning = {
+  properties: {
+     /**
+      *
+      * Allows to hide the register
+      */
+    hideRegister: {
+      type: Boolean,
+      value: false,
+      observer: '_hideRegisterChanged'
+    },
+    _registerType: {
+      type: String
+    },
+    _registerWrapperClass: {
+      type: String,
+      computed: '_getRegisterWrapperClass(_registerType)'
+    }
+  },
+ /**
+  * determine the flex class on the wrapper depending on where the register is
+  */
+  _getRegisterWrapperClass: function() {
+    var classList = "flex ";
+
+    if(!this.hideRegister) {
+      if(this._registerType === 'vertical') {
+        classList += "flex--row--rev";
+      }
+      else {
+        classList += "flex--col";
+      }
+    }
+
+    return classList;
+  },
+  _hideRegisterChanged: function() {
+    this.notifyResize();
+  },
+  _getHideClass: function(hide) {
+    if(hide === true) {
+      return 'visuallyhidden';
+    }
+    return '';
+  },
 };
 
 </script>

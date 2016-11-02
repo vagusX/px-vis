@@ -1,3 +1,7 @@
+v0.4.6
+==================
+* fixed codepen
+
 v0.4.5
 ==================
 * Update dependencies
