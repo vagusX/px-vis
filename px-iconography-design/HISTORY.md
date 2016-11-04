@@ -1,3 +1,8 @@
+
+v0.3.3
+==================
+* patch test
+
 v0.3.2
 ==============================
 * added second option in dropdown and updated px-sass-doc

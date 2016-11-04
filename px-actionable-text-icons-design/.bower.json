@@ -1,6 +1,6 @@
 {
   "name": "px-actionable-text-icons-design",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "authors": [
     "General Electric"
   ],
@@ -28,15 +28,15 @@
   "devDependencies": {
     "px-starter-kit-design": "~0.6.0",
     "px-demo-snippet": "^0.6.4",
-    "px-sass-doc": "^0.2.4",
+    "px-sass-doc": "^0.2.9",
     "px-spacing-design": "^0.3.11",
     "px-iconography-design": "^0.3.1"
   },
-  "_release": "0.1.1",
+  "_release": "0.1.2",
   "_resolution": {
     "type": "version",
-    "tag": "v0.1.1",
-    "commit": "cc1ad832db08e5a85c9c680756464c05aa3b65c6"
+    "tag": "0.1.2",
+    "commit": "cd2e1ccf11fe5715d4a5581740cdb0d660d917a1"
   },
   "_source": "https://github.com/predixDev/px-actionable-text-icons-design.git",
   "_target": "^0.1.0",

@@ -1,3 +1,8 @@
+
+v0.3.2
+==================
+* patch test
+
 v0.3.1
 ==============================
 * Updated 'use it in your project' section of demo 

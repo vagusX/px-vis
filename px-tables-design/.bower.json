@@ -1,6 +1,6 @@
 {
   "name": "px-tables-design",
-  "version": "0.3.18",
+  "version": "0.3.19",
   "authors": [
     "General Electric",
     "Harry Roberts <harry@csswizardry.com>"
@@ -30,14 +30,14 @@
     "px-defaults-design": "~0.3.0"
   },
   "devDependencies": {
-    "px-sass-doc": "~0.2.4",
+    "px-sass-doc": "^0.2.9",
     "px-starter-kit-design": "^0.6.0"
   },
-  "_release": "0.3.18",
+  "_release": "0.3.19",
   "_resolution": {
     "type": "version",
-    "tag": "v0.3.18",
-    "commit": "f4fa494e6fd143f05750d464ad2c3b90e1633db0"
+    "tag": "0.3.19",
+    "commit": "603c7b9b8cf888230fb1f0d9b848c66dbeb64958"
   },
   "_source": "https://github.com/predixDev/px-tables-design.git",
   "_target": "~0.3.13",

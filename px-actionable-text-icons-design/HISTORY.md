@@ -1,3 +1,8 @@
+
+v0.1.2
+==================
+* patch test
+
 v0.1.1
 ==========================
 * updated to px-sass-doc#0.2.8, updated to correct version
