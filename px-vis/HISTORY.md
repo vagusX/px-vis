@@ -1,3 +1,13 @@
+v0.6.28
+==================
+* increased register height for scrollbars
+
+v0.6.27
+==================
+* fix for large number of series in register
+* fix series bars on chart navigator axis
+* fix bug where deleting a series does not update mutedSeries and register
+
 v0.6.26
 ==================
 * added check that actionArea box has a selection
