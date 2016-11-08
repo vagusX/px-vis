@@ -1,6 +1,10 @@
-v0.9.4
+v0.9.6
 =================
-* Update dependencies
+* updated dependencies
+
+v0.9.5
+=================
+* added style variables for theming
 
 v0.9.3
 =================
