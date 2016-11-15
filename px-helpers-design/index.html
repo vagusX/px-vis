@@ -31,7 +31,7 @@
 <px-sass-doc
   module-name="px-helpers-design"
   description="A series of helper classes for use throughout Predix UI."
-  layer="objects"
+  layer="generic"
   sassdoc-path="sassdoc.json"
   dependencies='[
     "https://github.com/PredixDev/px-colors-design",
@@ -111,7 +111,7 @@
 
 <!-- 4: Set Import Slot -->
 <section data-slot="import">
-@import "px-helpers-design/_objects.helpers.scss";
+@import "px-helpers-design/_generic.helpers.scss";
 </section>
 
 <!-- 4.1: API Intro -->
@@ -231,7 +231,7 @@ A lot of these classes carry `!important` as you will always want them to win ou
   };
 
   template._importCode = function() {
-    return '@import "px-helpers-design/_objects.box.scss";';
+    return '@import "px-helpers-design/_generic.helpers.scss";';
   };
 </script>
 
