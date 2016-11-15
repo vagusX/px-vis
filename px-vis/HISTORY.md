@@ -1,3 +1,13 @@
+
+v0.6.31
+==================
+* bower updating px-demo-snippet
+
+v0.6.30
+==================
+* Fix intermittent bug in IE when drawing an image on a canvas withing an image load
+* Added timeData to px-vis-interaction-space so that non time based charts can use forceDateTimeDisplay on their register/tooltip
+
 v0.6.29
 ==================
 * IE min-height + flex bug fix for register / tooltip

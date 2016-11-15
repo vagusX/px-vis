@@ -1,3 +1,12 @@
+
+v0.6.9
+==================
+* removed unnecessary px-theme-styles import in px-demo-snippet.html and bower updated px-clipboard
+
+v0.6.8
+==================
+* bumping px-clipboard to fill container
+
 v0.6.7
 =================
 * fixed travis

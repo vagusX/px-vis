@@ -1,6 +1,6 @@
 {
     "name": "px-headings-design",
-    "version": "0.2.21",
+    "version": "0.2.23",
     "authors": [
         "General Electric",
         "Harry Roberts <harry@csswizardry.com>"
@@ -27,6 +27,6 @@
     },
     "devDependencies": {
         "px-starter-kit-design": "~0.6.0",
-        "px-sass-doc": "^0.2.9"
+        "px-sass-doc": "^0.2.10"
     }
 }

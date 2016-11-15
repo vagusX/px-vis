@@ -1,6 +1,6 @@
 {
     "name": "px-functions-design",
-    "version": "1.0.3",
+    "version": "1.0.5",
     "authors": [
         "General Electric"
     ],
@@ -26,6 +26,6 @@
     },
     "devDependencies": {
         "px-starter-kit-design": "~0.6.0",
-        "px-sass-doc": "^0.2.9"
+        "px-sass-doc": "^0.2.10"
     }
 }

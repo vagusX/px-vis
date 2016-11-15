@@ -1,3 +1,19 @@
+v0.1.12
+==================
+* changed var names to be consistent with BEM
+
+v0.1.11
+==================
+* bower updating px-demo-snippet
+
+v0.1.10
+==================
+* added style variables for theming
+
+v0.1.9
+==================
+* added flex__item to div content tag to allow clipboard to expand full width again
+
 v0.1.8
 ==================
 * fixed codepen

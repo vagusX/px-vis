@@ -1,6 +1,6 @@
 {
     "name": "px-box-sizing-design",
-    "version": "0.2.12",
+    "version": "0.2.14",
     "description": "Global box-sizing options for Predix UI",
     "private": false,
     "scripts": {

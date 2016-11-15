@@ -1,4 +1,20 @@
 
+v0.1.6
+==================
+* bower updating px-demo-snippet
+
+v0.1.5
+==================
+* added style variables for theming
+
+v0.1.4
+==================
+* bumping sassdoc to propogate clipboard changes
+
+v0.1.3
+==================
+* bumping all version of px-sass-doc to get px-clipboard update
+
 v0.1.2
 ==================
 * patch test

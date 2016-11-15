@@ -1,6 +1,6 @@
 {
   "name": "px-datetime-range-field",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "main": [
     "px-datetime-range-field.html"
   ],
@@ -36,7 +36,7 @@
     "px-polymer-font-awesome": "^0.1.9",
     "px-tabs": "~0.5.2",
     "px-api-viewer": "~0.1.0",
-    "px-demo-snippet": "^0.6.4",
+    "px-demo-snippet": "^0.6.9",
     "px-list-inline-design": "^0.2.11",
     "px-toggle-design": "^0.2.12",
     "px-headings-design": "^0.2.14",
@@ -44,11 +44,11 @@
     "px-dropdown": "^0.12.1"
   },
   "homepage": "https://github.com/predixDev/px-datetime-range-field",
-  "_release": "0.4.6",
+  "_release": "0.4.7",
   "_resolution": {
     "type": "version",
-    "tag": "v0.4.6",
-    "commit": "51e1609d6a31bdd562927256bb5d8081f181d5f8"
+    "tag": "v0.4.7",
+    "commit": "117c4658b0351c867b227ac78aaff3ee08c2fac3"
   },
   "_source": "https://github.com/predixDev/px-datetime-range-field.git",
   "_target": "~0.4.1",

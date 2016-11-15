@@ -14,53 +14,47 @@
 /// @type String [default]
 $inuit-toggle-namespace         : $inuit-namespace !default;
 
-/// Sets the toggle foreground color.
-///
-/// @group px-toggle-design:variables:style
-/// @type Color [default]
-$inuit-toggle-color             : $gray9 !default;
-
 /// Sets the toggle switch color.
 ///
 /// @group px-toggle-design:variables:style
 /// @type Color [default]
-$inuit-toggle-switch            : $white !default;
+$inuit-toggle-switch            : var(--px-toggle-switch-color, $white) !default;
 
 /// Sets the toggle switch border color.
 ///
 /// @group px-toggle-design:variables:style
 /// @type Color [default]
-$inuit-toggle-switch-border     : $gray2 !default;
+$inuit-toggle-switch-border     : var(--px-toggle-switch-border-color, $gray2) !default;
 
 /// Sets the toggle switch shadow color.
 ///
 /// @group px-toggle-design:variables:style
 /// @type Color | String [default]
-$inuit-toggle-switch-shadow     : 0px 1px 0px rgba($black, .15) !default;
+$inuit-toggle-switch-shadow     : 0px 1px 0px var(--px-toggle-switch-shadow-color, rgba($black, .15)) !default;
 
 /// Sets the toggle background color. This color is in use when the toggle is off/deactivated.
 ///
 /// @group px-toggle-design:variables:style
 /// @type Color [default]
-$inuit-toggle-background        : $gray4 !default;
+$inuit-toggle-background        : var(--px-toggle-backgound-color--off, $gray4) !default;
 
 /// Sets the toggle border color. This color is in use when the toggle is off/deactivated.
 ///
 /// @group px-toggle-design:variables:style
 /// @type Color [default]
-$inuit-toggle-border            : $gray5 !default;
+$inuit-toggle-border            : var(--px-toggle-border-color--off, $gray5) !default;
 
 /// Sets the toggle background color. This color is in use when the toggle is on/activated.
 ///
 /// @group px-toggle-design:variables:style
 /// @type Color [default]]
-$inuit-toggle-background--on    : $select-blue-default !default;
+$inuit-toggle-background--on    : var(--px-toggle-background-color--on, $select-blue-default) !default;
 
 /// Sets the toggle border color. This color is in use when the toggle is on/activated.
 ///
 /// @group px-toggle-design:variables:style
 /// @type Color [default]]
-$inuit-toggle-border--on        : $select-blue-hover !default;
+$inuit-toggle-border--on        : var(--px-toggle-border-color--on, $select-blue-hover) !default;
 
 
 /// Generates the CSS for small toggles if enabled.

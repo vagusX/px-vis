@@ -1,6 +1,6 @@
 {
   "name": "px-code-design",
-  "version": "0.2.19",
+  "version": "0.2.22",
   "authors": [
     "General Electric"
   ],
@@ -27,13 +27,13 @@
   "devDependencies": {
     "px-buttons-design": "^0.4.30",
     "px-starter-kit-design": "^0.6.0",
-    "px-sass-doc": "^0.2.9"
+    "px-sass-doc": "^0.2.10"
   },
-  "_release": "0.2.19",
+  "_release": "0.2.22",
   "_resolution": {
     "type": "version",
-    "tag": "0.2.19",
-    "commit": "c14c52c9c3298093d5ebcf7b545c3c05097a0533"
+    "tag": "v0.2.22",
+    "commit": "77eda485aafcdc4f852b2eeda5dec71e4261a157"
   },
   "_source": "https://github.com/predixDev/px-code-design.git",
   "_target": "~0.2.11",

@@ -1,6 +1,6 @@
 {
     "name": "px-actionable-text-icons-design",
-    "version": "0.1.2",
+    "version": "0.1.6",
     "authors": [
         "General Electric"
     ],
@@ -27,8 +27,8 @@
     },
     "devDependencies": {
         "px-starter-kit-design": "~0.6.0",
-        "px-demo-snippet": "^0.6.4",
-        "px-sass-doc": "^0.2.9",
+        "px-demo-snippet": "^0.6.9",
+        "px-sass-doc": "^0.2.10",
         "px-spacing-design": "^0.3.11",
         "px-iconography-design": "^0.3.1"
     }

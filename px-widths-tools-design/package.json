@@ -1,6 +1,6 @@
 {
     "name": "px-widths-tools-design",
-    "version": "0.2.15",
+    "version": "0.2.17",
     "description": "Predix UI width classes generator",
     "private": false,
     "scripts": {

@@ -2,7 +2,7 @@
   "name": "px-slider",
   "author": "General Electric",
   "description": "Predix UI slider component",
-  "version": "0.6.4",
+  "version": "0.6.7",
   "private": true,
   "extName": null,
   "repository": {

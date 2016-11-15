@@ -12,14 +12,23 @@ Element providing an overlay for use with other components.
 
 You can place the component anywhere on the page, since it has a fixed position, and takes up100vw x 100vh @ z-index position 1000.
 
+Default styles:
 Type dark = 65% black
-
 Type light = 15% black
 
 
 ##### Usage
 
     <px-overlay type="light"></px-overlay>
+
+### Styling
+The following custom properties are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--px-overlay-base-color` | Base background color for the overlay | `$black`
+`--px-overlay-light-alpha` | Alpha value for the light version | `0.15`
+`--px-overlay-dark-alpha` | Alpha value for the dark version | `0.65`
 
 @element px-overlay
 @blurb Element providing an overlay for use with other components.
