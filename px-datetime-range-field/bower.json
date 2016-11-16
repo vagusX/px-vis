@@ -1,6 +1,6 @@
 {
     "name": "px-datetime-range-field",
-    "version": "0.4.7",
+    "version": "0.4.8",
     "main": [
         "px-datetime-range-field.html"
     ],

@@ -1,6 +1,6 @@
 {
   "name": "px-datetime-range-panel",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "main": [
     "px-datetime-range-panel.html"
   ],
@@ -41,11 +41,11 @@
     "px-dropdown": "^0.12.1"
   },
   "homepage": "https://github.com/PredixDev/px-datetime-range-panel",
-  "_release": "0.3.4",
+  "_release": "0.3.5",
   "_resolution": {
     "type": "version",
-    "tag": "v0.3.4",
-    "commit": "2ea55ab555980d83b216c28ca5727900069a78f8"
+    "tag": "v0.3.5",
+    "commit": "c20d0b276adf27eae4dc24e7da4fc018f65a585f"
   },
   "_source": "https://github.com/PredixDev/px-datetime-range-panel.git",
   "_target": "~0.3.0",

@@ -1,3 +1,24 @@
+v0.6.33
+==================
+* added additional check to brush zoomBrush
+* fixed attrs in tooltip being passed down to register
+* created chart behaviors for axisConfigs and registerConfigs
+* doc fixes
+
+v0.6.32
+==================
+* added more checks to event and axis mutedSeries bars
+* fix to scale extents where chart data ys do not share an x
+* added more math.max checks for sizing
+* fix to navigator brush so it cannot disappear when fully collapsed
+* added more checks on zoomBrush for onload
+* added check on axis bar draw to see if it is in mutedSeries
+* check mutedSeries observer in axis to only run if titles exist.
+* added check to make sure the register elem clicked on has a name, otherwise transverses path to find it
+* Added check for currentDomainX & currentDomainY for event draw
+* Enable event deletion
+* Fix in interaction space to ensure removal of mousemove event
+* Fix to allow axes to delete from radar chart
 
 v0.6.31
 ==================
