@@ -1,6 +1,6 @@
 {
   "name": "px-tables-design",
-  "version": "0.3.22",
+  "version": "0.3.23",
   "authors": [
     "General Electric",
     "Harry Roberts <harry@csswizardry.com>"
@@ -17,7 +17,7 @@
   "ignore": [
     "**/.*",
     "npm-debug.log",
-    "Gruntfile.js",
+    "gulpfile.js",
     "node_modules",
     "bower_components",
     "OSS_Notice.pdf",
@@ -33,11 +33,11 @@
     "px-sass-doc": "^0.2.10",
     "px-starter-kit-design": "^0.6.0"
   },
-  "_release": "0.3.22",
+  "_release": "0.3.23",
   "_resolution": {
     "type": "version",
-    "tag": "v0.3.22",
-    "commit": "9ffa931ddbb54a4628e6d91f83bc04a1a2fedc05"
+    "tag": "v0.3.23",
+    "commit": "fecd2e4bd0c2d58d592ce680294a24de6d7d6f21"
   },
   "_source": "https://github.com/predixDev/px-tables-design.git",
   "_target": "~0.3.13",

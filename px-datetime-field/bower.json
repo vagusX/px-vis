@@ -1,13 +1,13 @@
 {
     "name": "px-datetime-field",
-    "version": "0.5.6",
+    "version": "0.5.8",
     "main": [
         "px-datetime-field.html"
     ],
     "ignore": [
         ".*",
         "npm-debug.log",
-        "Gruntfile.js",
+        "gulpfile.js",
         "sass",
         "bower_components",
         "node_modules",

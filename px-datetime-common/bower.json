@@ -1,34 +1,34 @@
 {
-  "name": "px-datetime-common",
-  "version": "0.6.8",
-  "main": [
-    "px-datetime-common.html"
-  ],
-  "ignore": [
-    ".*",
-    "npm-debug.log",
-    "Gruntfile.js",
-    "sass",
-    "bower_components",
-    "node_modules",
-    "test"
-  ],
-  "dependencies": {
-    "pxmoment": "moment#~2.13.0",
-    "pxmoment-timezone": "moment-timezone#~0.5.3",
-    "polymer": "^1.6.1",
-    "px-theme": "~1.1.2",
-    "iron-a11y-keys-behavior": "PolymerElements/iron-a11y-keys-behavior#~1.1.0",
-    "px-dropdown": "~0.12.1",
-    "polymer-font-awesome": "px-polymer-font-awesome#^0.1.9"
-  },
-  "devDependencies": {
-    "iron-component-page": "PolymerElements/iron-component-page#~v1.1.0",
-    "px-starter-kit-design": "~0.6.0",
-    "px-buttons-design": "~0.4.20",
-    "px-forms-design": "~0.3.0",
-    "px-list-bare-design": "~0.2.0",
-    "px-tables-design": "~0.3.0",
-    "px-actionable-text-icons-design": "^0.1.0"
-  }
+    "name": "px-datetime-common",
+    "version": "0.6.11",
+    "main": [
+        "px-datetime-common.html"
+    ],
+    "ignore": [
+        ".*",
+        "npm-debug.log",
+        "gulpfile.js",
+        "sass",
+        "bower_components",
+        "node_modules",
+        "test"
+    ],
+    "dependencies": {
+        "pxmoment": "moment#~2.13.0",
+        "pxmoment-timezone": "moment-timezone#~0.5.3",
+        "polymer": "^1.6.1",
+        "px-theme": "~1.1.2",
+        "iron-a11y-keys-behavior": "PolymerElements/iron-a11y-keys-behavior#~1.1.0",
+        "px-dropdown": "~0.12.1",
+        "polymer-font-awesome": "px-polymer-font-awesome#^0.1.9"
+    },
+    "devDependencies": {
+        "iron-component-page": "PolymerElements/iron-component-page#~v1.1.0",
+        "px-starter-kit-design": "~0.6.0",
+        "px-buttons-design": "~0.4.20",
+        "px-forms-design": "~0.3.0",
+        "px-list-bare-design": "~0.2.0",
+        "px-tables-design": "~0.3.0",
+        "px-actionable-text-icons-design": "^0.1.0"
+    }
 }

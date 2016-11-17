@@ -1,13 +1,13 @@
 {
   "name": "px-datetime-range-panel",
-  "version": "0.3.5",
+  "version": "0.3.7",
   "main": [
     "px-datetime-range-panel.html"
   ],
   "ignore": [
     ".*",
     "npm-debug.log",
-    "Gruntfile.js",
+    "gulpfile.js",
     "sass",
     "bower_components",
     "node_modules",
@@ -41,11 +41,11 @@
     "px-dropdown": "^0.12.1"
   },
   "homepage": "https://github.com/PredixDev/px-datetime-range-panel",
-  "_release": "0.3.5",
+  "_release": "0.3.7",
   "_resolution": {
     "type": "version",
-    "tag": "v0.3.5",
-    "commit": "c20d0b276adf27eae4dc24e7da4fc018f65a585f"
+    "tag": "v0.3.7",
+    "commit": "785c13cea256bbbf66de25cd70e6f7096019371b"
   },
   "_source": "https://github.com/PredixDev/px-datetime-range-panel.git",
   "_target": "~0.3.0",

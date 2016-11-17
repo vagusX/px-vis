@@ -1,13 +1,13 @@
 {
   "name": "px-tabs",
-  "version": "0.5.5",
+  "version": "0.5.7",
   "main": [
     "px-tabs.html"
   ],
   "ignore": [
     ".*",
     "npm-debug.log",
-    "Gruntfile.js",
+    "gulpfile.js",
     "sass",
     "bower_components",
     "node_modules",
@@ -39,11 +39,11 @@
     "px-toggle-design": "^0.2.12"
   },
   "homepage": "https://github.com/PredixDev/px-tabs",
-  "_release": "0.5.5",
+  "_release": "0.5.7",
   "_resolution": {
     "type": "version",
-    "tag": "v0.5.5",
-    "commit": "e8c9d4226bb5d8088cf4587a22815a35dc21d6e6"
+    "tag": "v0.5.7",
+    "commit": "ca8d1cbc4f95c7eae97dc03d258b0870db881109"
   },
   "_source": "https://github.com/PredixDev/px-tabs.git",
   "_target": "~0.5.2",

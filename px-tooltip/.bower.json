@@ -1,13 +1,13 @@
 {
   "name": "px-tooltip",
-  "version": "0.9.8",
+  "version": "0.9.11",
   "main": [
     "px-tooltip.html"
   ],
   "ignore": [
     ".*",
     "npm-debug.log",
-    "Gruntfile.js",
+    "gulpfile.js",
     "sass",
     "bower_components",
     "node_modules",
@@ -42,11 +42,11 @@
     "px-buttons-design": "^0.4.26"
   },
   "homepage": "https://github.com/PredixDev/px-tooltip",
-  "_release": "0.9.8",
+  "_release": "0.9.11",
   "_resolution": {
     "type": "version",
-    "tag": "v0.9.8",
-    "commit": "2f8b5a22e5c13fc36d19a5e1c320aacacf3dd98a"
+    "tag": "v0.9.11",
+    "commit": "990aed342663c5a189b060ef4aa7c627e0ffbfd0"
   },
   "_source": "https://github.com/PredixDev/px-tooltip.git",
   "_target": "~0.9.0",

@@ -1,13 +1,13 @@
 {
   "name": "px-overlay",
-  "version": "0.3.4",
+  "version": "0.3.6",
   "main": [
     "px-overlay.html"
   ],
   "ignore": [
     ".*",
     "npm-debug.log",
-    "Gruntfile.js",
+    "gulpfile.js",
     "sass",
     "bower_components",
     "node_modules",
@@ -40,11 +40,11 @@
     "px-buttons-design": "^0.4.26"
   },
   "homepage": "https://github.com/predixDev/px-overlay",
-  "_release": "0.3.4",
+  "_release": "0.3.6",
   "_resolution": {
     "type": "version",
-    "tag": "v0.3.4",
-    "commit": "064be2a2e4dd36987bca7b32fe50bc85b9b611de"
+    "tag": "v0.3.6",
+    "commit": "a2fdfcacd14b04c1a08e84f3ee9ee0c98290990e"
   },
   "_source": "https://github.com/predixDev/px-overlay.git",
   "_target": "~0.3.0",

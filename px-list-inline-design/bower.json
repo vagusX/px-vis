@@ -1,6 +1,6 @@
 {
     "name": "px-list-inline-design",
-    "version": "0.2.17",
+    "version": "0.2.18",
     "authors": [
         "General Electric",
         "Harry Roberts <harry@csswizardry.com>"
@@ -19,7 +19,7 @@
         "**/.*",
         "node_modules",
         "bower_components",
-        "Gruntfile.js",
+        "gulpfile.js",
         ".github",
         "sass",
         "OSS_Notice.pdf"

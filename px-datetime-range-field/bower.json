@@ -1,13 +1,13 @@
 {
     "name": "px-datetime-range-field",
-    "version": "0.4.8",
+    "version": "0.4.10",
     "main": [
         "px-datetime-range-field.html"
     ],
     "ignore": [
         ".*",
         "npm-debug.log",
-        "Gruntfile.js",
+        "gulpfile.js",
         "sass",
         "bower_components",
         "node_modules",

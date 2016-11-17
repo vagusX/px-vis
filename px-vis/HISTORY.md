@@ -1,3 +1,12 @@
+v0.6.35
+==================
+* removing px-theme style call
+
+
+v0.6.34
+==================
+* changing Gruntfile.js to gulpfile.js
+
 v0.6.33
 ==================
 * added additional check to brush zoomBrush

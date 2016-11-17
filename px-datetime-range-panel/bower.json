@@ -1,13 +1,13 @@
 {
     "name": "px-datetime-range-panel",
-    "version": "0.3.5",
+    "version": "0.3.7",
     "main": [
         "px-datetime-range-panel.html"
     ],
     "ignore": [
         ".*",
         "npm-debug.log",
-        "Gruntfile.js",
+        "gulpfile.js",
         "sass",
         "bower_components",
         "node_modules",

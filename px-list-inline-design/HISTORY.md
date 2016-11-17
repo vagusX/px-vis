@@ -1,4 +1,9 @@
 
+v0.2.18
+==================
+* changing Gruntfile.js to gulpfile.js
+
+
 v0.2.17
 ==================
 * bumping sassdoc to propogate clipboard changes

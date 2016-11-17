@@ -29,7 +29,7 @@
 <dom-module id="px-datetime-field">
   <template>
     <style include="px-datetime-field-styles"></style>
-    <style include="px-theme-styles"></style>
+    
     <div id="fieldWrapper" class$="{{_getWrapperClass(dateIsValid, timeIsValid, isSelected, _forcedFailedClass)}}">
       <template is="dom-if" if="[[!hideDate]]">
         <px-datetime-entry

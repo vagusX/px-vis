@@ -1,13 +1,13 @@
 {
   "name": "px-demo-snippet",
-  "version": "0.6.9",
+  "version": "0.6.10",
   "main": [
     "px-demo-snippet.html"
   ],
   "ignore": [
     ".*",
     "npm-debug.log",
-    "Gruntfile.js",
+    "gulpfile.js",
     "sass",
     "bower_components",
     "node_modules",
@@ -31,11 +31,11 @@
     "px-spinner": "^0.4.0"
   },
   "homepage": "https://github.com/predixdev/px-demo-snippet",
-  "_release": "0.6.9",
+  "_release": "0.6.10",
   "_resolution": {
     "type": "version",
-    "tag": "v0.6.9",
-    "commit": "0cef5a0cd66c33f069df3101cb6fb52767c0c8ca"
+    "tag": "v0.6.10",
+    "commit": "148d29fd5514073a40794ae89e9aa6bde64c4d5f"
   },
   "_source": "https://github.com/predixdev/px-demo-snippet.git",
   "_target": "^0.6.9",

@@ -1,29 +1,29 @@
 {
-  "name": "px-api-viewer",
-  "version": "0.1.0",
-  "main": [
-    "px-api-viewer.html"
-  ],
-  "ignore": [
-    ".*",
-    "npm-debug.log",
-    "Gruntfile.js",
-    "sass",
-    "bower_components",
-    "node_modules",
-    "test",
-    ".git",
-    "scripts",
-    ".github"
-  ],
-  "dependencies": {
-    "polymer": "^1.6.0",
-    "px-theme": "^1.1.2",
-    "hydrolysis": "~1.24.1",
-    "iron-doc-viewer": "~1.0.15",
-    "px-polymer-font-awesome" : "^0.1.8"
-  },
-  "devDependencies": {
-    "px-starter-kit-design": "~0.6.0"
-  }
+    "name": "px-api-viewer",
+    "version": "0.1.2",
+    "main": [
+        "px-api-viewer.html"
+    ],
+    "ignore": [
+        ".*",
+        "npm-debug.log",
+        "gulpfile.js",
+        "sass",
+        "bower_components",
+        "node_modules",
+        "test",
+        ".git",
+        "scripts",
+        ".github"
+    ],
+    "dependencies": {
+        "polymer": "^1.6.0",
+        "px-theme": "^1.1.2",
+        "hydrolysis": "~1.24.1",
+        "iron-doc-viewer": "~1.0.15",
+        "px-polymer-font-awesome": "^0.1.8"
+    },
+    "devDependencies": {
+        "px-starter-kit-design": "~0.6.0"
+    }
 }

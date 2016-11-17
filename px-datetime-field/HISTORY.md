@@ -1,3 +1,12 @@
+v0.5.8
+==================
+* removing px-theme style call
+
+
+v0.5.7
+==================
+* changing Gruntfile.js to gulpfile.js
+
 v0.5.6
 ==================
 * added style variable for theming

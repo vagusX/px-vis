@@ -1,6 +1,6 @@
 {
     "name": "px-list-bare-design",
-    "version": "0.2.18",
+    "version": "0.2.21",
     "description": "A simple object to remove bullets and indents from lists",
     "private": false,
     "scripts": {

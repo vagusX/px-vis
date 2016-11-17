@@ -1,3 +1,12 @@
+v0.1.14
+==================
+* removing px-theme style call
+
+
+v0.1.13
+==================
+* changing Gruntfile.js to gulpfile.js
+
 v0.1.12
 ==================
 * changed var names to be consistent with BEM

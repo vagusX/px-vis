@@ -1,13 +1,13 @@
 {
   "name": "px-datetime-common",
-  "version": "0.6.8",
+  "version": "0.6.11",
   "main": [
     "px-datetime-common.html"
   ],
   "ignore": [
     ".*",
     "npm-debug.log",
-    "Gruntfile.js",
+    "gulpfile.js",
     "sass",
     "bower_components",
     "node_modules",
@@ -32,11 +32,11 @@
     "px-actionable-text-icons-design": "^0.1.0"
   },
   "homepage": "https://github.com/PredixDev/px-datetime-common",
-  "_release": "0.6.8",
+  "_release": "0.6.11",
   "_resolution": {
     "type": "version",
-    "tag": "v0.6.8",
-    "commit": "4096618482ff231fef6906a092e14c65268d63fa"
+    "tag": "v0.6.11",
+    "commit": "dc08c898a929555f8396c7d37c92b45a609cd818"
   },
   "_source": "https://github.com/PredixDev/px-datetime-common.git",
   "_target": "~0.6.1",
