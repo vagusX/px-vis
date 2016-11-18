@@ -1,6 +1,6 @@
 {
   "name": "px-vis",
-  "version": "0.6.36",
+  "version": "0.6.37",
   "main": [
     "px-vis.html"
   ],
@@ -53,11 +53,11 @@
     "px-actionable-text-icons-design": "^0.1.0"
   },
   "homepage": "https://github.com/PredixDev/px-vis",
-  "_release": "0.6.36",
+  "_release": "0.6.37",
   "_resolution": {
     "type": "version",
-    "tag": "v0.6.36",
-    "commit": "7d28cd4dfb3213e9b8f1719948898da70bcd80f3"
+    "tag": "v0.6.37",
+    "commit": "87dccf0fdfd31d2e6d83537aeb3917216002ee35"
   },
   "_source": "https://github.com/PredixDev/px-vis.git",
   "_target": "^0.6.13",
