@@ -1,3 +1,36 @@
+v2.0.4
+==================
+* removing px-theme style call
+
+
+v2.0.3
+==================
+* changing Gruntfile.js to gulpfile.js
+
+v2.0.2
+==================
+* fixed style variables for consistency
+
+v2.0.1
+==================
+* added the style header in the docs
+
+v2.0.0
+==================
+* added css variables, and changed previous ones to match the BEM naming.
+
+v1.0.1
+==================
+* bower updating px-demo-snippet
+
+v1.0.0
+===============
+* accepted PR that fixed multiple checkbox behavior and standardized event names
+
+v0.13.0
+===============
+* added property for disabled dropdown
+
 v0.12.3
 ===============
 * Updated dependencies

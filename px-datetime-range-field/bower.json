@@ -1,6 +1,6 @@
 {
     "name": "px-datetime-range-field",
-    "version": "0.4.10",
+    "version": "0.4.11",
     "main": [
         "px-datetime-range-field.html"
     ],
@@ -41,6 +41,6 @@
         "px-toggle-design": "^0.2.12",
         "px-headings-design": "^0.2.14",
         "px-code-design": "~0.2.11",
-        "px-dropdown": "^0.12.1"
+        "px-dropdown": "~2.0.0"
     }
 }

@@ -1,6 +1,6 @@
 {
     "name": "px-overlay",
-    "version": "0.3.6",
+    "version": "0.3.7",
     "main": [
         "px-overlay.html"
     ],
@@ -34,7 +34,7 @@
         "px-code-design": "^0.2.11",
         "px-headings-design": "^0.2.14",
         "px-list-inline-design": "^0.2.11",
-        "px-dropdown": "^0.12.0",
+        "px-dropdown": "~2.0.0",
         "px-spacing-design": "~0.3.8",
         "px-toggle-design": "^0.2.12",
         "px-buttons-design": "^0.4.26"
