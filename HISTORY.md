@@ -1,3 +1,32 @@
+==================
+* ensure timeseries rendering to canvas with multiple lines are not cut off
+* added PxVisBehaviorChart.chartCommonMethods
+* made includeAllSeries loop over all data
+* added clip path to cursor
+* added cursor config to chart behavior
+* modified how cursor lines are calculated
+* added preserveDataOrder for px-vis-pie
+* fixed issues with px-vis-pie updates/addition/deletion
+
+v0.6.32
+==================
+* added more checks to event and axis mutedSeries bars
+* fix to scale extents where chart data ys do not share an x
+* added more math.max checks for sizing
+* fix to navigator brush so it cannot disappear when fully collapsed
+* added more checks on zoomBrush for onload
+* added check on axis bar draw to see if it is in mutedSeries
+* check mutedSeries observer in axis to only run if titles exist.
+* added check to make sure the register elem clicked on has a name, otherwise transverses path to find it
+* Added check for currentDomainX & currentDomainY for event draw
+* Enable event deletion
+* Fix in interaction space to ensure removal of mousemove event
+* Fix to allow axes to delete from radar chart
+
+v0.6.31
+==================
+* bower updating px-demo-snippet
+
 v0.6.30
 ==================
 * Fix intermittent bug in IE when drawing an image on a canvas withing an image load
