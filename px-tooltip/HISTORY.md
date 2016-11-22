@@ -1,3 +1,7 @@
+v0.9.14
+==================
+* turned max width into a mixin
+
 v0.9.13
 ==================
 * give (hidden) default values to mouseCoords in case the tooltip has been requried to be shown without the mouse positions being known yet
