@@ -256,8 +256,7 @@ Element which draws scatter series onto the chart
         // draw the path and move it so the ie is centered
         this.pieGroup = this.svg.append('g')
           .attr('series-id', 'pie_' + this.seriesId)
-          .attr('class', 'pie-slice')
-          .attr('transform', this._translationString);
+          .attr('class', 'pie-slice');
 
       }
     },
@@ -311,7 +310,7 @@ Element which draws scatter series onto the chart
 
             //update radius values
             b.innerRadius = _this._innerRadiusPx;
-            b.outerRadius = _this._radius;
+            b.outerRadius = _this.radius;
 
            //initialise new slices
            if(!this._previousData) {
