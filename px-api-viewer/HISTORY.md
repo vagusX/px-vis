@@ -1,3 +1,7 @@
+v0.1.3
+==================
+* modified the marked element behavior to open a new window on a link click
+
 v0.1.2
 ==================
 * removing px-theme style call

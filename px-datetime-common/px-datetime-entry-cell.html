@@ -132,6 +132,13 @@ Datetime input element. Includes iron-ally-keys-behavior to limit keystrokes to 
         readOnly: true,
         notify: true,
         value: false
+      },
+      /**
+       *  Boolean to determine of entry-cell has been attached. Set in 'attached' and used in '_inputValueChanged'
+       */
+      _isAttached:{
+        type: Boolean,
+        value: false,
       }
     },
 
@@ -160,6 +167,7 @@ Datetime input element. Includes iron-ally-keys-behavior to limit keystrokes to 
       this._addGeneralKeyBindings();
       this._sizeInputs();
       this.cellLength = (this.dtWorkingCopy.length > 1)? this.dtWorkingCopy.length : 2;
+      this._isAttached = true;  
     },
     _onEnter: function() {
       this._checkValue();
@@ -209,7 +217,6 @@ Datetime input element. Includes iron-ally-keys-behavior to limit keystrokes to 
           length;
           
       if(fontSize === "0px" || fontSize === "0"){
-        console.log("fontSize is 0px");
         setTimeout(function(){
           this._sizeInputs();
         }.bind(this),50);
@@ -349,10 +356,15 @@ Datetime input element. Includes iron-ally-keys-behavior to limit keystrokes to 
      * @method _inputValueChanged
      */
     _inputValueChanged: function(evt){
-      var _this = this;
-      this.debounce('cell-validation', function(){
-        _this.fire('px-cell-validate');
-      }, 100);
+      //this setTimeout needs to wait for entry cell to be attached so that entry can properly call validate. 
+      //this functionality should probably be handeld by entry, due to time constrains this is the solution we had
+      if(!this._isAttached) {
+        setTimeout(function() {
+          this._inputValueChanged();
+        }.bind(this), 50);
+        return;
+      }
+      this.fire('px-cell-validate');
     },
     /**
      * get the key that was clicked and add it to the dtWorkingCopy (string displayed in the input)

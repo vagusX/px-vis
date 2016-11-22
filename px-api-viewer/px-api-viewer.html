@@ -7,6 +7,7 @@
 <link rel="import" href="../hydrolysis/hydrolysis-analyzer.html" />
 <link rel="import" href="../iron-doc-viewer/iron-doc-viewer.html" />
 <link rel="import" href="../px-polymer-font-awesome/polymer-font-awesome.html" />
+
 <!--
 Element providing API documentation for a requested Polymer component
 
@@ -24,7 +25,7 @@ Element providing API documentation for a requested Polymer component
 <dom-module id="px-api-viewer">
   <template>
     <style include="px-api-viewer-styles"></style>
-    
+    <style include="px-theme-styles"></style>
     <template is="dom-if" if="[[_behaviorOn]]">
       <div on-tap="_turnBehaviorOff" class="returnToApi"><iron-icon icon="fa:fa-chevron-left"></iron-icon> Return to [[source]]'s API</div>
     </template>
@@ -101,6 +102,29 @@ Element providing API documentation for a requested Polymer component
           this._setElementDescriptor(analyzer);
           this.set('_analyzer', analyzer);
         }.bind(this));
+
+        var renderer = new marked.Renderer();
+        renderer.link = function(href, title, text) {
+       if (this.options.sanitize) {
+         try {
+           var prot = decodeURIComponent(unescape(href))
+             .replace(/[^\w:]/g, '')
+             .toLowerCase();
+         } catch (e) {
+           return '';
+         }
+         if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0) {
+           return '';
+         }
+       }
+       var out = '<a href="' + href + '"';
+       if (title) {
+         out += ' title="' + title + '"';
+       }
+       out += 'target="_blank">' + text + '</a>';
+       return out;
+     };
+        marked.setOptions({ renderer: renderer });
     },
     /*
     * This method is called when the return button is clicked/tapped
