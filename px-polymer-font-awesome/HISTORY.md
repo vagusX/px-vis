@@ -1,6 +1,10 @@
+v0.1.10
+==================
+* added new demo page and auto-ghp
+
 v0.1.9
 ==================
-* updated README.md to correct sytax 
+* updated README.md to correct sytax
 
 v0.1.8
 ==================
